@@ -125,7 +125,7 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
           <MessageSquare size={16} className="text-[#22e4ff]" aria-hidden="true" />
           <h2 className="font-display text-xs font-black uppercase tracking-wider">{title}</h2>
         </div>
-        <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
+        <span className="flex items-center gap-1.5 text-[13px] text-slate-300">
           <span className="relative flex h-2 w-2" aria-hidden="true">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d6ff2b] opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d6ff2b]" />
@@ -136,17 +136,17 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
 
       <div ref={listRef} onScroll={onScroll} role="log" aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
         {!data && !error && (
-          <div className="flex flex-1 items-center justify-center text-slate-500"><Loader2 size={18} className="animate-spin" aria-label="Loading chat" /></div>
+          <div className="flex flex-1 items-center justify-center text-slate-400"><Loader2 size={18} className="animate-spin" aria-label="Loading chat" /></div>
         )}
-        {error && !data && <p className="m-auto text-center text-sm text-slate-500">Chat is unavailable right now.</p>}
+        {error && !data && <p className="m-auto text-center text-sm text-slate-400">Chat is unavailable right now.</p>}
         {data && messages.length === 0 && (
-          <p className="m-auto max-w-[220px] text-pretty text-center text-sm leading-6 text-slate-500">No messages yet. Be the first to say gm.</p>
+          <p className="m-auto max-w-[220px] text-pretty text-center text-sm leading-6 text-slate-400">No messages yet. Be the first to say gm.</p>
         )}
         {messages.map((m) => {
           const mine = m.address === me
           return (
             <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`}>
-              <div className="flex items-center gap-2 text-[10px] text-slate-500">
+              <div className="flex items-center gap-2 text-xs text-slate-400">
                 <span className="font-mono font-bold" style={{ color: mine ? "#d6ff2b" : `hsl(${walletHue(m.address)} 90% 70%)` }}>
                   {mine ? "You" : short(m.address)}
                 </span>
@@ -182,7 +182,7 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
               maxLength={CHAT_MAX_LENGTH}
               placeholder="Say something…"
               autoComplete="off"
-              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-[#22e4ff]/60 focus:outline-none"
+              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 focus:border-[#22e4ff]/60 focus:outline-none"
             />
             <button type="submit" disabled={!draft.trim() || sending} aria-label="Send message" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#22e4ff] text-[#0d0818] transition hover:brightness-110 disabled:opacity-40">
               {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}

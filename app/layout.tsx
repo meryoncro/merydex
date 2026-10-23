@@ -1,12 +1,12 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Orbitron, Space_Grotesk } from 'next/font/google'
+import { Chakra_Petch, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-const orbitron = Orbitron({
+const chakraPetch = Chakra_Petch({
   subsets: ['latin'],
-  weight: ['400', '500', '700', '800', '900'],
-  variable: '--font-orbitron',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-chakra',
 })
 
 const spaceGrotesk = Space_Grotesk({
@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark ${orbitron.variable} ${spaceGrotesk.variable} bg-[#0a0510]`}>
+    <html lang="en" className={`dark ${chakraPetch.variable} ${spaceGrotesk.variable} bg-[#0a0510]`}>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

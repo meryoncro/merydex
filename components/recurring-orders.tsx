@@ -44,7 +44,7 @@ function TokenAvatar({ token }: { token: Token }) {
   if (token.logoURI && !failed) {
     return <img src={token.logoURI} alt="" className="h-7 w-7 shrink-0 rounded-full bg-white/5 object-cover" onError={() => setFailed(true)} />
   }
-  return <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-[10px] font-black">{token.symbol.slice(0, 2)}</div>
+  return <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-xs font-black">{token.symbol.slice(0, 2)}</div>
 }
 
 export function RecurringOrders({ tokens, account, onConnect }: Props) {
@@ -205,7 +205,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
                 role="radio"
                 aria-checked={side === s}
                 onClick={() => setSide(s)}
-                className={`rounded px-4 py-1.5 font-display text-xs font-black uppercase tracking-wider transition ${side === s ? (s === "buy" ? "bg-[#d6ff2b] text-[#11140a]" : "bg-[#ff2d95] text-white") : "text-slate-400 hover:text-white"}`}
+                className={`rounded px-4 py-1.5 font-display text-xs font-black uppercase tracking-wider transition ${side === s ? (s === "buy" ? "bg-[#d6ff2b] text-[#11140a]" : "bg-[#ff2d95] text-white") : "text-slate-300 hover:text-white"}`}
               >
                 {s}
               </button>
@@ -221,20 +221,20 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
 
         <div className="flex flex-col gap-4">
           <div className="relative">
-            <span className="mb-1.5 block font-display text-[10px] uppercase tracking-wider text-slate-400">{side === "buy" ? "Token to buy" : "Token to sell"}</span>
+            <span className="mb-1.5 block font-display text-xs uppercase tracking-wider text-slate-300">{side === "buy" ? "Token to buy" : "Token to sell"}</span>
             <button
               onClick={() => setPicking((p) => !p)}
               aria-expanded={picking}
               className="flex w-full items-center gap-3 rounded-md border border-white/10 bg-black/30 px-3 py-2.5 text-left transition hover:border-[#22e4ff]/40"
             >
-              {token ? <TokenAvatar token={token} /> : <Search size={16} className="text-slate-500" />}
-              <span className={token ? "font-bold" : "text-sm text-slate-500"}>{token ? token.symbol : "Choose a token"}</span>
-              {token && <span className="truncate text-xs text-slate-500">{token.name}</span>}
+              {token ? <TokenAvatar token={token} /> : <Search size={16} className="text-slate-400" />}
+              <span className={token ? "font-bold" : "text-sm text-slate-400"}>{token ? token.symbol : "Choose a token"}</span>
+              {token && <span className="truncate text-xs text-slate-400">{token.name}</span>}
             </button>
             {picking && (
               <div className="absolute z-20 mt-2 w-full rounded-md border border-[#22e4ff]/30 bg-[#0d0716] p-2 shadow-2xl">
                 <div className="mb-2 flex items-center gap-2 rounded border border-white/10 px-2 py-1.5">
-                  <Search size={14} className="text-slate-500" />
+                  <Search size={14} className="text-slate-400" />
                   <input
                     autoFocus
                     type="search"
@@ -242,12 +242,12 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search token, name, or address"
                     aria-label="Search tokens"
-                    className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-slate-500 [&::-webkit-search-cancel-button]:hidden"
+                    className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-slate-400 [&::-webkit-search-cancel-button]:hidden"
                   />
-                  {query && <button onClick={() => setQuery("")} aria-label="Clear search"><X size={14} className="text-slate-400" /></button>}
+                  {query && <button onClick={() => setQuery("")} aria-label="Clear search"><X size={14} className="text-slate-300" /></button>}
                 </div>
                 <ul className="max-h-64 overflow-y-auto">
-                  {pickable.length === 0 && <li className="px-2 py-3 text-sm text-slate-500">No tokens found.</li>}
+                  {pickable.length === 0 && <li className="px-2 py-3 text-sm text-slate-400">No tokens found.</li>}
                   {pickable.map((t) => (
                     <li key={t.address}>
                       <button
@@ -256,7 +256,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
                       >
                         <TokenAvatar token={t} />
                         <span className="font-bold">{t.symbol}</span>
-                        <span className="truncate text-xs text-slate-500">{t.name}</span>
+                        <span className="truncate text-xs text-slate-400">{t.name}</span>
                       </button>
                     </li>
                   ))}
@@ -266,28 +266,28 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
           </div>
 
           <label className="block">
-            <span className="mb-1.5 block font-display text-[10px] uppercase tracking-wider text-slate-400">{side === "buy" ? "CRO to spend each day" : `${token?.symbol ?? "Tokens"} to sell each day`}</span>
+            <span className="mb-1.5 block font-display text-xs uppercase tracking-wider text-slate-300">{side === "buy" ? "CRO to spend each day" : `${token?.symbol ?? "Tokens"} to sell each day`}</span>
             <div className="flex items-center rounded-md border border-white/10 bg-black/30 px-3 focus-within:border-[#22e4ff]/50">
               <input
                 inputMode="decimal"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
                 placeholder="0.0"
-                className="w-full min-w-0 bg-transparent py-2.5 font-display text-lg font-black outline-none placeholder:text-slate-600"
+                className="w-full min-w-0 bg-transparent py-2.5 font-display text-lg font-black outline-none placeholder:text-slate-400"
               />
-              <span className="font-display text-xs font-bold text-slate-400">{spendUnit}</span>
+              <span className="font-display text-xs font-bold text-slate-300">{spendUnit}</span>
             </div>
           </label>
 
           <div>
-            <span className="mb-1.5 block font-display text-[10px] uppercase tracking-wider text-slate-400">Number of days</span>
+            <span className="mb-1.5 block font-display text-xs uppercase tracking-wider text-slate-300">Number of days</span>
             <div className="flex flex-wrap items-center gap-2">
               {RUN_PRESETS.map((n) => (
                 <button
                   key={n}
                   onClick={() => setRuns(n)}
                   aria-pressed={runs === n}
-                  className={`rounded-md border px-3 py-1.5 font-display text-xs font-bold transition ${runs === n ? "border-[#22e4ff] bg-[#22e4ff]/15 text-[#22e4ff]" : "border-white/10 text-slate-400 hover:text-white"}`}
+                  className={`rounded-md border px-3 py-1.5 font-display text-xs font-bold transition ${runs === n ? "border-[#22e4ff] bg-[#22e4ff]/15 text-[#22e4ff]" : "border-white/10 text-slate-300 hover:text-white"}`}
                 >
                   {n}d
                 </button>
@@ -305,7 +305,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
           </div>
 
           <label className="flex items-center justify-between gap-3">
-            <span className="font-display text-[10px] uppercase tracking-wider text-slate-400">Max slippage per run</span>
+            <span className="font-display text-xs uppercase tracking-wider text-slate-300">Max slippage per run</span>
             <div className="flex items-center rounded-md border border-white/10 bg-black/30 px-2">
               <input
                 inputMode="decimal"
@@ -313,7 +313,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
                 onChange={(e) => setSlippage(e.target.value.replace(/[^0-9.]/g, ""))}
                 className="w-12 bg-transparent py-1.5 text-right text-sm outline-none"
               />
-              <span className="text-sm text-slate-400">%</span>
+              <span className="text-sm text-slate-300">%</span>
             </div>
           </label>
         </div>
@@ -325,12 +325,12 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
                 {side === "buy" ? "Buy" : "Sell"} <strong className="text-white">{fmt(perRun)} {spendUnit}</strong> {side === "buy" ? `of ${token.symbol}` : "for CRO"} every day for{" "}
                 <strong className="text-white">{runs} days</strong>.
               </p>
-              <p className="text-slate-400">
+              <p className="text-slate-300">
                 Total budget {fmt(perRun * runs)} {spendUnit}. First run now, then daily at {runHour}:00 UTC until about {endDate.toLocaleDateString()}.
               </p>
             </>
           ) : (
-            <p className="text-slate-400">Pick a token, a daily amount, and how many days to run.</p>
+            <p className="text-slate-300">Pick a token, a daily amount, and how many days to run.</p>
           )}
         </div>
 
@@ -353,7 +353,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
           </p>
         )}
 
-        <p className="mt-4 text-xs leading-5 text-slate-500">
+        <p className="mt-4 text-xs leading-5 text-slate-400">
           You sign once. A keeper wallet runs each daily trade from a capped allowance, and the output goes straight to your wallet. The usual 1% fee applies to each run. Cancel anytime.
         </p>
       </div>
@@ -364,7 +364,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
             <CalendarClock size={16} className="text-[#ff2d95]" /> Your plans
           </div>
           {orders.length === 0 ? (
-            <p className="text-sm text-slate-500">No recurring plans yet.</p>
+            <p className="text-sm text-slate-400">No recurring plans yet.</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {orders.map((o) => (
@@ -381,7 +381,7 @@ export function RecurringOrders({ tokens, account, onConnect }: Props) {
 const STATUS_STYLE: Record<RecurringOrder["status"], string> = {
   active: "border-[#22e4ff]/40 text-[#22e4ff]",
   completed: "border-[#d6ff2b]/40 text-[#d6ff2b]",
-  cancelled: "border-white/15 text-slate-400",
+  cancelled: "border-white/15 text-slate-300",
   failed: "border-[#ff2d95]/40 text-[#ff6b9d]",
 }
 
@@ -395,20 +395,20 @@ function OrderRow({ order, busy, onCancel }: { order: RecurringOrder; busy: bool
           <div className="font-bold">
             <span className={order.side === "buy" ? "text-[#d6ff2b]" : "text-[#ff2d95]"}>{order.side === "buy" ? "Buy" : "Sell"}</span>{" "}
             {order.side === "buy" ? `${order.tokenSymbol} with ${fmt(Number(order.amountPerRun))} ${unit}` : `${fmt(Number(order.amountPerRun))} ${unit} for CRO`}
-            <span className="font-normal text-slate-500"> / day</span>
+            <span className="font-normal text-slate-400"> / day</span>
           </div>
-          <div className="mt-0.5 text-xs text-slate-500">
+          <div className="mt-0.5 text-xs text-slate-400">
             {order.status === "active" ? `Next run ${new Date(order.nextRunAt).toLocaleString()}` : `Started ${new Date(order.createdAt).toLocaleDateString()}`}
           </div>
         </div>
-        <span className={`shrink-0 rounded border px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLE[order.status]}`}>{order.status}</span>
+        <span className={`shrink-0 rounded border px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider ${STATUS_STYLE[order.status]}`}>{order.status}</span>
       </div>
 
       <div className="mt-3 flex items-center gap-3">
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuenow={order.runsDone} aria-valuemin={0} aria-valuemax={order.runsTotal} aria-label="Runs completed">
           <div className="h-full rounded-full bg-[#22e4ff]" style={{ width: `${pct}%` }} />
         </div>
-        <span className="text-xs tabular-nums text-slate-400">{order.runsDone}/{order.runsTotal}</span>
+        <span className="text-xs tabular-nums text-slate-300">{order.runsDone}/{order.runsTotal}</span>
       </div>
 
       {order.lastError && order.status !== "completed" && <p className="mt-2 text-xs leading-5 text-[#ff6b9d]">Last run failed: {order.lastError}</p>}
@@ -420,7 +420,7 @@ function OrderRow({ order, busy, onCancel }: { order: RecurringOrder; busy: bool
           </a>
         ) : <span />}
         {order.status === "active" && (
-          <button onClick={onCancel} disabled={busy} className="rounded-md border border-[#ff2d95]/40 px-3 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-[#ff6b9d] transition hover:bg-[#ff2d95]/10 disabled:opacity-40">
+          <button onClick={onCancel} disabled={busy} className="rounded-md border border-[#ff2d95]/40 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-[#ff6b9d] transition hover:bg-[#ff2d95]/10 disabled:opacity-40">
             Cancel
           </button>
         )}

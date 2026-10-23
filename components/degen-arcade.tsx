@@ -215,11 +215,11 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
           <h2 className="mt-1 text-balance font-display text-xl font-black uppercase leading-tight tracking-tight sm:text-2xl">Pick your player</h2>
         </div>
         <div className="shrink-0 text-right">
-          <div className="font-display text-[10px] uppercase tracking-wider text-slate-500">DegenScore</div>
+          <div className="font-display text-xs uppercase tracking-wider text-slate-400">DegenScore</div>
           <div className="font-display text-xl font-black tabular-nums text-[#d6ff2b] neon-lime sm:text-2xl">
             {account ? (score?.me?.score ?? 0).toLocaleString() : "—"}
           </div>
-          <div className="font-display text-[10px] uppercase tracking-wider text-slate-500">
+          <div className="font-display text-xs uppercase tracking-wider text-slate-400">
             {!account ? "Connect to play" : score?.me?.rank ? `Rank #${score.me.rank}` : "Unranked"}
           </div>
         </div>
@@ -243,7 +243,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
               <div className={`font-display text-xs font-black uppercase leading-tight sm:text-sm ${selected ? p.glow : ""}`} style={{ color: selected ? p.accent : "#cbd5e1" }}>
                 {p.name}
               </div>
-              <div className="mt-0.5 font-display text-[9px] uppercase tracking-wider text-slate-500">
+              <div className="mt-0.5 font-display text-[11px] uppercase tracking-wider text-slate-400">
                 {selected ? "Your profile" : "Select"}
               </div>
             </button>
@@ -262,8 +262,8 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
               role="tab"
               aria-selected={selected}
               onClick={() => { setSection(id); if (id === "profile") setProfileTarget(null) }}
-              className={`flex flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 font-display text-[9px] font-black uppercase tracking-wider transition sm:flex-row sm:gap-1.5 sm:px-2 sm:text-[11px] ${
-                selected ? "bg-[#ff2d95] text-[#0a0510]" : "text-slate-400 hover:bg-white/5 hover:text-white"
+              className={`flex flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 font-display text-[11px] font-black uppercase tracking-wider transition sm:flex-row sm:gap-1.5 sm:px-2 sm:text-[13px] ${
+                selected ? "bg-[#ff2d95] text-[#0a0510]" : "text-slate-300 hover:bg-white/5 hover:text-white"
               }`}
             >
               <Icon size={14} aria-hidden="true" />
@@ -276,9 +276,9 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
       {section === "market" ? (<>
       <div className="mt-4 grid gap-3 rounded-xl border border-[#22e4ff]/25 bg-[#0d0818] p-3 sm:grid-cols-[1.4fr_1fr]">
         <div>
-          <div className="mb-2 flex items-center justify-between font-display text-[10px] font-bold uppercase tracking-wider">
+          <div className="mb-2 flex items-center justify-between font-display text-xs font-bold uppercase tracking-wider">
             <span className="text-[#d6ff2b]">Buy size</span>
-            <span className="text-slate-500">
+            <span className="text-slate-400">
               {account ? `Bal ${croBalance != null ? Number(croBalance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "…"} CRO` : "Not connected"}
             </span>
           </div>
@@ -295,13 +295,13 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
                 className="w-full min-w-0 bg-transparent font-display text-xs font-bold tabular-nums text-white outline-none"
                 placeholder="Custom"
               />
-              <span className="font-display text-[10px] text-slate-500">CRO</span>
+              <span className="font-display text-xs text-slate-400">CRO</span>
             </label>
           </div>
         </div>
         <div className="flex flex-col gap-3">
           <div>
-            <div className="mb-2 font-display text-[10px] font-bold uppercase tracking-wider text-[#ff2d95]">Sell size</div>
+            <div className="mb-2 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]">Sell size</div>
             <div className="flex gap-1.5">
               {SELL_PRESETS.map((p) => (
                 <SizeChip key={p} selected={sellPercent === p} onClick={() => setSellPercent(p)} color="#ff2d95">{p === 100 ? "Max" : `${p}%`}</SizeChip>
@@ -309,7 +309,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
             </div>
           </div>
           <div className="flex items-center justify-between gap-2">
-            <span className="font-display text-[10px] font-bold uppercase tracking-wider text-slate-400">Slippage</span>
+            <span className="font-display text-xs font-bold uppercase tracking-wider text-slate-300">Slippage</span>
             <div className="flex gap-1">
               {SLIPPAGE_PRESETS.map((s) => (
                 <SizeChip key={s} selected={slippage === s} onClick={() => setSlippage(s)} color="#22e4ff" small>{s}%</SizeChip>
@@ -319,21 +319,21 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
         </div>
       </div>
 
-      <p className="mt-3 text-pretty text-xs leading-5 text-slate-400">{active.tagline}</p>
+      <p className="mt-3 text-pretty text-xs leading-5 text-slate-300">{active.tagline}</p>
 
       <div className="mt-3 flex items-center gap-2">
         <label className="flex flex-1 items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 focus-within:border-[#22e4ff]/60">
-          <Search size={14} className="shrink-0 text-slate-500" aria-hidden="true" />
+          <Search size={14} className="shrink-0 text-slate-400" aria-hidden="true" />
           <span className="sr-only">Search tokens</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search token, name, or address"
-            className="w-full min-w-0 bg-transparent text-sm text-white outline-none placeholder:text-slate-500 [&::-webkit-search-cancel-button]:hidden"
+            className="w-full min-w-0 bg-transparent text-sm text-white outline-none placeholder:text-slate-400 [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
-            <button type="button" onClick={() => setQuery("")} className="shrink-0 text-slate-500 hover:text-white" aria-label="Clear search">
+            <button type="button" onClick={() => setQuery("")} className="shrink-0 text-slate-400 hover:text-white" aria-label="Clear search">
               <X size={14} />
             </button>
           )}
@@ -341,7 +341,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
         <button
           onClick={() => setReload((n) => n + 1)}
           disabled={loading}
-          className="shrink-0 rounded-md p-2 text-slate-400 hover:bg-white/5 hover:text-[#22e4ff] disabled:opacity-40"
+          className="shrink-0 rounded-md p-2 text-slate-300 hover:bg-white/5 hover:text-[#22e4ff] disabled:opacity-40"
           aria-label="Refresh token list"
         >
           <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
@@ -358,13 +358,13 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setSort(id)}
-                className={`flex shrink-0 items-center gap-1 rounded-md border px-2.5 py-2 font-display text-[10px] font-black uppercase tracking-wider transition sm:py-1.5 ${
-                  selected ? "border-[#22e4ff]/60 bg-[#22e4ff]/10 text-[#22e4ff]" : "border-white/10 text-slate-400 hover:text-white"
+                className={`flex shrink-0 items-center gap-1 rounded-md border px-2.5 py-2 font-display text-xs font-black uppercase tracking-wider transition sm:py-1.5 ${
+                  selected ? "border-[#22e4ff]/60 bg-[#22e4ff]/10 text-[#22e4ff]" : "border-white/10 text-slate-300 hover:text-white"
                 }`}
               >
                 <Icon size={12} aria-hidden="true" className={id === "hot" && selected ? "text-[#ff2d95]" : ""} />
                 {label}
-                {id === "watchlist" && watched.size > 0 && <span className="tabular-nums text-slate-500">{watched.size}</span>}
+                {id === "watchlist" && watched.size > 0 && <span className="tabular-nums text-slate-400">{watched.size}</span>}
               </button>
             )
           })}
@@ -377,7 +377,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
                 role="radio"
                 aria-checked={timeframe === t.id}
                 onClick={() => setTimeframe(t.id)}
-                className={`rounded px-2 py-1 font-display text-[10px] font-black tabular-nums transition ${timeframe === t.id ? "bg-white/10 text-white" : "text-slate-500 hover:text-white"}`}
+                className={`rounded px-2 py-1 font-display text-xs font-black tabular-nums transition ${timeframe === t.id ? "bg-white/10 text-white" : "text-slate-400 hover:text-white"}`}
               >
                 {t.label}
               </button>
@@ -385,9 +385,9 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
           </div>
         ) : null}
       </div>
-      {watchError && <p className="mt-2 text-[11px] text-[#ff2d95]" role="alert">{watchError}</p>}
+      {watchError && <p className="mt-2 text-[13px] text-[#ff2d95]" role="alert">{watchError}</p>}
 
-      <div className="mt-3 flex items-center justify-between border-b border-white/10 pb-2 font-display text-[10px] uppercase tracking-wider text-slate-500">
+      <div className="mt-3 flex items-center justify-between border-b border-white/10 pb-2 font-display text-xs uppercase tracking-wider text-slate-400">
         <span>
           {allRows ? `${rows.length}${query ? ` of ${sorted.length}` : ""} tokens` : "Tokens"} ·{" "}
           {sort === "gainers" ? `${tfLabel} change` : sort === "new" ? "newest pairs" : `${tfLabel} txns`}
@@ -408,9 +408,9 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
             ))}
           </div>
         ) : error ? (
-          <p className="py-10 text-center text-sm text-slate-500">Couldn&apos;t load the arcade. Try refreshing.</p>
+          <p className="py-10 text-center text-sm text-slate-400">Couldn&apos;t load the arcade. Try refreshing.</p>
         ) : rows.length === 0 ? (
-          <p className="py-10 text-center text-sm text-slate-500 text-pretty">
+          <p className="py-10 text-center text-sm text-slate-400 text-pretty">
             {query
               ? `No tokens match "${query}".`
               : sort === "watchlist"
@@ -469,7 +469,7 @@ function SizeChip({ selected, onClick, color, small, children }: { selected: boo
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`rounded-md border font-display font-black uppercase tabular-nums transition ${small ? "px-2 py-1 text-[10px]" : "px-2.5 py-1.5 text-xs"}`}
+      className={`rounded-md border font-display font-black uppercase tabular-nums transition ${small ? "px-2 py-1 text-xs" : "px-2.5 py-1.5 text-xs"}`}
       style={{
         borderColor: selected ? color : "rgba(255,255,255,0.1)",
         backgroundColor: selected ? `${color}1f` : "transparent",
@@ -546,19 +546,19 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
           <div className="flex items-center gap-2">
             <span className="truncate font-display text-sm font-black text-white">{row.symbol}</span>
             <span
-              className={`flex items-center gap-0.5 font-display text-[10px] font-bold tabular-nums ${up ? "text-[#d6ff2b]" : "text-[#ff2d95]"}`}
+              className={`flex items-center gap-0.5 font-display text-xs font-bold tabular-nums ${up ? "text-[#d6ff2b]" : "text-[#ff2d95]"}`}
               title={`${tfLabel} change`}
             >
               {up ? <TrendingUp size={11} aria-hidden="true" /> : <TrendingDown size={11} aria-hidden="true" />}
               {frame.change == null ? "—" : `${up ? "+" : ""}${frame.change.toFixed(1)}%`}
             </span>
             {isNew && (
-              <span className="rounded bg-[#22e4ff]/15 px-1 py-px font-display text-[9px] font-black uppercase tracking-wider text-[#22e4ff]">
+              <span className="rounded bg-[#22e4ff]/15 px-1 py-px font-display text-[11px] font-black uppercase tracking-wider text-[#22e4ff]">
                 New {row.pairCreatedAt ? timeAgo(new Date(row.pairCreatedAt).toISOString()) : ""}
               </span>
             )}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[11px] text-slate-500">
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-slate-400">
             <span className="text-slate-300">{formatPrice(row.priceUsd)}</span>
             <span className="tabular-nums" title={`${tfLabel} transactions`}>{txns.toLocaleString()} txns</span>
             <span className="tabular-nums" title="Liquidity">Liq {formatUsd(row.liquidityUsd)}</span>
@@ -573,7 +573,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
           onClick={() => onToggleWatch(row.address)}
           aria-pressed={watched}
           aria-label={watched ? `Remove ${row.symbol} from watchlist` : `Add ${row.symbol} to watchlist`}
-          className={`shrink-0 rounded-md p-2 transition hover:bg-white/5 sm:p-1.5 ${watched ? "text-[#d6ff2b]" : "text-slate-600 hover:text-slate-300"}`}
+          className={`shrink-0 rounded-md p-2 transition hover:bg-white/5 sm:p-1.5 ${watched ? "text-[#d6ff2b]" : "text-slate-400 hover:text-slate-300"}`}
         >
           <Star size={16} fill={watched ? "currentColor" : "none"} aria-hidden="true" />
         </button>
@@ -581,7 +581,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
           <button
             onClick={() => token && onBuy(token)}
             disabled={!tradable || buyDisabled}
-            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md bg-[#d6ff2b] px-3 py-2.5 sm:py-1.5 font-display text-[11px] font-black uppercase tracking-wider text-[#0a0510] transition hover:bg-[#e6ff6b] disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md bg-[#d6ff2b] px-3 py-2.5 sm:py-1.5 font-display text-[13px] font-black uppercase tracking-wider text-[#0a0510] transition hover:bg-[#e6ff6b] disabled:cursor-not-allowed disabled:opacity-30"
             aria-label={`${buyLabel} CRO of ${row.symbol}`}
           >
             {pending === "buy" ? <Loader2 size={13} className="animate-spin" /> : buyLabel}
@@ -589,7 +589,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
           <button
             onClick={() => token && onSell(token)}
             disabled={!tradable}
-            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md border border-[#ff2d95]/50 px-3 py-2.5 sm:py-1.5 font-display text-[11px] font-black uppercase tracking-wider text-[#ff2d95] transition hover:bg-[#ff2d95]/10 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md border border-[#ff2d95]/50 px-3 py-2.5 sm:py-1.5 font-display text-[13px] font-black uppercase tracking-wider text-[#ff2d95] transition hover:bg-[#ff2d95]/10 disabled:cursor-not-allowed disabled:opacity-30"
             aria-label={`${sellLabel} of ${row.symbol}`}
           >
             {pending === "sell" ? <Loader2 size={13} className="animate-spin" /> : sellLabel}
