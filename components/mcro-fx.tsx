@@ -134,7 +134,10 @@ function Mascot({ reduced }: { reduced: boolean }) {
     setPos({ x, y })
   }
 
-  const homeSpot = () => ({ x: window.innerWidth - MASCOT - 20, y: window.innerHeight - MASCOT - 20 })
+  const isSmallScreen = () => window.innerWidth < 640
+  const homeSpot = () => isSmallScreen()
+    ? { x: window.innerWidth - MASCOT - 12, y: window.innerHeight - MASCOT - 12 }
+    : { x: window.innerWidth - MASCOT - 20, y: window.innerHeight - MASCOT - 20 }
 
   // Wander the viewport; stay parked when the user prefers reduced motion.
   useEffect(() => {
@@ -144,6 +147,8 @@ function Mascot({ reduced }: { reduced: boolean }) {
     if (reduced) return
     let hops = 0
     const wander = () => {
+      // Small screens have no free space to roam, so the mascot stays parked in its corner.
+      if (isSmallScreen()) { const s = homeSpot(); moveTo(s.x, s.y); return }
       const w = window.innerWidth, h = window.innerHeight
       moveTo(16 + Math.random() * Math.max(0, w - MASCOT - 32), 96 + Math.random() * Math.max(0, h - MASCOT - 120))
       if (++hops % 3 === 0) say(pick(IDLE_LINES), 2200)
@@ -178,7 +183,7 @@ function Mascot({ reduced }: { reduced: boolean }) {
     const r = REACTIONS[event.kind]
     say(r.line)
     if (!reduced) play(r.anim)
-    if (!reduced && (event.kind === "win" || event.kind === "buy" || event.kind === "fight")) {
+    if (!reduced && !isSmallScreen() && (event.kind === "win" || event.kind === "buy" || event.kind === "fight")) {
       moveTo(window.innerWidth / 2 - MASCOT / 2, Math.min(window.innerHeight * 0.62, window.innerHeight - MASCOT - 24))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -209,7 +214,7 @@ function Mascot({ reduced }: { reduced: boolean }) {
       <button
         onClick={hide}
         aria-label="Hide the MCRO mascot"
-        className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-[#0a0510] text-slate-300 opacity-0 ring-1 ring-white/20 transition group-hover:opacity-100 focus-visible:opacity-100"
+        className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-[#0a0510] text-slate-300 opacity-100 ring-1 ring-white/20 transition group-hover:opacity-100 focus-visible:opacity-100 sm:opacity-0"
       >
         <X size={12} />
       </button>
