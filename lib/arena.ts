@@ -1,4 +1,5 @@
 import type { ArenaCollection } from "@/lib/ebisus"
+import { clearSession, ensureSession } from "@/lib/wallet-session"
 
 export type ArenaMode = "coin" | "rps"
 export type RpsMove = "rock" | "paper" | "scissors"
@@ -36,12 +37,18 @@ export interface ArenaStats {
   players: number
 }
 
-async function post(body: Record<string, unknown>) {
-  const res = await fetch("/api/arena", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  })
+async function post(body: Record<string, unknown> & { wallet: string }) {
+  const send = async (token: string) =>
+    fetch("/api/arena", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+    })
+  let res = await send(await ensureSession(body.wallet))
+  if (res.status === 401) {
+    clearSession(body.wallet)
+    res = await send(await ensureSession(body.wallet))
+  }
   const data = await res.json()
   if (!res.ok) throw new Error(data?.error || "Arena request failed")
   return data

@@ -1,7 +1,26 @@
 import { NextResponse } from "next/server"
 import { pool } from "@/lib/db"
+import { provider } from "@/lib/keeper"
 
+export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
+
+const MAX_TX_AGE_SECONDS = 60 * 60
+
+/** True only for a successful, recent Cronos transaction actually sent by `wallet`. */
+async function verifiedTrade(wallet: string, txHash: string): Promise<boolean> {
+  const rpc = provider()
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const receipt = await rpc.getTransactionReceipt(txHash).catch(() => null)
+    if (receipt) {
+      if (receipt.status !== 1 || receipt.from.toLowerCase() !== wallet) return false
+      const block = await rpc.getBlock(receipt.blockNumber).catch(() => null)
+      return !!block && Date.now() / 1000 - block.timestamp <= MAX_TX_AGE_SECONDS
+    }
+    await new Promise((r) => setTimeout(r, 2000))
+  }
+  return false
+}
 
 const ADDR = /^0x[a-fA-F0-9]{40}$/
 const TX = /^0x[a-fA-F0-9]{64}$/
@@ -17,6 +36,7 @@ export async function POST(req: Request) {
     const txHash = String(body.txHash ?? "").toLowerCase()
     if (!ADDR.test(wallet)) return NextResponse.json({ error: "invalid_wallet" }, { status: 400 })
     if (!TX.test(txHash)) return NextResponse.json({ error: "invalid_tx" }, { status: 400 })
+    if (!(await verifiedTrade(wallet, txHash))) return NextResponse.json({ error: "unverified_tx" }, { status: 403 })
 
     const fromSymbol = body.fromSymbol ? String(body.fromSymbol).slice(0, 20) : null
     const toSymbol = body.toSymbol ? String(body.toSymbol).slice(0, 20) : null
