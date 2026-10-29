@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
 import { Chakra_Petch, Space_Grotesk } from 'next/font/google'
 import './globals.css'
@@ -40,7 +41,12 @@ export default function RootLayout({
     <html lang="en" className={`dark ${chakraPetch.variable} ${spaceGrotesk.variable} bg-[#0a0510]`}>
       <body className="font-sans antialiased">
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   )
