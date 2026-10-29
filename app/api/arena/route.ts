@@ -1,6 +1,23 @@
 import { NextResponse } from "next/server"
+import { Contract } from "ethers"
 import { pool } from "@/lib/db"
-import { isArenaCollection } from "@/lib/ebisus"
+import { ARENA_COLLECTIONS, isArenaCollection, type ArenaCollection } from "@/lib/ebisus"
+import { provider } from "@/lib/keeper"
+import { sessionAddress } from "@/lib/session"
+
+async function ownsNft(wallet: string, collection: ArenaCollection, nftId: string): Promise<boolean> {
+  try {
+    const nft = new Contract(ARENA_COLLECTIONS[collection].address, ["function ownerOf(uint256) view returns (address)"], provider())
+    const owner: string = await nft.ownerOf(BigInt(nftId))
+    return owner.toLowerCase() === wallet
+  } catch {
+    return false
+  }
+}
+
+const safeImage = (v: unknown) =>
+  typeof v === "string" && v.length <= 500 && /^(https:\/\/|ipfs:\/\/)/i.test(v) ? v : undefined
+const safeName = (v: unknown) => (typeof v === "string" ? v.slice(0, 80) : undefined)
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -68,14 +85,21 @@ export async function POST(req: Request) {
   }
 
   const action = body.action
-  const wallet = addr(body.wallet)
-  if (!wallet) return NextResponse.json({ error: "Missing wallet" }, { status: 400 })
+  const wallet = await sessionAddress(req)
+  if (!wallet) return NextResponse.json({ error: "Sign in with your wallet to fight" }, { status: 401 })
+  if (body.wallet && addr(body.wallet) !== wallet) {
+    return NextResponse.json({ error: "Signed-in wallet does not match" }, { status: 403 })
+  }
 
   if (action === "join") {
     const nft = { ...(body.nft as NftRef) }
-    if (!validNft(nft)) return NextResponse.json({ error: "Missing or invalid NFT" }, { status: 400 })
-    if (!isArenaCollection(nft.collection ?? "mery")) {
+    if (!validNft(nft) || !/^\d{1,78}$/.test(nft.nftId)) return NextResponse.json({ error: "Missing or invalid NFT" }, { status: 400 })
+    const collection = nft.collection ?? "mery"
+    if (!isArenaCollection(collection)) {
       return NextResponse.json({ error: "Only MERY and Loaded Lions NFTs can enter the arena" }, { status: 400 })
+    }
+    if (!(await ownsNft(wallet, collection, nft.nftId))) {
+      return NextResponse.json({ error: "This wallet does not own that NFT" }, { status: 403 })
     }
     const mode: Mode = body.mode === "rps" ? "rps" : "coin"
     const move = mode === "rps" ? body.move : null
@@ -83,7 +107,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pick rock, paper, or scissors" }, { status: 400 })
     }
     // Keep only the fields we care about.
-    const nftRef: NftRef = { nftId: String(nft.nftId), name: nft.name, image: nft.image, collection: nft.collection ?? "mery" }
+    const nftRef: NftRef = { nftId: nft.nftId, name: safeName(nft.name), image: safeImage(nft.image), collection }
 
     await purgeStale()
 
