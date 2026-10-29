@@ -243,7 +243,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
               <div className={`font-display text-xs font-black uppercase leading-tight sm:text-sm ${selected ? p.glow : ""}`} style={{ color: selected ? p.accent : "#cbd5e1" }}>
                 {p.name}
               </div>
-              <div className="mt-0.5 font-display text-[11px] uppercase tracking-wider text-slate-400">
+              <div className="mt-0.5 truncate font-display text-[11px] uppercase tracking-wider text-slate-400">
                 {selected ? "Your profile" : "Select"}
               </div>
             </button>

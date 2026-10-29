@@ -91,17 +91,19 @@ export async function GET(req: Request) {
       if (!target) return bad("wallet_required")
       const [stats, tokens, recent, graph] = await Promise.all([
         pool.query(
-          `WITH all_s AS (SELECT LOWER(wallet) AS wallet, ${SCORE_SQL} AS score FROM merydex_trades GROUP BY LOWER(wallet))
-           SELECT COUNT(*)::int AS trades, ${SCORE_SQL} AS score,
-                  COALESCE(SUM(usd_value), 0)::float AS volume,
-                  COUNT(*) FILTER (WHERE ${SIDE_SQL} = 'buy')::int AS buys,
-                  COUNT(*) FILTER (WHERE ${SIDE_SQL} = 'sell')::int AS sells,
-                  COALESCE(SUM(usd_value) FILTER (WHERE ${SIDE_SQL} = 'sell'), 0)::float
-                    - COALESCE(SUM(usd_value) FILTER (WHERE ${SIDE_SQL} = 'buy'), 0)::float AS net_flow,
-                  COALESCE(MAX(usd_value), 0)::float AS biggest,
-                  MIN(created_at) AS first_trade,
-                  (SELECT COUNT(*)::int + 1 FROM all_s WHERE all_s.score > (${SCORE_SQL})) AS rank
-           FROM merydex_trades WHERE LOWER(wallet) = $1`,
+          `WITH all_s AS (SELECT LOWER(wallet) AS wallet, ${SCORE_SQL} AS score FROM merydex_trades GROUP BY LOWER(wallet)),
+           me AS (
+             SELECT COUNT(*)::int AS trades, ${SCORE_SQL} AS score,
+                    COALESCE(SUM(usd_value), 0)::float AS volume,
+                    COUNT(*) FILTER (WHERE ${SIDE_SQL} = 'buy')::int AS buys,
+                    COUNT(*) FILTER (WHERE ${SIDE_SQL} = 'sell')::int AS sells,
+                    COALESCE(SUM(usd_value) FILTER (WHERE ${SIDE_SQL} = 'sell'), 0)::float
+                      - COALESCE(SUM(usd_value) FILTER (WHERE ${SIDE_SQL} = 'buy'), 0)::float AS net_flow,
+                    COALESCE(MAX(usd_value), 0)::float AS biggest,
+                    MIN(created_at) AS first_trade
+             FROM merydex_trades WHERE LOWER(wallet) = $1
+           )
+           SELECT me.*, (SELECT COUNT(*)::int + 1 FROM all_s WHERE all_s.score > me.score) AS rank FROM me`,
           [target],
         ),
         pool.query(
