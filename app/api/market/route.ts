@@ -50,7 +50,7 @@ const toNum = (value: unknown): number | null => {
 
 async function fetchPairs(url: string, signal: AbortSignal): Promise<DexPair[]> {
   const response = await fetch(url, {
-    headers: { Accept: "application/json", "User-Agent": "MeryDex/1.0" },
+    headers: { Accept: "application/json", "User-Agent": "MCRO.FUN/1.0" },
     cache: "no-store",
     signal,
   })

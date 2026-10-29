@@ -18,7 +18,7 @@ export type Leaderboard = {
   totals: LeaderboardTotals
 }
 
-// Fire-and-forget: record a confirmed MERYDEX swap so it counts on the
+// Fire-and-forget: record a confirmed MCRO.FUN swap so it counts on the
 // leaderboard. Never throws — a failed record must not break the swap UX.
 export async function recordTrade(input: {
   wallet: string

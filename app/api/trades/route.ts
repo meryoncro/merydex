@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic"
 const ADDR = /^0x[a-fA-F0-9]{40}$/
 const TX = /^0x[a-fA-F0-9]{64}$/
 
-// Record a swap executed through MERYDEX. Deduped on tx_hash so a retry or
+// Record a swap executed through MCRO.FUN. Deduped on tx_hash so a retry or
 // double-submit can't inflate a wallet's leaderboard stats.
 export async function POST(req: Request) {
   try {

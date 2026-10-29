@@ -3,7 +3,7 @@ import { pool } from "@/lib/db"
 
 export const dynamic = "force-dynamic"
 
-// DegenScore is derived from recorded MERYDEX trades so it can't be farmed
+// DegenScore is derived from recorded MCRO.FUN trades so it can't be farmed
 // client-side: 10 points per swap plus 1 point per USD traded.
 const SCORE_SQL = `(COUNT(*) * 10 + FLOOR(COALESCE(SUM(usd_value), 0)))::int`
 

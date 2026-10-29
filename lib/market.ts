@@ -37,7 +37,7 @@ export interface TrendingToken {
 
 /**
  * Fetches the top 20 tokens on Cronos ranked by 24h trading volume via the
- * /api/trending proxy, which scans MeryDEX's tradable universe on DexScreener.
+ * /api/trending proxy, which scans MCRO.FUN's tradable universe on DexScreener.
  */
 export async function fetchTrending(signal?: AbortSignal): Promise<TrendingToken[]> {
   const res = await fetch("/api/trending", { signal })

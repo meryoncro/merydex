@@ -13,4 +13,4 @@ export const isChatRoom = (value: unknown): value is ChatRoom =>
   typeof value === "string" && (CHAT_ROOMS as readonly string[]).includes(value)
 
 export const chatSignInMessage = (address: string, issuedAt: string) =>
-  `Sign in to MERYDEX live chat\n\nThis only proves you own this wallet. It costs no gas and approves nothing.\n\nWallet: ${address}\nIssued: ${issuedAt}`
+  `Sign in to MCRO.FUN live chat\n\nThis only proves you own this wallet. It costs no gas and approves nothing.\n\nWallet: ${address}\nIssued: ${issuedAt}`

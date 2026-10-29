@@ -150,7 +150,7 @@ export function TradeTicker({ trades }: { trades: FeedTrade[] }) {
   if (trades.length === 0) return null
   const loop = [...trades.slice(0, 14), ...trades.slice(0, 14)]
   return (
-    <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[#0d0818]" aria-label="Latest MERYDEX trades">
+    <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[#0d0818]" aria-label="Latest MCRO.FUN trades">
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center gap-1.5 bg-[#0d0818] pl-3 pr-2 font-display text-xs font-black uppercase tracking-wider text-[#ff2d95]">
         <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff2d95] opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff2d95]" /></span>
         Live
@@ -286,7 +286,7 @@ export function Leaderboard({ account, onConnect, onOpenTrader }: { account: str
           })}
         </ol>
       )}
-      <p className="mt-3 text-[13px] leading-5 text-slate-400">DegenScore = 10 points per swap + 1 point per $1 traded on MERYDEX.</p>
+      <p className="mt-3 text-[13px] leading-5 text-slate-400">DegenScore = 10 points per swap + 1 point per $1 traded on MCRO.FUN.</p>
     </div>
   )
 }
@@ -382,12 +382,12 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
       <div className="mt-4">
         <div className="mb-1 font-display text-xs font-bold uppercase tracking-wider text-slate-300">Recent trades</div>
         {!data ? <Skeleton /> : data.recent.length === 0 ? (
-          <Empty>{isMe ? "No MERYDEX trades yet. Hit the Market tab and ape in." : "This wallet hasn't traded on MERYDEX yet."}</Empty>
+          <Empty>{isMe ? "No MCRO.FUN trades yet. Hit the Market tab and ape in." : "This wallet hasn't traded on MCRO.FUN yet."}</Empty>
         ) : (
           <TradeFeedList trades={data.recent} />
         )}
       </div>
-      {isMe && <p className="mt-3 text-[13px] leading-5 text-slate-400">Net CRO flow is USD received from sells minus USD spent on buys through MERYDEX. It isn&apos;t unrealized PnL.</p>}
+      {isMe && <p className="mt-3 text-[13px] leading-5 text-slate-400">Net CRO flow is USD received from sells minus USD spent on buys through MCRO.FUN. It isn&apos;t unrealized PnL.</p>}
     </div>
   )
 }

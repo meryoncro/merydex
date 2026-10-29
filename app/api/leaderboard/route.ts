@@ -3,7 +3,7 @@ import { pool } from "@/lib/db"
 
 export const dynamic = "force-dynamic"
 
-// Leaderboard of unique wallets that have traded on MERYDEX, ranked by total
+// Leaderboard of unique wallets that have traded on MCRO.FUN, ranked by total
 // USD volume then trade count. Also returns platform-wide totals.
 export async function GET() {
   try {

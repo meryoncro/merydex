@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react"
-import { AlertTriangle, ArrowDown, ArrowDownUp, ArrowUpRight, BarChart3, ChevronDown, CircleDollarSign, Coins, Copy, Crown, Droplets, ExternalLink, Fuel, Gamepad2, Hand, HandFist, ImageIcon, Loader2, Menu, RefreshCw, Scissors, Search, Settings2, ShieldCheck, ShoppingCart, Skull, Sparkles, Swords, Tag, TrendingUp, Trophy, Users, Wallet, X, Zap } from "lucide-react"
+import { AlertTriangle, ArrowDown, ArrowDownUp, ArrowUpRight, BarChart3, ChevronDown, CircleDollarSign, Coins, Copy, Crown, Droplets, ExternalLink, Fuel, Hand, HandFist, ImageIcon, Loader2, Menu, RefreshCw, Scissors, Search, Settings2, ShieldCheck, ShoppingCart, Skull, Sparkles, Swords, Tag, TrendingUp, Trophy, Users, Wallet, X, Zap } from "lucide-react"
 import { BrowserProvider, Contract, JsonRpcProvider, formatUnits, parseUnits } from "ethers"
 import { TOKENS, getTokenLogoUrl, getTokenBySymbol, getRoutingAddress, type Token } from "@/lib/tokens"
 import { ACTIVE_CHAIN } from "@/lib/chains"
@@ -13,6 +13,8 @@ import { joinArena, leaveArena, getMatch, getArenaStats, getArenaHistory, shortA
 import { DegenArcade } from "@/components/degen-arcade"
 import { RecurringOrders } from "@/components/recurring-orders"
 import { LiveChat } from "@/components/live-chat"
+import { McroFx } from "@/components/mcro-fx"
+import { emitFx } from "@/lib/fx"
 import { recordTrade, fetchLeaderboard, shortWallet, formatVolume, timeAgo, type LeaderRow, type LeaderboardTotals } from "@/lib/leaderboard"
 
 const tabs = ["Overview", "Swap", "Markets", "NFTs", "Game", "Portfolio"]
@@ -351,6 +353,10 @@ export default function Page() {
         }
         const outLabel = Number.isFinite(expectedOut) ? `~${expectedOut.toLocaleString(undefined, { maximumSignificantDigits: 5 })} ` : ""
         setMessage(`Done: ${Number(fromAmount).toLocaleString(undefined, { maximumSignificantDigits: 6 })} ${fromToken.symbol} → ${outLabel}${toToken.symbol}`)
+        emitFx({
+          kind: fromToken.isNative ? "buy" : toToken.isNative ? "sell" : "swap",
+          label: `${Number(fromAmount).toLocaleString(undefined, { maximumSignificantDigits: 5 })} ${fromToken.symbol} → ${outLabel}${toToken.symbol}`,
+        })
       }
       refreshBalances()
     } catch (error) {
@@ -384,8 +390,8 @@ export default function Page() {
         <div className="mx-auto flex h-[76px] max-w-[1320px] items-center justify-between px-5 lg:px-8">
           <div className="flex items-center gap-9">
             <button className="group flex items-center gap-3" onClick={() => setActiveTab("Overview")} aria-label="Go to overview">
-              <div className="flex h-11 w-11 items-center justify-center rounded-md bg-gradient-to-br from-[#ff2d95] to-[#a855f7] glow-pink"><Gamepad2 size={22} /></div>
-              <div className="text-left"><div className="font-display text-lg font-black tracking-tight text-white">MERY<span className="text-[#22e4ff] neon-cyan">DEX</span></div><div className="font-display text-[11px] uppercase tracking-[.28em] text-[#ff2d95]/80">Cronos Arcade</div></div>
+              <img src="/images/mcro-logo.png" alt="" width={44} height={44} className="h-11 w-11 animate-logo-wobble drop-shadow-[0_0_10px_rgba(245,184,46,.5)] [image-rendering:pixelated]" />
+              <div className="text-left"><div className="font-display text-lg font-black tracking-tight text-white">MCRO<span className="text-[#f5b82e] [text-shadow:0_0_12px_rgba(245,184,46,.6)]">.FUN</span></div><div className="font-display text-[11px] uppercase tracking-[.28em] text-[#ff2d95]/80">Cronos Arcade</div></div>
             </button>
             <nav className="hidden items-center gap-1 md:flex">{tabs.map(tab => <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-md px-3.5 py-2 font-display text-xs font-bold uppercase tracking-wider transition ${activeTab === tab ? "bg-[#ff2d95]/15 text-[#22e4ff] neon-cyan glow-cyan" : "text-slate-300 hover:text-white"}`}>{tab}</button>)}</nav>
           </div>
@@ -430,8 +436,9 @@ export default function Page() {
         </>}
       </div>
 
-      <footer className="relative z-10 border-t border-[#22e4ff]/15 py-6"><div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-3 px-5 font-display text-xs uppercase tracking-wider text-slate-400 sm:flex-row lg:px-8"><span>MERYDEX · Cronos Mainnet</span><span>Best-route swaps · Non-custodial</span></div></footer>
+      <footer className="relative z-10 border-t border-[#22e4ff]/15 py-6"><div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-3 px-5 font-display text-xs uppercase tracking-wider text-slate-400 sm:flex-row lg:px-8"><span>MCRO.FUN · Cronos Mainnet</span><span>Best-route swaps · Non-custodial</span></div></footer>
       {message && <div role="status" className="fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-md border border-[#22e4ff]/40 bg-[#130a1f] px-4 py-3 text-sm shadow-2xl glow-cyan"><span>{message}</span><button onClick={() => setMessage("")} aria-label="Dismiss message"><X size={15} /></button></div>}
+      <McroFx />
     </main>
     </LogoContext.Provider>
   )
@@ -456,7 +463,7 @@ function SwapPanel(props: SwapPanelProps) {
   const [mode, setMode] = useState<"instant" | "recurring">("instant")
   return <section className="mx-auto grid max-w-7xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0">
     <div className="mb-8 text-center">
-      <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-[#ff2d95]/30 bg-[#ff2d95]/10 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]"><ArrowDownUp size={13} /> MERYDEX smart routing</div>
+      <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-[#ff2d95]/30 bg-[#ff2d95]/10 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]"><ArrowDownUp size={13} /> MCRO.FUN smart routing</div>
       <h1 className="font-display text-4xl font-black uppercase tracking-tight">{mode === "instant" ? <>One-click <span className="text-[#22e4ff] neon-cyan">trading</span></> : <>Recurring <span className="text-[#22e4ff] neon-cyan">orders</span></>}</h1>
       <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-6 text-slate-300">{mode === "instant" ? "Set your size once. Every Buy or Sell grabs a fresh best-route quote and sends it straight to your wallet to confirm." : "Buy or sell a little every day on autopilot. Set it up once and stop signing every trade."}</p>
       <div role="tablist" aria-label="Trading mode" className="mx-auto mt-5 inline-flex rounded-md border border-[#22e4ff]/25 bg-black/30 p-1">
@@ -494,9 +501,9 @@ function MarketsPanel({ account }: { account: string | null }) {
   return <section>
     <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div>
-        <Eyebrow color="cyan">MERYDEX traders</Eyebrow>
+        <Eyebrow color="cyan">MCRO.FUN traders</Eyebrow>
         <h1 className="font-display text-4xl font-black uppercase tracking-tight">Leader<span className="text-[#22e4ff] neon-cyan">board</span></h1>
-        <p className="mt-3 text-sm text-slate-300">{error ? "Leaderboard unavailable — try refreshing." : "Unique wallets ranked by volume traded on MERYDEX."}</p>
+        <p className="mt-3 text-sm text-slate-300">{error ? "Leaderboard unavailable — try refreshing." : "Unique wallets ranked by volume traded on MCRO.FUN."}</p>
       </div>
       <button className="flex w-fit items-center gap-2 rounded-md border border-white/10 px-4 py-2.5 font-display text-xs font-bold uppercase tracking-wider text-slate-300 hover:border-[#22e4ff]/50 hover:text-white disabled:opacity-60" disabled={loading} onClick={() => setReload(n => n + 1)}><RefreshCw size={15} className={loading ? "animate-spin" : ""} /> Refresh</button>
     </div>
@@ -512,7 +519,7 @@ function MarketsPanel({ account }: { account: string | null }) {
     <div className="overflow-x-auto rounded-lg border border-[#22e4ff]/20 bg-[#130a1f]/70 p-5 sm:p-6">
       {loading && !data ? <div className="space-y-3">{[0, 1, 2, 3, 4].map(i => <div key={i} className="flex items-center gap-3"><div className="h-8 w-8 animate-pulse rounded bg-white/10" /><div className="h-3 w-40 animate-pulse rounded bg-white/10" /><div className="ml-auto h-3 w-20 animate-pulse rounded bg-white/5" /></div>)}</div>
         : error ? <div className="p-10 text-center text-sm text-slate-400">Couldn&apos;t load the leaderboard. Try refreshing.</div>
-        : leaders.length === 0 ? <div className="p-10 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-[#22e4ff]/10 text-[#22e4ff] glow-cyan"><Trophy size={26} /></div><h2 className="mt-5 font-display text-xl font-black uppercase">No trades yet</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-300">Be the first to make the board — swap on MERYDEX and your wallet shows up here.</p></div>
+        : leaders.length === 0 ? <div className="p-10 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-[#22e4ff]/10 text-[#22e4ff] glow-cyan"><Trophy size={26} /></div><h2 className="mt-5 font-display text-xl font-black uppercase">No trades yet</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-300">Be the first to make the board — swap on MCRO.FUN and your wallet shows up here.</p></div>
         : <table className="w-full min-w-[680px] text-left text-sm"><thead className="border-b border-white/10 font-display text-xs uppercase tracking-wider text-slate-400"><tr><th className="pb-3 font-bold">Rank</th><th className="pb-3 font-bold">Trader</th><th className="pb-3 font-bold text-right">Volume</th><th className="pb-3 font-bold text-right">Trades</th><th className="pb-3 font-bold text-right">Last trade</th></tr></thead><tbody>{leaders.map((row) => {
           const mine = me != null && row.wallet.toLowerCase() === me
           return <tr key={row.wallet} className={`border-b border-white/[0.06] last:border-0 transition hover:bg-white/[0.03] ${mine ? "bg-[#d6ff2b]/[0.06]" : ""}`}>
@@ -843,7 +850,7 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
     return () => window.clearInterval(t)
   }, [phase])
 
-  const startReveal = () => { setPhase("revealing"); window.setTimeout(() => { setPhase("result"); refreshMeta() }, 3200) }
+  const startReveal = () => { setPhase("revealing"); emitFx({ kind: "fight" }); window.setTimeout(() => { setPhase("result"); refreshMeta() }, 3200) }
 
   const startPolling = (id: string) => {
     stopPolling()
@@ -882,6 +889,14 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
   const draw = match?.status === "resolved" && !match.winner
   const won = !!match?.winner && match.winner === me
   const matchMode: ArenaMode = match?.mode ?? mode
+
+  useEffect(() => {
+    if (phase === "queuing") emitFx({ kind: "queue" })
+    if (phase !== "result" || !match) return
+    const winnerNft = won ? opp?.nft : mine?.nft
+    emitFx(draw ? { kind: "draw" } : won ? { kind: "win", label: winnerNft ? `Captured ${arenaNftName(winnerNft)}` : undefined } : { kind: "lose" })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase])
 
   const counts = { all: walletNfts.length, mery: walletNfts.filter(n => n.collection === "mery").length, lions: walletNfts.filter(n => n.collection === "lions").length }
   const visible = filter === "all" ? walletNfts : walletNfts.filter(n => n.collection === filter)

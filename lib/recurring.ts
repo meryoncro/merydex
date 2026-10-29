@@ -46,7 +46,7 @@ export function recurringOrderMessage(t: RecurringOrderTerms): string {
   const spend = t.side === "buy" ? `${t.amountPerRun} WCRO` : `${t.amountPerRun} ${t.tokenSymbol}`
   const action = t.side === "buy" ? `Buy ${t.tokenSymbol} with ${spend}` : `Sell ${spend} for CRO`
   return [
-    "MERYDEX recurring order",
+    "MCRO.FUN recurring order",
     `Wallet: ${t.owner.toLowerCase()}`,
     `Action: ${action}`,
     `Token: ${t.tokenAddress.toLowerCase()}`,
@@ -58,7 +58,7 @@ export function recurringOrderMessage(t: RecurringOrderTerms): string {
 }
 
 export function cancelOrderMessage(owner: string, orderId: number, issuedAt: string): string {
-  return ["MERYDEX cancel recurring order", `Wallet: ${owner.toLowerCase()}`, `Order: #${orderId}`, `Issued: ${issuedAt}`].join("\n")
+  return ["MCRO.FUN cancel recurring order", `Wallet: ${owner.toLowerCase()}`, `Order: #${orderId}`, `Issued: ${issuedAt}`].join("\n")
 }
 
 /** Next scheduled run strictly after `after`. */

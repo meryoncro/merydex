@@ -16,25 +16,12 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'MERYDEX - Trade Memecoins Like an Arcade Game',
+  title: 'MCRO.FUN - Trade Memecoins Like an Arcade Game',
   description: 'Swap Cronos memecoins in a neon arcade. Live prices, best-route smart swaps, and non-custodial trading. Insert coin to start.',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/images/mcro-logo.png',
+    apple: '/images/mcro-logo.png',
   },
 }
 

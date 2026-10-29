@@ -1,5 +1,5 @@
 /**
- * Scans MERYDEX's tradable universe (the WolfSwap whitelist) through
+ * Scans MCRO.FUN's tradable universe (the WolfSwap whitelist) through
  * DexScreener's batch tokens endpoint and returns one row per token, built from
  * its deepest-liquidity Cronos pair. DexScreener has no chain-wide ranking feed
  * for Cronos, so callers rank these rows themselves.
@@ -89,7 +89,7 @@ async function fetchWhitelist(signal: AbortSignal): Promise<string[]> {
 
 async function fetchBatch(addresses: string[], signal: AbortSignal): Promise<DexPair[]> {
   const res = await fetch(`${DEX_TOKENS_URL}${addresses.join(",")}`, {
-    headers: { Accept: "application/json", "User-Agent": "MeryDex/1.0" },
+    headers: { Accept: "application/json", "User-Agent": "MCRO.FUN/1.0" },
     cache: "no-store",
     signal,
   })

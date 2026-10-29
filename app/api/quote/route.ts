@@ -86,7 +86,7 @@ async function getWolfswapQuote(
       else if (best.labels?.v2) names.add("Uniswap V2")
     }
 
-    // Show what the trader actually receives after the MERYDEX partner fee.
+    // Show what the trader actually receives after the MCRO.FUN partner fee.
     const netOut = (BigInt(best.amountOutTotal) * BigInt(10000 - FEE_BPS)) / BigInt(10000)
     return {
       amountOut: ethers.formatUnits(netOut, outDec),
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
 
     // Native CRO pairs arrive here already mapped to WCRO; the client wraps CRO
     // before the swap and unwraps WCRO after it. All swaps route through
-    // WolfSwap only, so every trade carries the MERYDEX partner fee.
+    // WolfSwap only, so every trade carries the MCRO.FUN partner fee.
     const result = await getWolfswapQuote(from, to, amountInWei, outDec, request.signal)
 
     if (!result) {

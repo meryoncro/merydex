@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto"
 import { pool } from "@/lib/db"
 
-/** Resolves the wallet behind a signed-in MERYDEX session (shared with chat). */
+/** Resolves the wallet behind a signed-in MCRO.FUN session (shared with chat). */
 export async function sessionAddress(req: Request): Promise<string | null> {
   const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "")
   if (!token) return null

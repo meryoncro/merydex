@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 // WolfSwap publishes its whitelisted "more tokens" list across every chain it
-// supports. MeryDEX is Cronos-only, so we filter to chainId 25, normalize to
+// supports. MCRO.FUN is Cronos-only, so we filter to chainId 25, normalize to
 // our Token shape, and cache the result. These tokens are swappable through the
 // WolfSwap aggregator (our primary quote route), so surfacing them here makes
 // them selectable without hardcoding hundreds of entries.
