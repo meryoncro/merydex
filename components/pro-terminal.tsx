@@ -337,7 +337,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
         </div>
       </div>
 
-      <p className="text-xs text-slate-500">Market data from the Crypto.com Exchange public API. Swaps on MCRO.FUN settle on Cronos via WolfSwap.</p>
+      <p className="text-xs text-slate-500">Market data from the Crypto.com Exchange public API. Swaps on MCRO.FUN settle on the Cronos network.</p>
     </section>
   )
 }

@@ -9,7 +9,7 @@ type NetworkSwitchProps = {
 // WolfSwap's routing API only accepts Cronos (networkId 25) today; Ethereum
 // requests are rejected with "networkId is not supported".
 const ETH_UNAVAILABLE =
-  "Ethereum swaps aren't live yet. WolfSwap's routing API currently supports Cronos only. We'll switch it on as soon as they add Ethereum."
+  "Ethereum swaps aren't live yet. Swap routing currently supports Cronos only. We'll switch Ethereum on as soon as it's available."
 
 export function NetworkSwitch({ onUnavailable }: NetworkSwitchProps) {
   return (

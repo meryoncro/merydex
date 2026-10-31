@@ -443,7 +443,7 @@ export default function Page() {
         </>}
       </div>
 
-      <footer className="relative z-10 border-t border-[#22e4ff]/15 py-6"><div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-3 px-5 font-display text-xs uppercase tracking-wider text-slate-400 sm:flex-row lg:px-8"><span>MCRO.FUN · Cronos Mainnet</span><span>Best-route swaps · Non-custodial</span></div></footer>
+      <footer className="relative z-10 border-t border-[#22e4ff]/15 py-6"><div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-3 px-5 font-display text-xs uppercase tracking-wider text-slate-400 sm:flex-row lg:px-8"><span>MCRO.FUN · Cronos Mainnet</span><span>Powered by Cronos Network and Crypto.com data</span><span>Best-route swaps · Non-custodial</span></div></footer>
       {message && <div role="status" className="fixed bottom-5 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between gap-3 rounded-md border border-[#22e4ff]/40 bg-[#130a1f] px-4 py-3 text-sm shadow-2xl glow-cyan"><span className="min-w-0 break-words">{message}</span><button onClick={() => setMessage("")} aria-label="Dismiss message" className="shrink-0 p-1"><X size={15} /></button></div>}
       <McroFx />
     </main>
