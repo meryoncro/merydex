@@ -12,7 +12,6 @@ import { fetchBalances, formatBalance, type BalanceMap } from "@/lib/balances"
 import { fetchCollection, fetchListings, fetchWalletNfts, buyListing, ensureListingApproval, listingUrl, croFormat, NATIVE_CURRENCY, MERY_SLUG, ARENA_COLLECTIONS, isArenaCollection, fetchArenaNfts, arenaNftName, type ArenaCollection, type ArenaNft, type Collection, type Listing, type WalletNft } from "@/lib/ebisus"
 import { joinArena, leaveArena, getMatch, getArenaStats, getArenaHistory, shortAddr, RPS_MOVES, type ArenaMatch, type ArenaStats, type ArenaMode, type RpsMove, type NftRef } from "@/lib/arena"
 import { DegenArcade, ScoreBoost } from "@/components/degen-arcade"
-import { RecurringOrders } from "@/components/recurring-orders"
 import { ReferralPanel, useReferralCapture } from "@/components/referral-panel"
 import { ProTerminal } from "@/components/pro-terminal"
 import { PredictHub } from "@/components/predict-hub"
@@ -468,17 +467,13 @@ interface SwapPanelProps {
 }
 
 function SwapPanel(props: SwapPanelProps) {
-  const [mode, setMode] = useState<"instant" | "recurring">("instant")
   return <section className="mx-auto grid max-w-7xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0">
     <div className="mb-8 text-center">
       <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-[#ff2d95]/30 bg-[#ff2d95]/10 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]"><ArrowDownUp size={13} /> MCRO.FUN smart routing</div>
-      <h1 className="font-display text-4xl font-black uppercase tracking-tight">{mode === "instant" ? <>One-click <span className="text-[#22e4ff] neon-cyan">trading</span></> : <>Recurring <span className="text-[#22e4ff] neon-cyan">orders</span></>}</h1>
-      <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-6 text-slate-300">{mode === "instant" ? "Set your size once. Every Buy or Sell grabs a fresh best-route quote and sends it straight to your wallet to confirm." : "Buy or sell a little every day on autopilot. Set it up once and stop signing every trade."}</p>
-      <div role="tablist" aria-label="Trading mode" className="mx-auto mt-5 inline-flex rounded-md border border-[#22e4ff]/25 bg-black/30 p-1">
-        {(["instant", "recurring"] as const).map((m) => <button key={m} role="tab" aria-selected={mode === m} onClick={() => setMode(m)} className={`rounded px-5 py-2 font-display text-xs font-black uppercase tracking-wider transition ${mode === m ? "bg-[#22e4ff] text-[#06131a] glow-cyan" : "text-slate-300 hover:text-white"}`}>{m === "instant" ? "Instant" : "Recurring"}</button>)}
-      </div>
+      <h1 className="font-display text-4xl font-black uppercase tracking-tight">One-click <span className="text-[#22e4ff] neon-cyan">trading</span></h1>
+      <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-6 text-slate-300">Set your size once. Every Buy or Sell grabs a fresh best-route quote and sends it straight to your wallet to confirm.</p>
     </div>
-    {mode === "instant" ? <DegenArcade {...props} /> : <RecurringOrders tokens={props.tokens} account={props.account} onConnect={props.onConnect} />}
+    <DegenArcade {...props} />
   </div>
     <LiveChat room="swap" title="Traders chat" account={props.account} onConnect={props.onConnect} />
   </section>

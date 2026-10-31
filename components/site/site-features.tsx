@@ -1,4 +1,4 @@
-import { ArrowLeftRight, CandlestickChart, Gift, Image as ImageIcon, Repeat, Swords, Target } from "lucide-react"
+import { ArrowLeftRight, CandlestickChart, Gift, Image as ImageIcon, Swords, Target } from "lucide-react"
 
 const features = [
   {
@@ -30,13 +30,6 @@ const features = [
     span: "",
   },
   {
-    icon: Repeat,
-    title: "Recurring buys",
-    body: "Schedule daily buys of your favorite token and let the keeper run them for you.",
-    tone: "text-[#22e4ff]",
-    span: "",
-  },
-  {
     icon: ImageIcon,
     title: "NFT gallery",
     body: "See the Cronos NFTs your wallet holds right next to your tokens.",
@@ -48,7 +41,7 @@ const features = [
     title: "Earn 30% of fees",
     body: "Every wallet gets its own invite code. Share it and earn 30% of the platform fee on every swap your referrals make.",
     tone: "text-[#c6ff3a]",
-    span: "md:col-span-2",
+    span: "md:col-span-3",
   },
 ]
 
