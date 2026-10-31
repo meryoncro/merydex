@@ -323,7 +323,7 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
           <X size={12} /> Close profile
         </button>
       )}
-      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#111317] p-4">
+      <div className="relative overflow-hidden arcade-panel rounded-xl border border-white/15 bg-[#111317] p-4">
         <div
           aria-hidden="true"
           className="absolute inset-x-0 top-0 h-1"

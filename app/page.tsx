@@ -392,7 +392,7 @@ export default function Page() {
             </button>
             <nav className="hidden items-center gap-1 md:flex">{tabs.map(tab => <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-md px-3 py-2 text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.07] text-white" : "text-slate-400 hover:text-white"}`}>{tab}</button>)}</nav>
           </div>
-          <div className="flex items-center gap-3"><NetworkSwitch onUnavailable={setMessage} /><button onClick={connectWallet} className="rounded-md bg-[#f2b33d] px-4 py-2.5 text-sm font-semibold text-[#0e0f12] transition hover:bg-[#f7c766]">{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Connect wallet"}</button><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
+          <div className="flex items-center gap-3"><NetworkSwitch onUnavailable={setMessage} /><button onClick={connectWallet} className="arcade-btn rounded-md bg-[#f2b33d] px-4 py-2 font-display text-sm font-bold text-[#0e0f12] hover:bg-[#f7c766]">{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Connect wallet"}</button><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
         </div>
         {mobileOpen && <nav aria-label="Mobile navigation" className="grid grid-cols-3 gap-2 border-t border-white/10 px-5 py-3 md:hidden">{tabs.map(tab => <button key={tab} onClick={() => { setActiveTab(tab); setMobileOpen(false) }} aria-current={activeTab === tab ? "page" : undefined} className={`rounded-md px-2 py-3 text-center text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.08] text-white" : "bg-white/[0.03] text-slate-400"}`}>{tab}</button>)}</nav>}
       </header>
@@ -407,7 +407,7 @@ export default function Page() {
               <h1 className="max-w-3xl font-display text-3xl font-bold leading-tight tracking-tight text-balance sm:text-5xl">What&apos;s moving on Cronos</h1>
               <p className="mt-4 max-w-xl text-base leading-7 text-slate-400 text-pretty">Live prices and volume from Cronos DEXs. Pick a token and swap at the best route, straight from your wallet.</p>
             </div>
-            <button onClick={() => setActiveTab("Swap")} className="flex w-fit items-center gap-2 rounded-md bg-[#f2b33d] px-5 py-3 text-sm font-semibold text-[#0e0f12] transition hover:bg-[#f7c766]">Start swapping <Zap size={16} /></button>
+            <button onClick={() => setActiveTab("Swap")} className="arcade-btn flex w-fit items-center gap-2 rounded-md bg-[#f2b33d] px-5 py-3 font-display text-base font-bold text-[#0e0f12] hover:bg-[#f7c766]">Press start <Zap size={16} /></button>
           </section>
 
           <section className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4">{[{ icon: BarChart3, label: "24h volume", value: formatUsd(chainStats?.volume24h ?? null), sub: "Cronos DEXs", color: "#f2b33d" }, { icon: CircleDollarSign, label: "Total liquidity", value: formatUsd(chainStats?.liquidityUsd ?? null), sub: "Tracked pairs", color: "#f0616d" }, { icon: Fuel, label: "Avg. gas fee", value: formatGasFee(chainStats?.gasFeeUsd ?? null), sub: chainStats?.gasPriceGwei != null ? `${chainStats.gasPriceGwei.toFixed(0)} gwei` : "On-chain", color: "#3dd68c" }, { icon: Wallet, label: "Active wallets", value: formatCount(chainStats?.activeAddresses ?? null), sub: chainStats ? `last ${chainStats.activeSampleBlocks} blocks` : "On-chain", color: "#8b93a7" }].map(({ icon: Icon, label, value, sub, color }) => <div key={label} className="min-w-0 rounded-lg border border-white/10 bg-[#16181d]/70 p-4 transition hover:border-[#f2b33d]/40 sm:p-5"><div className="flex items-center justify-between gap-2 font-display text-xs tracking-normal text-slate-400"><span className="truncate">{label}</span><Icon size={16} className="shrink-0" style={{ color }} /></div><div className="mt-3 flex flex-col gap-1 sm:mt-4 sm:flex-row sm:items-end sm:justify-between sm:gap-2"><strong className="truncate font-display text-xl font-bold sm:text-2xl">{chainStats ? value : "…"}</strong><span className="truncate font-display text-[11px] font-bold tracking-normal text-slate-400 sm:text-xs">{sub}</span></div></div>)}</section>
@@ -570,7 +570,7 @@ function PortfolioPanel({ account, onConnect, market, balances, balancesLoading,
           : holdings.length === 0 ? <div className="p-10 text-center text-sm text-slate-400">No token balances found in this wallet on Cronos.</div>
           : <div className="overflow-x-auto"><table className="w-full min-w-[560px] text-left text-sm"><thead className="border-b border-white/10 font-display text-xs tracking-normal text-slate-400"><tr><th className="p-4 font-bold">Asset</th><th className="p-4 font-bold text-right">Balance</th><th className="p-4 font-bold text-right">Price</th><th className="p-4 font-bold text-right">Value</th></tr></thead><tbody>{holdings.map((h) => <tr key={h.key} className="border-b border-white/[0.06] last:border-0 transition hover:bg-white/[0.03]"><td className="p-4"><div className="flex items-center gap-3"><TokenIcon token={h.token} size="sm" /><div><div className="flex items-center gap-1.5 font-display text-xs font-bold">{h.token.symbol}{h.native && <span className="rounded border border-[#1199FA]/40 px-1 py-0.5 font-display text-[11px] tracking-wide text-[#f7c766]">Native</span>}</div><div className="text-xs text-slate-400">{h.token.name}</div></div></div></td><td className="p-4 text-right font-display font-bold">{formatBalance(h.amount)}</td><td className="p-4 text-right font-mono text-xs text-slate-300">{h.price != null ? formatPrice(h.price) : "—"}</td><td className="p-4 text-right font-display font-bold text-[#3dd68c]">{h.value != null ? formatUsd(h.value) : "—"}</td></tr>)}</tbody></table></div>}
       </div>
-    </> : <div className="rounded-lg border border-dashed border-[#f2b33d]/25 bg-[#16181d]/50 p-10 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-[#f2b33d]/10 text-[#f2b33d] shadow-sm"><Wallet size={26} /></div><h2 className="mt-5 font-display text-xl font-bold">Connect your wallet</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-300">Connect a Cronos wallet to view your balances and portfolio value.</p><button onClick={onConnect} className="mt-6 rounded-md bg-[#f2b33d] px-5 py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] shadow-sm">Connect wallet</button></div>}
+    </> : <div className="rounded-lg border border-dashed border-[#f2b33d]/25 bg-[#16181d]/50 p-10 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-[#f2b33d]/10 text-[#f2b33d] shadow-sm"><Wallet size={26} /></div><h2 className="mt-5 font-display text-xl font-bold">Connect your wallet</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-300">Connect a Cronos wallet to view your balances and portfolio value.</p><button onClick={onConnect} className="mt-6 rounded-md arcade-btn bg-[#f2b33d] px-5 py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] shadow-sm">Connect wallet</button></div>}
   </section>
 }
 
@@ -687,7 +687,7 @@ function NftPanel({ account, onConnect }: { account: string | null; onConnect: (
     <div className="mb-8"><Eyebrow color="lime">NFT collection</Eyebrow><h1 className="font-display text-4xl font-bold tracking-tight">Mistery <span className="text-[#8b93a7]">on Cro</span></h1><p className="mt-3 text-sm text-slate-300">Buy from the live Ebisu&apos;s Bay marketplace, or list and sell the MERY NFTs in your wallet.</p></div>
 
     {/* Collection header */}
-    <div className="relative mb-6 overflow-hidden rounded-xl border border-white/10 bg-[#16181d]/70 p-5">
+    <div className="relative mb-6 overflow-hidden arcade-panel rounded-xl border border-white/15 bg-[#16181d]/70 p-5">
       <div className="pointer-events-none absolute inset-0 opacity-[0.08]" />
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -759,7 +759,7 @@ function NftGridSkeleton() {
 }
 
 function EmptyState({ icon: Icon, title, text, accent, action }: { icon: typeof ImageIcon; title: string; text: string; accent: string; action?: { label: string; onClick: () => void } }) {
-  return <div className="rounded-lg border border-dashed border-white/15 bg-[#16181d]/50 p-12 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg" style={{ background: `${accent}18`, color: accent }}><Icon size={26} /></div><h2 className="mt-5 font-display text-lg font-bold">{title}</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-300">{text}</p>{action && <button onClick={action.onClick} className="mt-6 rounded-md bg-[#f2b33d] px-5 py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] shadow-sm">{action.label}</button>}</div>
+  return <div className="rounded-lg border border-dashed border-white/15 bg-[#16181d]/50 p-12 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg" style={{ background: `${accent}18`, color: accent }}><Icon size={26} /></div><h2 className="mt-5 font-display text-lg font-bold">{title}</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-300">{text}</p>{action && <button onClick={action.onClick} className="mt-6 rounded-md arcade-btn bg-[#f2b33d] px-5 py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] shadow-sm">{action.label}</button>}</div>
 }
 
 type ArenaPhase = "select" | "queuing" | "revealing" | "result"
@@ -940,7 +940,7 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
   <div className="flex flex-col items-center gap-4 py-6 text-center sm:py-14">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#f2b33d]/15 text-[#f2b33d]"><Swords size={28} /></div>
             <div><h2 className="font-display text-lg font-bold">Enter the arena</h2><p className="mt-1 text-sm text-slate-300">Connect your wallet to put up a MERY or Loaded Lion and battle other holders.</p></div>
-            <button onClick={onConnect} className="rounded-md bg-[#f2b33d] px-6 py-3 font-display text-xs font-bold text-[#0e0f12] transition hover:brightness-110">Connect wallet</button>
+            <button onClick={onConnect} className="arcade-btn rounded-md bg-[#f2b33d] px-6 py-3 font-display text-sm font-bold text-[#0e0f12] hover:bg-[#f7c766]">Connect wallet</button>
           </div>
         ) : phase === "select" ? (
           <div>
@@ -990,7 +990,7 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
             )}
 
             {error && <div className="mt-4 flex items-center gap-2 rounded-md border border-[#f0616d]/40 bg-[#f0616d]/10 px-3 py-2 font-display text-xs text-[#f58a93]"><AlertTriangle size={14} />{error}</div>}
-            {walletNfts.length > 0 && <button onClick={enterArena} disabled={!selected || busy || (mode === "rps" && !move)} className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#f2b33d] text-[#0e0f12] px-6 py-4 font-display text-sm font-bold tracking-normal transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 glow-purple">{busy ? <><Loader2 size={16} className="animate-spin" />Entering…</> : !selected ? <><Swords size={16} />Pick a fighter</> : mode === "rps" && !move ? <><Scissors size={16} />Lock a move</> : <><Swords size={16} />Fight with {arenaNftName(selected)}</>}</button>}
+            {walletNfts.length > 0 && <button onClick={enterArena} disabled={!selected || busy || (mode === "rps" && !move)} className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg arcade-btn bg-[#f2b33d] text-[#0e0f12] px-6 py-4 font-display text-sm font-bold tracking-normal transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 glow-purple">{busy ? <><Loader2 size={16} className="animate-spin" />Entering…</> : !selected ? <><Swords size={16} />Pick a fighter</> : mode === "rps" && !move ? <><Scissors size={16} />Lock a move</> : <><Swords size={16} />Fight with {arenaNftName(selected)}</>}</button>}
           </div>
         ) : phase === "queuing" ? (
           <div className="py-6">
@@ -1024,7 +1024,7 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
               <div className="flex shrink-0 items-center"><div className="font-display text-lg font-bold text-slate-400">VS</div></div>
               <ArenaFighterCard label="Opponent" nft={opp?.nft} wallet={opp?.wallet} accent="#f0616d" crown={!won && !draw} dim={won} move={opp?.move} fx={draw ? undefined : won ? "knockout" : "victory"} />
             </div>
-            <button onClick={battleAgain} className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#f2b33d] text-[#0e0f12] px-6 py-4 font-display text-sm font-bold tracking-normal transition hover:brightness-110 glow-purple"><Swords size={16} />Battle again</button>
+            <button onClick={battleAgain} className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg arcade-btn bg-[#f2b33d] text-[#0e0f12] px-6 py-4 font-display text-sm font-bold tracking-normal transition hover:brightness-110 glow-purple"><Swords size={16} />Battle again</button>
           </div>
         )}
       </div>
@@ -1033,7 +1033,7 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
     {history.length > 0 && (
       <div className="mt-8">
         <h2 className="mb-4 font-display text-sm font-bold tracking-normal text-slate-300">Your recent battles</h2>
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-[#16181d]/70">
+        <div className="overflow-hidden arcade-panel rounded-xl border border-white/15 bg-[#16181d]/70">
           {history.map((m, i) => {
             const p1me = m.p1.wallet === me
             const myF = p1me ? m.p1 : m.p2
@@ -1056,7 +1056,7 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
 
 function TokenBox({ label, token, amount, onAmount, onPick, readOnly, loading, account, balance, balancesLoading, onMax }: any) {
   const hasBalance = balance !== undefined && Number(balance) > 0
-  return <div className="rounded-xl border border-white/10 bg-[#16181d]/80 p-4 transition focus-within:border-[#f2b33d]/40"><div className="mb-3 flex items-center justify-between font-display text-xs tracking-normal text-slate-400"><span>{label}</span><span className="flex items-center gap-2">Balance {!account ? "—" : balancesLoading && balance === undefined ? <span className="inline-block h-3 w-10 animate-pulse rounded bg-white/10" /> : <span className="text-slate-300">{formatBalance(balance)}</span>}{!readOnly && account && hasBalance && onMax && <button onClick={onMax} className="rounded border border-[#3dd68c]/40 px-1.5 py-0.5 font-display text-[11px] font-bold tracking-normal text-[#3dd68c] hover:bg-[#3dd68c]/10">Max</button>}</span></div><div className="flex items-center gap-3"><input value={amount} onChange={e => onAmount(e.target.value)} readOnly={readOnly} inputMode="decimal" placeholder="0.00" className="min-w-0 flex-1 bg-transparent font-display text-3xl font-bold tracking-tight outline-none placeholder:text-slate-700" /><button onClick={onPick} className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2 font-display text-sm font-bold hover:border-[#f2b33d]/40 hover:bg-white/10"><TokenIcon token={token} size="sm" /><span>{token.symbol}</span><ChevronDown size={15} className="text-slate-400" /></button></div>{loading && <div className="mt-2 flex items-center gap-1.5 font-display text-xs tracking-normal text-[#f2b33d] animate-arcade-pulse"><Zap size={12} />Fetching best route...</div>}</div>
+  return <div className="arcade-panel rounded-xl border border-white/15 bg-[#16181d]/80 p-4 transition focus-within:border-[#f2b33d]/40"><div className="mb-3 flex items-center justify-between font-display text-xs tracking-normal text-slate-400"><span>{label}</span><span className="flex items-center gap-2">Balance {!account ? "—" : balancesLoading && balance === undefined ? <span className="inline-block h-3 w-10 animate-pulse rounded bg-white/10" /> : <span className="text-slate-300">{formatBalance(balance)}</span>}{!readOnly && account && hasBalance && onMax && <button onClick={onMax} className="rounded border border-[#3dd68c]/40 px-1.5 py-0.5 font-display text-[11px] font-bold tracking-normal text-[#3dd68c] hover:bg-[#3dd68c]/10">Max</button>}</span></div><div className="flex items-center gap-3"><input value={amount} onChange={e => onAmount(e.target.value)} readOnly={readOnly} inputMode="decimal" placeholder="0.00" className="min-w-0 flex-1 bg-transparent font-display text-3xl font-bold tracking-tight outline-none placeholder:text-slate-700" /><button onClick={onPick} className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2 font-display text-sm font-bold hover:border-[#f2b33d]/40 hover:bg-white/10"><TokenIcon token={token} size="sm" /><span>{token.symbol}</span><ChevronDown size={15} className="text-slate-400" /></button></div>{loading && <div className="mt-2 flex items-center gap-1.5 font-display text-xs tracking-normal text-[#f2b33d] animate-arcade-pulse"><Zap size={12} />Fetching best route...</div>}</div>
 }
 
 function TokenPicker({ onSelect, onClose, excludeAddress, tokens }: { onSelect: (t: Token) => void; onClose: () => void; excludeAddress?: string; tokens: Token[] }) {

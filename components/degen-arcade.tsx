@@ -203,7 +203,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
   const tfLabel = TIMEFRAMES.find((t) => t.id === timeframe)?.label ?? "24H"
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#16181d]/70 p-4 sm:p-6">
+    <div className="arcade-panel rounded-2xl border border-white/15 bg-[#16181d]/70 p-4 sm:p-6">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 font-display text-xs font-bold tracking-normal text-[#f0616d]">
@@ -250,7 +250,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
 
       {feed && feed.trades.length > 0 && <div className="mt-4"><TradeTicker trades={feed.trades} /></div>}
 
-      <div className="mt-4 grid grid-cols-4 gap-1 rounded-xl border border-white/10 bg-[#111317] p-1" role="tablist" aria-label="Arcade sections">
+      <div className="mt-4 grid grid-cols-4 gap-1 arcade-panel rounded-xl border border-white/15 bg-[#111317] p-1" role="tablist" aria-label="Arcade sections">
         {SECTIONS.map(({ id, label, icon: Icon }) => {
           const selected = section === id
           return (

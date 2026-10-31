@@ -1,13 +1,13 @@
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Manrope } from 'next/font/google'
+import { Inter, Pixelify_Sans } from 'next/font/google'
 import './globals.css'
 
-const manrope = Manrope({
+const pixel = Pixelify_Sans({
   subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-  variable: '--font-manrope',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-pixel',
 })
 
 const inter = Inter({
@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark ${manrope.variable} ${inter.variable} bg-[#0e0f12]`}>
+    <html lang="en" className={`dark ${pixel.variable} ${inter.variable} bg-[#0e0f12]`}>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && (

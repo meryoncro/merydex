@@ -140,7 +140,7 @@ export function SwapBox(props: SwapBoxProps) {
   return (
     <div className="rounded-2xl border border-[#f2b33d]/25 bg-[#16181d]/90 p-4 backdrop-blur sm:p-5" id="swap-box">
       <div className="mb-4 flex items-center justify-between gap-2">
-        <div className="grid flex-1 grid-cols-2 gap-1 rounded-xl border border-white/10 bg-[#111317] p-1" role="tablist" aria-label="Trade direction">
+        <div className="grid flex-1 grid-cols-2 gap-1 arcade-panel rounded-xl border border-white/15 bg-[#111317] p-1" role="tablist" aria-label="Trade direction">
           {(["buy", "sell"] as const).map((m) => {
             const selected = mode === m
             const c = m === "buy" ? "#3dd68c" : "#f0616d"
@@ -169,7 +169,7 @@ export function SwapBox(props: SwapBoxProps) {
       </div>
 
       {showSettings && (
-        <div className="mb-3 flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-[#111317] px-3 py-2.5">
+        <div className="mb-3 flex items-center justify-between gap-2 arcade-panel rounded-xl border border-white/15 bg-[#111317] px-3 py-2.5">
           <span className="font-display text-xs font-bold tracking-normal text-slate-300">Max slippage</span>
           <div className="flex gap-1">
             {SLIPPAGE_PRESETS.map((s) => (
@@ -249,7 +249,7 @@ export function SwapBox(props: SwapBoxProps) {
       </AmountField>
 
       {token && out != null && rate != null && (
-        <dl className="mt-3 flex flex-col gap-1.5 rounded-xl border border-white/10 bg-[#111317] px-3 py-2.5 text-[13px]">
+        <dl className="mt-3 flex flex-col gap-1.5 arcade-panel rounded-xl border border-white/15 bg-[#111317] px-3 py-2.5 text-[13px]">
           <Row label="Rate">1 {from?.symbol} = {formatOut(rate)} {to?.symbol}</Row>
           <Row label={`Min. received (${slippage}% slippage)`}>{formatOut(minOut ?? 0)} {to?.symbol}</Row>
 
@@ -292,7 +292,7 @@ function AmountField({ label, token, balance, account, balancesLoading, onPick, 
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-[#111317] p-4 transition focus-within:border-[#f2b33d]/50">
+    <div className="arcade-panel rounded-xl border border-white/15 bg-[#111317] p-4 transition focus-within:border-[#f2b33d]/50">
       <div className="mb-2 flex items-center justify-between font-display text-xs tracking-normal text-slate-400">
         <span>{label}</span>
         <span>

@@ -20,7 +20,7 @@ function TokenPill({ symbol, logo }: { symbol: string; logo?: string }) {
 export function SwapPreview() {
   return (
     <figure aria-label="Preview of the mcro.fun swap box" className="relative mx-auto w-full max-w-[420px]">
-      <div className="rounded-2xl border border-white/10 bg-[#16181d] p-3 shadow-2xl shadow-black/40">
+      <div className="arcade-panel rounded-2xl border border-white/15 bg-[#16181d] p-3 shadow-2xl shadow-black/40">
         <div className="flex items-center justify-between px-2 pb-3 pt-1">
           <span className="font-display text-base font-semibold">Swap</span>
           <span className="text-xs text-slate-500">Slippage 0.5%</span>

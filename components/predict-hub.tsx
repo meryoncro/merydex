@@ -209,13 +209,13 @@ function Ticket({
                 <button
                   onClick={place}
                   disabled={busy || !tradable || stakeN < minStake || (balance !== null && stakeN > balance)}
-                  className="flex items-center justify-center gap-2 rounded-md bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {busy && <Loader2 size={15} className="animate-spin" />}
                   {tradable ? "Place pick" : "Market not tradable"}
                 </button>
               ) : (
-                <button onClick={onConnect} className="flex items-center justify-center gap-2 rounded-md bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766]">
+                <button onClick={onConnect} className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766]">
                   <Wallet size={15} /> Connect to pick
                 </button>
               )}

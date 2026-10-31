@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
 import { SiteHero } from "@/components/site/site-hero"
 import { SiteSteps } from "@/components/site/site-steps"
+import { SiteTicker } from "@/components/site/site-ticker"
 import { APP_URL, SITE_URL, isSiteHost } from "@/lib/domains"
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default async function SitePage() {
       <SiteHeader appHref={appHref} />
       <main>
         <SiteHero appHref={appHref} />
+        <SiteTicker />
         <SiteFeatures />
         <SiteSteps appHref={appHref} />
         <SiteFaq />

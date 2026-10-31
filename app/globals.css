@@ -165,13 +165,45 @@
 /* ---------- mcro.fun theme ---------- */
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-pixel), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: -0.01em;
+    font-family: var(--font-pixel), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.01em;
+  }
+
+  /* Physical arcade push-button: hard drop shadow that collapses on press */
+  .arcade-btn {
+    border: 2px solid #0e0f12;
+    box-shadow: 0 4px 0 #8a5d12, 0 4px 0 2px #0e0f12;
+    transform: translateY(0);
+    transition: transform 80ms ease-out, box-shadow 80ms ease-out, background-color 150ms;
+  }
+  .arcade-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #8a5d12, 0 5px 0 2px #0e0f12;
+  }
+  .arcade-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #8a5d12, 0 1px 0 2px #0e0f12;
+  }
+
+  /* Cabinet panel: chunky outline + offset shadow, no glow */
+  .arcade-panel {
+    border-width: 2px;
+    box-shadow: 4px 4px 0 #050506;
+  }
+
+  .sticker {
+    border: 2px solid #0e0f12;
+    box-shadow: 2px 2px 0 #0e0f12;
+  }
+
+  .pixel-dots {
+    background-image: radial-gradient(rgba(242, 179, 61, 0.14) 1px, transparent 1px);
+    background-size: 14px 14px;
   }
 
   .animate-grid-scroll {
