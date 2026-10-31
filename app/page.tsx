@@ -16,6 +16,7 @@ import { RecurringOrders } from "@/components/recurring-orders"
 import { ReferralPanel, useReferralCapture } from "@/components/referral-panel"
 import { LiveChat } from "@/components/live-chat"
 import { McroFx } from "@/components/mcro-fx"
+import { NetworkSwitch } from "@/components/network-switch"
 import { emitFx } from "@/lib/fx"
 import { recordTrade, fetchLeaderboard, shortWallet, formatVolume, timeAgo, type LeaderRow, type LeaderboardTotals } from "@/lib/leaderboard"
 
@@ -399,7 +400,7 @@ export default function Page() {
             </button>
             <nav className="hidden items-center gap-1 md:flex">{tabs.map(tab => <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-md px-3.5 py-2 font-display text-xs font-bold uppercase tracking-wider transition ${activeTab === tab ? "bg-[#ff2d95]/15 text-[#22e4ff] neon-cyan glow-cyan" : "text-slate-300 hover:text-white"}`}>{tab}</button>)}</nav>
           </div>
-          <div className="flex items-center gap-3"><div className="hidden items-center gap-2 rounded-md border border-[#d6ff2b]/25 bg-[#d6ff2b]/[0.06] px-3 py-2 font-display text-xs uppercase tracking-wider text-[#d6ff2b] sm:flex"><span className="h-2 w-2 rounded-full bg-[#d6ff2b] shadow-[0_0_10px_#d6ff2b] animate-arcade-pulse" />Cronos Mainnet</div><button onClick={connectWallet} className="rounded-md bg-[#22e4ff] px-4 py-2.5 font-display text-xs font-black uppercase tracking-wider text-[#06131a] transition hover:bg-[#5cefff] glow-cyan">{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Plug in"}</button><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
+          <div className="flex items-center gap-3"><NetworkSwitch onUnavailable={setMessage} /><button onClick={connectWallet} className="rounded-md bg-[#22e4ff] px-4 py-2.5 font-display text-xs font-black uppercase tracking-wider text-[#06131a] transition hover:bg-[#5cefff] glow-cyan">{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Plug in"}</button><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
         </div>
         {mobileOpen && <nav aria-label="Mobile navigation" className="grid grid-cols-3 gap-2 border-t border-white/10 px-5 py-3 md:hidden">{tabs.map(tab => <button key={tab} onClick={() => { setActiveTab(tab); setMobileOpen(false) }} aria-current={activeTab === tab ? "page" : undefined} className={`rounded-md px-2 py-3 text-center font-display text-xs font-bold uppercase tracking-wider transition ${activeTab === tab ? "bg-[#ff2d95]/15 text-[#22e4ff]" : "bg-white/[0.03] text-slate-300"}`}>{tab}</button>)}</nav>}
       </header>
