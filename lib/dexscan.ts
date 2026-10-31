@@ -4,12 +4,21 @@
  * its deepest-liquidity Cronos pair. DexScreener has no chain-wide ranking feed
  * for Cronos, so callers rank these rows themselves.
  */
+import { TOKENS } from "@/lib/tokens"
+
 const WOLFSWAP_TOKENLIST = "https://api.wolfswap.app/factions/dex/tokenlist/more-tokens"
 const DEX_TOKENS_URL = "https://api.dexscreener.com/latest/dex/tokens/"
 const CRONOS_CHAIN_ID = 25
 const CHAIN_ID = "cronos"
 const BATCH_SIZE = 30
-const MAX_BATCHES = 24
+// Enough to cover the full WolfSwap Cronos whitelist (~1.9k tokens) plus the
+// curated list. Batches run through a small worker pool so DexScreener's
+// rate limit isn't hit in a single burst.
+const MAX_BATCHES = 80
+const CONCURRENCY = 10
+const SCAN_CACHE_MS = 60_000
+
+let scanCache: { at: number; tokens: ScannedToken[] } | null = null
 
 export const STABLE_SYMBOLS = new Set(["USDC", "USDT", "DAI", "TUSD", "USDG", "USDD", "BUSD", "FRAX"])
 
@@ -98,8 +107,41 @@ async function fetchBatch(addresses: string[], signal: AbortSignal): Promise<Dex
   return Array.isArray(data.pairs) ? data.pairs : []
 }
 
+// Curated tokens (including $MERY) are scanned first so they are never lost
+// to the batch cap, even if the external whitelist omits them.
+function curatedAddresses(): string[] {
+  return TOKENS.filter((t) => !t.isNative && !STABLE_SYMBOLS.has(t.symbol.toUpperCase())).map((t) => t.address)
+}
+
+async function runPool<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<PromiseSettledResult<R>[]> {
+  const results: PromiseSettledResult<R>[] = new Array(items.length)
+  let next = 0
+  const worker = async () => {
+    while (next < items.length) {
+      const i = next++
+      try {
+        results[i] = { status: "fulfilled", value: await fn(items[i]) }
+      } catch (reason) {
+        results[i] = { status: "rejected", reason }
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker))
+  return results
+}
+
 export async function scanWhitelistTokens(signal: AbortSignal): Promise<ScannedToken[] | null> {
-  const candidates = await fetchWhitelist(signal)
+  if (scanCache && Date.now() - scanCache.at < SCAN_CACHE_MS) return scanCache.tokens
+
+  const whitelist = await fetchWhitelist(signal)
+  const seen = new Set<string>()
+  const candidates: string[] = []
+  for (const a of [...curatedAddresses(), ...whitelist]) {
+    const lower = a.toLowerCase()
+    if (seen.has(lower)) continue
+    seen.add(lower)
+    candidates.push(a)
+  }
   if (candidates.length === 0) return null
 
   const batches: string[][] = []
@@ -107,7 +149,7 @@ export async function scanWhitelistTokens(signal: AbortSignal): Promise<ScannedT
     batches.push(candidates.slice(i, i + BATCH_SIZE))
   }
 
-  const results = await Promise.allSettled(batches.map((b) => fetchBatch(b, signal)))
+  const results = await runPool(batches, CONCURRENCY, (b) => fetchBatch(b, signal))
   const whitelisted = new Set(candidates.map((a) => a.toLowerCase()))
 
   const best = new Map<string, DexPair>()
@@ -155,5 +197,6 @@ export async function scanWhitelistTokens(signal: AbortSignal): Promise<ScannedT
       ) as Record<Timeframe, TokenFrame>,
     })
   }
+  if (tokens.length) scanCache = { at: Date.now(), tokens }
   return tokens
 }

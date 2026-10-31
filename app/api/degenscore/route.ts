@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
 import { pool } from "@/lib/db"
+import { SCORE_SQL } from "@/lib/score"
 
 export const dynamic = "force-dynamic"
 
 // DegenScore is derived from recorded MCRO.FUN trades so it can't be farmed
-// client-side: 10 points per swap plus 1 point per USD traded.
-const SCORE_SQL = `(COUNT(*) * 10 + FLOOR(COALESCE(SUM(usd_value), 0)))::int`
+// client-side: 10 points per swap plus 1 point per USD traded, doubled for $MERY.
 
 export async function GET(req: Request) {
   const wallet = new URL(req.url).searchParams.get("wallet")?.toLowerCase() ?? null

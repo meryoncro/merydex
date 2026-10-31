@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import useSWR from "swr"
 import { Crown, Flame, Gamepad2, LineChart, Loader2, Radio, RefreshCw, Rocket, Search, Star, TrendingDown, TrendingUp, User, X } from "lucide-react"
 import type { Token } from "@/lib/tokens"
+import { isMery } from "@/lib/score"
 import { Leaderboard, TradeFeed, TradeTicker, TraderProfile, fetchJson, formatUsd, socialAction, timeAgo, type FeedTrade } from "@/components/arcade-social"
 
 type Timeframe = "m5" | "h1" | "h6" | "h24"
@@ -184,7 +185,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
   }, [account, swapping])
 
   const active = PLAYERS.find((p) => p.id === player) ?? PLAYERS[0]
-  const sorted = useMemo(() => {
+  const ranked = useMemo(() => {
     const list = [...(allRows ?? [])]
     const txns = (r: ArcadeToken) => { const f = frameOf(r, timeframe); return f.buys + f.sells }
     const hot = (a: ArcadeToken, b: ArcadeToken) => txns(b) - txns(a) || frameOf(b, timeframe).volume - frameOf(a, timeframe).volume
@@ -197,6 +198,13 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
     if (sort === "watchlist") return list.filter((r) => watched.has(r.address.toLowerCase())).sort(hot)
     return list.sort(hot)
   }, [allRows, sort, timeframe, watched])
+  // $MERY is the house token: always pinned to the top of every sort (except a
+  // watchlist it isn't on).
+  const sorted = useMemo(() => {
+    const mery = (allRows ?? []).find((r) => isMery(r.address))
+    if (!mery || (sort === "watchlist" && !watched.has(mery.address.toLowerCase()))) return ranked
+    return [mery, ...ranked.filter((r) => !isMery(r.address))]
+  }, [ranked, allRows, sort, watched])
   const rankByAddress = useMemo(() => new Map(sorted.map((r, i) => [r.address.toLowerCase(), i + 1])), [sorted])
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -463,6 +471,17 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
   )
 }
 
+export function ScoreBoost() {
+  return (
+    <span
+      className="shrink-0 rounded border border-[#f2b84b]/50 bg-[#f2b84b]/15 px-1.5 py-0.5 font-display text-[10px] font-black uppercase leading-none tracking-wider text-[#f2b84b]"
+      title="Trades in $MERY earn 2x DegenScore"
+    >
+      2x score
+    </span>
+  )
+}
+
 function SizeChip({ selected, onClick, color, small, children }: { selected: boolean; onClick: () => void; color: string; small?: boolean; children: React.ReactNode }) {
   return (
     <button
@@ -545,6 +564,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate font-display text-sm font-black text-white">{row.symbol}</span>
+            {isMery(row.address) && <ScoreBoost />}
             <span
               className={`flex items-center gap-0.5 font-display text-xs font-bold tabular-nums ${up ? "text-[#d6ff2b]" : "text-[#ff2d95]"}`}
               title={`${tfLabel} change`}
