@@ -79,29 +79,18 @@ const formatPrice = (p: number | null) => {
 
 const shortWallet = (w: string) => `${w.slice(0, 6)}…${w.slice(-4)}`
 
-const BUY_PRESETS = ["10", "50", "100", "500"]
-const SELL_PRESETS = [25, 50, 100]
-const SLIPPAGE_PRESETS = ["0.5", "1", "3"]
-
 interface DegenArcadeProps {
   tokens: Token[]
   account: string | null
   swapping: boolean
-  pendingTrade: string | null
-  croBalance: string | undefined
-  slippage: string
-  setSlippage: (value: string) => void
-  onBuy: (token: Token, croAmount: string) => void
-  onSell: (token: Token, percent: number) => void
+  selectedAddress: string | null
+  onPick: (token: Token, mode: "buy" | "sell") => void
   onConnect: () => void
 }
 
-export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalance, slippage, setSlippage, onBuy, onSell, onConnect }: DegenArcadeProps) {
-  const [buySize, setBuySize] = useState("50")
-  const [sellPercent, setSellPercent] = useState(100)
-  const buyValid = Number(buySize) > 0
-  const handleBuy = (token: Token) => { if (!account) onConnect(); else if (buyValid) onBuy(token, buySize) }
-  const handleSell = (token: Token) => { if (!account) onConnect(); else onSell(token, sellPercent) }
+export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick, onConnect }: DegenArcadeProps) {
+  const handleBuy = (token: Token) => onPick(token, "buy")
+  const handleSell = (token: Token) => onPick(token, "sell")
   const [player, setPlayerState] = useState<PlayerId>("cat")
   const [allRows, setAllRows] = useState<ArcadeToken[] | null>(null)
   const [query, setQuery] = useState("")
@@ -282,52 +271,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
       </div>
 
       {section === "market" ? (<>
-      <div className="mt-4 grid gap-3 rounded-xl border border-[#22e4ff]/25 bg-[#0d0818] p-3 sm:grid-cols-[1.4fr_1fr]">
-        <div>
-          <div className="mb-2 flex items-center justify-between font-display text-xs font-bold uppercase tracking-wider">
-            <span className="text-[#d6ff2b]">Buy size</span>
-            <span className="text-slate-400">
-              {account ? `Bal ${croBalance != null ? Number(croBalance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "…"} CRO` : "Not connected"}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {BUY_PRESETS.map((v) => (
-              <SizeChip key={v} selected={buySize === v} onClick={() => setBuySize(v)} color="#d6ff2b">{v}</SizeChip>
-            ))}
-            <label className="flex min-w-24 flex-1 items-center gap-1 rounded-md border border-white/10 bg-white/[0.03] px-2 py-1.5 focus-within:border-[#d6ff2b]/60">
-              <span className="sr-only">Custom buy size in CRO</span>
-              <input
-                inputMode="decimal"
-                value={buySize}
-                onChange={(e) => { const v = e.target.value.replace(",", "."); if (/^\d*\.?\d*$/.test(v)) setBuySize(v) }}
-                className="w-full min-w-0 bg-transparent font-display text-xs font-bold tabular-nums text-white outline-none"
-                placeholder="Custom"
-              />
-              <span className="font-display text-xs text-slate-400">CRO</span>
-            </label>
-          </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          <div>
-            <div className="mb-2 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]">Sell size</div>
-            <div className="flex gap-1.5">
-              {SELL_PRESETS.map((p) => (
-                <SizeChip key={p} selected={sellPercent === p} onClick={() => setSellPercent(p)} color="#ff2d95">{p === 100 ? "Max" : `${p}%`}</SizeChip>
-              ))}
-            </div>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <span className="font-display text-xs font-bold uppercase tracking-wider text-slate-300">Slippage</span>
-            <div className="flex gap-1">
-              {SLIPPAGE_PRESETS.map((s) => (
-                <SizeChip key={s} selected={slippage === s} onClick={() => setSlippage(s)} color="#22e4ff" small>{s}%</SizeChip>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <p className="mt-3 text-pretty text-xs leading-5 text-slate-300">{active.tagline}</p>
+      <p className="mt-4 text-pretty text-xs leading-5 text-slate-300">{active.tagline}</p>
 
       <div className="mt-3 flex items-center gap-2">
         <label className="flex flex-1 items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 focus-within:border-[#22e4ff]/60">
@@ -401,8 +345,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
           {allRows ? `${rows.length}${query ? ` of ${sorted.length}` : ""} tokens` : "Tokens"} ·{" "}
           {sort === "gainers" ? `${tfLabel} change` : sort === "new" ? "newest pairs" : `${tfLabel} txns`}
         </span>
-        <span className="sm:hidden">Swipe to trade</span>
-        <span className="hidden sm:inline">Swipe right to buy · left to sell</span>
+        <span>Tap Buy or Sell to load the swap box</span>
       </div>
 
       <div className="max-h-[65vh] overflow-y-auto overscroll-contain sm:max-h-[520px]">
@@ -435,11 +378,12 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
                 row={row}
                 accent={active.accent}
                 token={tokenByAddress.get(row.address.toLowerCase())}
-                buyLabel={buyValid ? `Buy ${buySize}` : "Buy"}
-                sellLabel={sellPercent === 100 ? "Sell all" : `Sell ${sellPercent}%`}
+                buyLabel="Buy"
+                sellLabel="Sell"
                 busy={swapping}
-                pending={pendingTrade?.endsWith(`:${row.address.toLowerCase()}`) ? (pendingTrade.startsWith("buy") ? "buy" : "sell") : null}
-                buyDisabled={!buyValid}
+                pending={null}
+                selected={selectedAddress === row.address.toLowerCase()}
+                buyDisabled={false}
                 onBuy={handleBuy}
                 onSell={handleSell}
                 timeframe={timeframe}
@@ -483,24 +427,6 @@ export function ScoreBoost() {
   )
 }
 
-function SizeChip({ selected, onClick, color, small, children }: { selected: boolean; onClick: () => void; color: string; small?: boolean; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={selected}
-      className={`rounded-md border font-display font-black uppercase tabular-nums transition ${small ? "px-2 py-1 text-xs" : "px-2.5 py-1.5 text-xs"}`}
-      style={{
-        borderColor: selected ? color : "rgba(255,255,255,0.1)",
-        backgroundColor: selected ? `${color}1f` : "transparent",
-        color: selected ? color : "#94a3b8",
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
 interface ArcadeRowProps {
   rank: number
   row: ArcadeToken
@@ -510,6 +436,7 @@ interface ArcadeRowProps {
   sellLabel: string
   busy: boolean
   pending: "buy" | "sell" | null
+  selected: boolean
   buyDisabled: boolean
   onBuy: (token: Token) => void
   onSell: (token: Token) => void
@@ -521,7 +448,7 @@ interface ArcadeRowProps {
 
 const NEW_PAIR_MS = 24 * 60 * 60 * 1000
 
-function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pending, buyDisabled, onBuy, onSell, timeframe, tfLabel, watched, onToggleWatch }: ArcadeRowProps) {
+function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pending, selected, buyDisabled, onBuy, onSell, timeframe, tfLabel, watched, onToggleWatch }: ArcadeRowProps) {
   const startX = useRef<number | null>(null)
   const [dragX, setDragX] = useState(0)
   const [logoFailed, setLogoFailed] = useState(false)
@@ -543,7 +470,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
   const swipeHint = dragX > SWIPE_THRESHOLD_PX ? "rgba(214,255,43,0.12)" : dragX < -SWIPE_THRESHOLD_PX ? "rgba(255,45,149,0.12)" : "transparent"
 
   return (
-    <li className="border-b border-white/[0.06] last:border-0" style={{ backgroundColor: swipeHint }}>
+    <li className="border-b border-white/[0.06] last:border-0" style={{ backgroundColor: selected && swipeHint === "transparent" ? "rgba(34,228,255,0.06)" : swipeHint }}>
       <div
         className="flex touch-pan-y select-none flex-wrap items-center gap-x-2.5 gap-y-2 py-3 transition-transform sm:flex-nowrap sm:gap-3"
         style={{ transform: `translateX(${Math.max(-80, Math.min(80, dragX))}px)` }}
