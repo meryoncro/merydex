@@ -4,7 +4,7 @@ const features = [
   {
     icon: ArrowLeftRight,
     title: "Smart swaps",
-    body: "Every trade is routed through the WolfSwap aggregator for the best price across Cronos DEXs, with slippage you control.",
+    body: "Every trade is routed for the best price across Cronos DEXs, with slippage you control.",
     tone: "text-[#22e4ff]",
     span: "md:col-span-2",
   },

@@ -7,6 +7,7 @@ export function SiteFooter({ appHref }: { appHref: string }) {
         <div className="flex flex-col gap-1">
           <span className="font-display text-lg font-bold tracking-wider text-[#ff2d95] neon-pink">MCRO.FUN</span>
           <span className="font-display text-xs uppercase tracking-wider text-slate-400">The Cronos memecoin arcade · Non-custodial</span>
+          <span className="text-xs text-slate-500">Powered by Cronos Network and Crypto.com data</span>
         </div>
         <LaunchButton href={appHref} size="sm" />
       </div>
