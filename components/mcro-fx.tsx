@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useRef, useState, type CSSProperties } from "react"
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react"
 import { X } from "lucide-react"
 import { onFx, type FxEvent, type FxKind } from "@/lib/fx"
+import { MeryAgentChat } from "@/components/mery-agent-chat"
 
 const LOGO = "/images/mcro-logo.png"
 
@@ -108,6 +109,9 @@ function Mascot({ reduced }: { reduced: boolean }) {
   const [facingLeft, setFacingLeft] = useState(false)
   const [bubble, setBubble] = useState<string | null>(null)
   const [anim, setAnim] = useState("")
+  const [chatOpen, setChatOpen] = useState(false)
+  const chatOpenRef = useRef(false)
+  chatOpenRef.current = chatOpen
   const tiltRef = useRef<HTMLDivElement>(null)
   const posRef = useRef<{ x: number; y: number } | null>(null)
   const bubbleTimer = useRef<number>(0)
@@ -148,7 +152,8 @@ function Mascot({ reduced }: { reduced: boolean }) {
     let hops = 0
     const wander = () => {
       // Small screens have no free space to roam, so the mascot stays parked in its corner.
-      if (isSmallScreen()) { const s = homeSpot(); moveTo(s.x, s.y); return }
+      // It also stays home while its chat is open so the panel stays anchored to it.
+      if (isSmallScreen() || chatOpenRef.current) { const s = homeSpot(); moveTo(s.x, s.y); return }
       const w = window.innerWidth, h = window.innerHeight
       moveTo(16 + Math.random() * Math.max(0, w - MASCOT - 32), 96 + Math.random() * Math.max(0, h - MASCOT - 120))
       if (++hops % 3 === 0) say(pick(IDLE_LINES), 2200)
@@ -183,13 +188,21 @@ function Mascot({ reduced }: { reduced: boolean }) {
     const r = REACTIONS[event.kind]
     say(r.line)
     if (!reduced) play(r.anim)
-    if (!reduced && !isSmallScreen() && (event.kind === "win" || event.kind === "buy" || event.kind === "fight")) {
+    if (!reduced && !isSmallScreen() && !chatOpenRef.current && (event.kind === "win" || event.kind === "buy" || event.kind === "fight")) {
       moveTo(window.innerWidth / 2 - MASCOT / 2, Math.min(window.innerHeight * 0.62, window.innerHeight - MASCOT - 24))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [reduced])
 
-  const hide = () => { setHidden(true); window.localStorage.setItem("mcro:mascot-hidden", "1") }
+  const closeChat = useCallback(() => setChatOpen(false), [])
+  const toggleChat = () => {
+    if (!chatOpen) { const s = homeSpot(); moveTo(s.x, s.y) }
+    setChatOpen(o => !o)
+    setBubble(null)
+    if (!reduced) play("animate-mascot-hop")
+  }
+
+  const hide = () => { setChatOpen(false); setHidden(true); window.localStorage.setItem("mcro:mascot-hidden", "1") }
   const show = () => { setHidden(false); window.localStorage.removeItem("mcro:mascot-hidden") }
 
   if (hidden) {
@@ -202,8 +215,10 @@ function Mascot({ reduced }: { reduced: boolean }) {
   if (!pos) return null
 
   return (
+    <>
+    <MeryAgentChat open={chatOpen} onClose={closeChat} />
     <div
-      className="group fixed left-0 top-0 z-[65] transition-transform ease-in-out"
+      className={`group fixed left-0 top-0 z-[65] transition-transform ease-in-out ${chatOpen ? "max-sm:hidden" : ""}`}
       style={{ transform: `translate(${pos.x}px, ${pos.y}px)`, transitionDuration: reduced ? "0ms" : "2400ms" }}
     >
       {bubble && (
@@ -219,8 +234,9 @@ function Mascot({ reduced }: { reduced: boolean }) {
         <X size={12} />
       </button>
       <button
-        onClick={() => { say(pick(CLICK_LINES)); if (!reduced) play("animate-mascot-hop") }}
-        aria-label="MCRO mascot. Click for a hint"
+        onClick={toggleChat}
+        aria-label={chatOpen ? "Close the MERY AI chat" : "Ask MERY, the AI guide, about crypto and markets"}
+        aria-expanded={chatOpen}
         className="block cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#f5b82e]"
       >
         <div ref={tiltRef} className="mascot-tilt">
@@ -237,5 +253,6 @@ function Mascot({ reduced }: { reduced: boolean }) {
         </div>
       </button>
     </div>
+    </>
   )
 }
