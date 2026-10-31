@@ -14,7 +14,7 @@ export function SiteHeader({ appHref }: { appHref: string }) {
         <a href="#top" className="flex items-center gap-2.5" aria-label="mcro.fun home">
           <Image src="/images/mcro-logo.png" alt="" width={32} height={32} className="rounded-md" />
           <span className="font-display text-lg font-bold tracking-tight text-white">
-            mcro<span className="text-[#29e6ff]">.fun</span>
+            MCRO<span className="text-[#29e6ff]">.FUN</span>
           </span>
         </a>
         <nav aria-label="Site" className="hidden items-center gap-1 md:flex">

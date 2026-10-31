@@ -388,7 +388,7 @@ export default function Page() {
           <div className="flex items-center gap-9">
             <button className="group flex items-center gap-3" onClick={() => setActiveTab("Overview")} aria-label="Go to overview">
               <img src="/images/mcro-logo.png" alt="" width={44} height={44} className="h-11 w-11 animate-logo-wobble [image-rendering:pixelated]" />
-              <div className="text-left"><div className="font-display text-lg font-bold tracking-tight text-white">mcro<span className="text-[#29e6ff]">.fun</span></div><div className="text-xs text-slate-400">Cronos memecoin swap</div></div>
+              <div className="text-left"><div className="font-display text-lg font-bold tracking-tight text-white">MCRO<span className="text-[#29e6ff]">.FUN</span></div><div className="text-xs text-slate-400">Cronos Arcade</div></div>
             </button>
             <nav className="hidden items-center gap-1 md:flex">{tabs.map(tab => <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-md px-3 py-2 text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.07] text-white" : "text-slate-400 hover:text-white"}`}>{tab}</button>)}</nav>
           </div>
