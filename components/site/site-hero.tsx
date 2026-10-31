@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { LaunchButton } from "./launch-button"
 
-const ticker = ["Best-route swaps", "Pro terminal", "Prediction markets", "Hourly crypto rounds", "PvP arena", "NFT gallery", "Recurring buys", "30% referral share", "Non-custodial"]
+const ticker = ["Best-route swaps", "Pro terminal", "Prediction markets", "Hourly crypto rounds", "PvP arena", "NFT gallery", "30% referral share", "Non-custodial"]
 
 export function SiteHero({ appHref }: { appHref: string }) {
   return (

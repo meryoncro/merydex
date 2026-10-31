@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { Contract } from "ethers"
 import { pool } from "@/lib/db"
 import { ARENA_COLLECTIONS, isArenaCollection, type ArenaCollection } from "@/lib/ebisus"
-import { provider } from "@/lib/keeper"
+import { provider } from "@/lib/rpc"
 import { sessionAddress } from "@/lib/session"
 
 async function ownsNft(wallet: string, collection: ArenaCollection, nftId: string): Promise<boolean> {

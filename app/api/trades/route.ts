@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { pool } from "@/lib/db"
 import type { TransactionReceipt } from "ethers"
-import { provider } from "@/lib/keeper"
+import { provider } from "@/lib/rpc"
 import { valueTrade } from "@/lib/trade-value"
 
 export const runtime = "nodejs"
