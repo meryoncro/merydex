@@ -17,11 +17,11 @@ const TIMEFRAMES: { id: Timeframe; label: string }[] = [
   { id: "h6", label: "6H" },
   { id: "h24", label: "24H" },
 ]
-const SORTS: { id: SortMode; label: string; icon: typeof Flame }[] = [
+const SORTS: { id: SortMode; label: string; short?: string; icon: typeof Flame }[] = [
   { id: "hot", label: "Hot", icon: Flame },
-  { id: "gainers", label: "Gainers", icon: TrendingUp },
+  { id: "gainers", label: "Gainers", short: "Top", icon: TrendingUp },
   { id: "new", label: "New", icon: Rocket },
-  { id: "watchlist", label: "Watchlist", icon: Star },
+  { id: "watchlist", label: "Watchlist", short: "Saved", icon: Star },
 ]
 const SECTIONS: { id: Section; label: string; icon: typeof Flame }[] = [
   { id: "market", label: "Market", icon: LineChart },
@@ -252,7 +252,7 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
                 {p.name}
               </div>
               <div className="mt-0.5 truncate font-display text-[11px] uppercase tracking-wider text-slate-400">
-                {selected ? "Your profile" : "Select"}
+                {selected ? "Playing" : "Select"}
               </div>
             </button>
           )
@@ -357,8 +357,8 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="-mx-1 flex max-w-full gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="Sort tokens">
-          {SORTS.map(({ id, label, icon: Icon }) => {
+        <div className="grid w-full grid-cols-4 gap-1 sm:flex sm:w-auto" role="tablist" aria-label="Sort tokens">
+          {SORTS.map(({ id, label, short, icon: Icon }) => {
             const selected = sort === id
             return (
               <button
@@ -366,12 +366,13 @@ export function DegenArcade({ tokens, account, swapping, pendingTrade, croBalanc
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setSort(id)}
-                className={`flex shrink-0 items-center gap-1 rounded-md border px-2.5 py-2 font-display text-xs font-black uppercase tracking-wider transition sm:py-1.5 ${
+                className={`flex min-w-0 items-center justify-center gap-1 rounded-md border px-1.5 py-2 font-display text-xs font-black uppercase tracking-wider transition sm:shrink-0 sm:px-2.5 sm:py-1.5 ${
                   selected ? "border-[#22e4ff]/60 bg-[#22e4ff]/10 text-[#22e4ff]" : "border-white/10 text-slate-300 hover:text-white"
                 }`}
               >
-                <Icon size={12} aria-hidden="true" className={id === "hot" && selected ? "text-[#ff2d95]" : ""} />
-                {label}
+                <Icon size={12} aria-hidden="true" className={`hidden shrink-0 min-[400px]:block ${id === "hot" && selected ? "text-[#ff2d95]" : ""}`} />
+                <span className="sm:hidden">{short ?? label}</span>
+                <span className="hidden sm:inline">{label}</span>
                 {id === "watchlist" && watched.size > 0 && <span className="tabular-nums text-slate-400">{watched.size}</span>}
               </button>
             )
@@ -578,9 +579,9 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
               </span>
             )}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-slate-400">
+          <div className="mt-0.5 flex items-center gap-x-2 overflow-hidden whitespace-nowrap text-[13px] text-slate-400 sm:flex-wrap">
             <span className="text-slate-300">{formatPrice(row.priceUsd)}</span>
-            <span className="tabular-nums" title={`${tfLabel} transactions`}>{txns.toLocaleString()} txns</span>
+            <span className="tabular-nums" title={`${tfLabel} transactions`}>{txns.toLocaleString()}<span className="sm:hidden"> tx</span><span className="hidden sm:inline"> txns</span></span>
             <span className="tabular-nums" title="Liquidity">Liq {formatUsd(row.liquidityUsd)}</span>
             <span className="hidden tabular-nums md:inline" title={`${tfLabel} volume`}>Vol {formatUsd(frame.volume)}</span>
             {row.marketCap != null && <span className="hidden tabular-nums md:inline" title="Market cap">MC {formatUsd(row.marketCap)}</span>}

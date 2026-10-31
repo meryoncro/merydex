@@ -934,8 +934,8 @@ function GamePanel({ account, onConnect }: { account: string | null; onConnect: 
     <div className={`relative overflow-hidden rounded-2xl border border-[#a855f7]/25 bg-[#130a1f]/70 ${phase === "revealing" ? "animate-arena-shake" : ""}`}>
       <div className="pointer-events-none absolute inset-0 arcade-grid opacity-[0.1]" />
       <div className="relative p-5 sm:p-7">
-        {!account ? (
-          <div className="flex flex-col items-center gap-4 py-14 text-center">
+  {!account ? (
+  <div className="flex flex-col items-center gap-4 py-6 text-center sm:py-14">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-[#a855f7] to-[#ff2d95] glow-purple"><Swords size={28} /></div>
             <div><h2 className="font-display text-lg font-black uppercase">Enter the arena</h2><p className="mt-1 text-sm text-slate-300">Connect your wallet to put up a MERY or Loaded Lion and battle other holders.</p></div>
             <button onClick={onConnect} className="rounded-md bg-[#a855f7] px-6 py-3 font-display text-xs font-black uppercase tracking-wider text-white transition hover:bg-[#b975f9] glow-purple">Connect wallet</button>

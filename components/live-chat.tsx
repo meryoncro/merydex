@@ -119,7 +119,7 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
   }
 
   return (
-    <aside aria-label={title} className="flex h-[560px] flex-col overflow-hidden rounded-xl border border-[#22e4ff]/25 bg-[#0d0818]/90 shadow-[0_0_24px_rgba(34,228,255,0.08)] lg:sticky lg:top-24">
+    <aside aria-label={title} className="flex h-[420px] flex-col sm:h-[560px] overflow-hidden rounded-xl border border-[#22e4ff]/25 bg-[#0d0818]/90 shadow-[0_0_24px_rgba(34,228,255,0.08)] lg:sticky lg:top-24">
       <header className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div className="flex items-center gap-2">
           <MessageSquare size={16} className="text-[#22e4ff]" aria-hidden="true" />
