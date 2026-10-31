@@ -1,12 +1,12 @@
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Pixelify_Sans } from 'next/font/google'
+import { Chakra_Petch, Inter } from 'next/font/google'
 import './globals.css'
 
-const pixel = Pixelify_Sans({
+const pixel = Chakra_Petch({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['500', '600', '700'],
   variable: '--font-pixel',
 })
 
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'dark',
-  themeColor: '#0e0f12',
+  themeColor: '#0b0816',
   userScalable: false,
 }
 
@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark ${pixel.variable} ${inter.variable} bg-[#0e0f12]`}>
+    <html lang="en" className={`dark ${pixel.variable} ${inter.variable} bg-[#0b0816]`}>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && (

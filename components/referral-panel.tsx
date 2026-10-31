@@ -109,7 +109,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
         setCopied(true)
         setTimeout(() => setCopied(false), 1500)
       }}
-      className="flex shrink-0 items-center gap-2 rounded-md bg-[#f2b33d] px-3.5 py-2.5 font-display text-xs font-bold tracking-normal text-[#0e0f12] transition hover:bg-[#f7c766]"
+      className="flex shrink-0 items-center gap-2 rounded-md bg-[#29e6ff] px-3.5 py-2.5 font-display text-xs font-bold tracking-normal text-[#0b0816] transition hover:bg-[#8ef3ff]"
       aria-label={`Copy ${label}`}
     >
       {copied ? <Check size={15} /> : <Copy size={15} />}
@@ -122,7 +122,7 @@ function Stat({ label, value, tone = "default" }: { label: string; value: string
   return (
     <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-4">
       <span className="font-display text-[11px] font-bold tracking-normal text-slate-400">{label}</span>
-      <span className={`font-display text-2xl font-bold tabular-nums ${tone === "lime" ? "text-[#3dd68c]" : "text-white"}`}>{value}</span>
+      <span className={`font-display text-2xl font-bold tabular-nums ${tone === "lime" ? "text-[#3dff9a]" : "text-white"}`}>{value}</span>
     </div>
   )
 }
@@ -166,9 +166,9 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
 
   const header = (
     <div className="mb-8 flex flex-col gap-3">
-      <span className="font-display text-xs font-bold tracking-normal text-[#f0616d]">Invite & earn</span>
+      <span className="font-display text-xs font-bold tracking-normal text-[#ff3d7f]">Invite & earn</span>
       <h1 className="font-display text-4xl font-bold tracking-tight text-balance">
-        Earn <span className="text-[#3dd68c]">{sharePct}%</span> of every fee
+        Earn <span className="text-[#3dff9a]">{sharePct}%</span> of every fee
       </h1>
       <p className="max-w-2xl text-sm leading-relaxed text-slate-300 text-pretty">
         Share your code. Every time a friend you invite swaps on MCRO.FUN, {sharePct}% of the platform fee they pay is credited to you,
@@ -182,11 +182,11 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
       <section className="mx-auto max-w-4xl">
         {header}
         <div className="flex flex-col items-center gap-4 rounded-lg border border-white/10 bg-white/[0.03] px-6 py-14 text-center">
-          <Gift size={28} className="text-[#f2b33d]" aria-hidden="true" />
+          <Gift size={28} className="text-[#29e6ff]" aria-hidden="true" />
           <p className="text-sm text-slate-300">Connect your wallet to get your personal invite code.</p>
           <button
             onClick={onConnect}
-            className="flex items-center gap-2 rounded-md bg-[#f2b33d] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766]"
+            className="flex items-center gap-2 rounded-md bg-[#29e6ff] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8ef3ff]"
           >
             <Wallet size={15} /> Connect wallet
           </button>
@@ -203,14 +203,14 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
       {header}
 
       {pendingCode && data && !data.referredBy && (
-        <div className="flex flex-col gap-3 rounded-lg border border-[#f0616d]/40 bg-[#f0616d]/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 rounded-lg border border-[#ff3d7f]/40 bg-[#ff3d7f]/10 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-slate-200">
             You were invited with code <span className="font-display font-bold tracking-normal text-white">{pendingCode}</span>. Sign once to accept.
           </p>
           <button
             onClick={() => run("bind")}
             disabled={busy !== null}
-            className="flex w-fit items-center gap-2 rounded-md bg-[#f0616d] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-white hover:bg-[#f0616d] disabled:opacity-60"
+            className="flex w-fit items-center gap-2 rounded-md bg-[#ff3d7f] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-white hover:bg-[#ff3d7f] disabled:opacity-60"
           >
             {busy === "bind" && <Loader2 size={15} className="animate-spin" />} Accept invite
           </button>
@@ -220,13 +220,13 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
       {notice && (
         <p
           role="status"
-          className={`rounded-md border px-4 py-3 text-sm ${notice.tone === "ok" ? "border-[#3dd68c]/40 bg-[#3dd68c]/10 text-[#3dd68c]" : "border-[#f0616d]/40 bg-[#f0616d]/10 text-[#f58a93]"}`}
+          className={`rounded-md border px-4 py-3 text-sm ${notice.tone === "ok" ? "border-[#3dff9a]/40 bg-[#3dff9a]/10 text-[#3dff9a]" : "border-[#ff3d7f]/40 bg-[#ff3d7f]/10 text-[#ff85ad]"}`}
         >
           {notice.text}
         </p>
       )}
 
-      {error && <p className="text-sm text-[#f58a93]">Couldn&apos;t load your referral stats. Retrying shortly.</p>}
+      {error && <p className="text-sm text-[#ff85ad]">Couldn&apos;t load your referral stats. Retrying shortly.</p>}
 
       {isLoading || !data || !earnings ? (
         <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-400">
@@ -234,11 +234,11 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-5 rounded-lg border border-[#f2b33d]/30 bg-[#f2b33d]/[0.05] p-5 shadow-sm">
+          <div className="flex flex-col gap-5 rounded-lg border border-[#29e6ff]/30 bg-[#29e6ff]/[0.05] p-5 shadow-sm">
             <div className="flex flex-col gap-2">
               <span className="font-display text-[11px] font-bold tracking-normal text-slate-400">Your invite code</span>
               <div className="flex items-center justify-between gap-3">
-                <span className="font-display text-4xl font-bold tracking-normal text-[#f2b33d]">{data.code}</span>
+                <span className="font-display text-4xl font-bold tracking-normal text-[#29e6ff]">{data.code}</span>
                 <CopyButton value={data.code} label="invite code" />
               </div>
             </div>
@@ -258,7 +258,7 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
                     href={`https://x.com/intent/post?text=${encodeURIComponent(`Swap on Cronos with me on MCRO.FUN. Trade $MERY for 2x score.`)}&url=${encodeURIComponent(link)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex shrink-0 items-center gap-2 rounded-md border border-white/15 px-3.5 py-2.5 font-display text-xs font-bold tracking-normal text-slate-200 hover:border-[#f2b33d]/50 hover:text-white"
+                    className="flex shrink-0 items-center gap-2 rounded-md border border-white/15 px-3.5 py-2.5 font-display text-xs font-bold tracking-normal text-slate-200 hover:border-[#29e6ff]/50 hover:text-white"
                   >
                     <Share2 size={15} /> Share
                   </a>
@@ -278,7 +278,7 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
           <div className="flex flex-col gap-4 rounded-lg border border-white/10 bg-white/[0.03] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-1">
               <span className="font-display text-[11px] font-bold tracking-normal text-slate-400">Claimable now</span>
-              <span className="font-display text-3xl font-bold tabular-nums text-[#3dd68c]">{usd(earnings.claimableUsd)}</span>
+              <span className="font-display text-3xl font-bold tabular-nums text-[#3dff9a]">{usd(earnings.claimableUsd)}</span>
               <span className="text-xs text-slate-400">
                 Paid {usd(earnings.paidUsd)}
                 {earnings.pendingUsd > 0 && ` · ${usd(earnings.pendingUsd)} being processed`} · Minimum payout {usd(data.minClaimUsd)}
@@ -287,7 +287,7 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
             <button
               onClick={() => run("claim")}
               disabled={!canClaim || busy !== null}
-              className="flex w-fit items-center gap-2 rounded-md bg-[#3dd68c] px-5 py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#6ee7a8] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex w-fit items-center gap-2 rounded-md bg-[#3dff9a] px-5 py-3 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8cffc0] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {busy === "claim" && <Loader2 size={15} className="animate-spin" />} Request payout
             </button>
@@ -305,7 +305,7 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
                       <span className="font-mono text-slate-200">{r.wallet}</span>
                       <span className="text-right text-xs text-slate-400">
                         {r.trades} trades · {usd(r.volumeUsd)}
-                        <span className="ml-2 font-display font-bold text-[#3dd68c]">+{usd(r.rewardUsd)}</span>
+                        <span className="ml-2 font-display font-bold text-[#3dff9a]">+{usd(r.rewardUsd)}</span>
                       </span>
                     </li>
                   ))}
@@ -315,20 +315,20 @@ export function ReferralPanel({ account, onConnect }: { account: string | null; 
             <div className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-5">
               <h2 className="font-display text-sm font-bold tracking-normal text-white">How it works</h2>
               <ol className="flex flex-col gap-3 text-sm leading-relaxed text-slate-300">
-                <li><span className="font-display font-bold text-[#f2b33d]">1.</span> Share your code or link with a friend who hasn&apos;t traded here yet.</li>
-                <li><span className="font-display font-bold text-[#f2b33d]">2.</span> They connect their wallet and sign once to accept your invite.</li>
+                <li><span className="font-display font-bold text-[#29e6ff]">1.</span> Share your code or link with a friend who hasn&apos;t traded here yet.</li>
+                <li><span className="font-display font-bold text-[#29e6ff]">2.</span> They connect their wallet and sign once to accept your invite.</li>
                 <li>
-                  <span className="font-display font-bold text-[#f2b33d]">3.</span> On every swap they pay a {data.feeBps / 100}% platform fee, and {sharePct}% of
+                  <span className="font-display font-bold text-[#29e6ff]">3.</span> On every swap they pay a {data.feeBps / 100}% platform fee, and {sharePct}% of
                   that fee is credited to you, worked out from the swap&apos;s on-chain value.
                 </li>
-                <li><span className="font-display font-bold text-[#f2b33d]">4.</span> Request a payout once you reach {usd(data.minClaimUsd)}. Payouts are sent to your wallet.</li>
+                <li><span className="font-display font-bold text-[#29e6ff]">4.</span> Request a payout once you reach {usd(data.minClaimUsd)}. Payouts are sent to your wallet.</li>
               </ol>
               {data.payouts.length > 0 && (
                 <ul className="mt-2 flex flex-col gap-1.5 border-t border-white/5 pt-3 text-xs text-slate-400">
                   {data.payouts.map((p) => (
                     <li key={p.id} className="flex justify-between gap-3">
                       <span>{new Date(p.createdAt).toLocaleDateString()} · {usd(p.usdAmount)}</span>
-                      <span className={p.status === "paid" ? "text-[#3dd68c]" : p.status === "rejected" ? "text-[#f0616d]" : "text-slate-300"}>{p.status}</span>
+                      <span className={p.status === "paid" ? "text-[#3dff9a]" : p.status === "rejected" ? "text-[#ff3d7f]" : "text-slate-300"}>{p.status}</span>
                     </li>
                   ))}
                 </ul>

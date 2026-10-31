@@ -52,7 +52,7 @@ function Distance({ m }: { m: HourlyMarket }) {
   return (
     <span className="flex items-center gap-1.5 font-mono tabular-nums">
       <span className="text-slate-300">{usd(m.spot)}</span>
-      <span className={above ? "text-[#3dd68c]" : "text-[#f0616d]"}>
+      <span className={above ? "text-[#3dff9a]" : "text-[#ff3d7f]"}>
         {above ? "+" : ""}
         {diff.toFixed(2)}%
       </span>
@@ -70,11 +70,11 @@ function SideButton({ side, price, active, onClick }: { side: Side; price: numbe
       className={`flex-1 rounded-md py-2 font-display text-[11px] font-bold tracking-normal transition disabled:cursor-not-allowed disabled:opacity-30 ${
         active
           ? yes
-            ? "bg-[#3dd68c] text-[#0e0f12]"
-            : "bg-[#f0616d] text-white"
+            ? "bg-[#3dff9a] text-[#0b0816]"
+            : "bg-[#ff3d7f] text-white"
           : yes
-            ? "border border-[#3dd68c]/35 text-[#3dd68c] hover:bg-[#3dd68c]/10"
-            : "border border-[#f0616d]/40 text-[#f0616d] hover:bg-[#f0616d]/10"
+            ? "border border-[#3dff9a]/35 text-[#3dff9a] hover:bg-[#3dff9a]/10"
+            : "border border-[#ff3d7f]/40 text-[#ff3d7f] hover:bg-[#ff3d7f]/10"
       }`}
     >
       {side} {price === null ? "—" : cents(price)}
@@ -91,10 +91,10 @@ export function HourlyBoard({ selected, onPick }: { selected: { symbol: string; 
   const shown = expanded ? markets : markets.slice(0, COLLAPSED)
 
   return (
-    <section aria-labelledby="hourly-title" className="flex flex-col gap-4 rounded-lg border border-[#3dd68c]/25 bg-[#3dd68c]/[0.03] p-4">
+    <section aria-labelledby="hourly-title" className="flex flex-col gap-4 rounded-lg border border-[#3dff9a]/25 bg-[#3dff9a]/[0.03] p-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <span className="font-display text-[11px] font-bold tracking-normal text-[#3dd68c]">Live order books</span>
+          <span className="font-display text-[11px] font-bold tracking-normal text-[#3dff9a]">Live order books</span>
           <h2 id="hourly-title" className="font-display text-xl font-bold tracking-tight text-white text-balance">
             Crypto rounds
           </h2>
@@ -104,7 +104,7 @@ export function HourlyBoard({ selected, onPick }: { selected: { symbol: string; 
         </div>
         {nextExpiry && (
           <div className="flex items-center gap-2 rounded-md border border-white/10 bg-black/30 px-3 py-2" aria-live="off">
-            <Timer size={15} className="text-[#f2b33d]" aria-hidden="true" />
+            <Timer size={15} className="text-[#29e6ff]" aria-hidden="true" />
             <span className="font-display text-[11px] font-bold tracking-normal text-slate-400">Round ends</span>
             <span className="font-mono text-base font-bold tabular-nums text-white">{clock(nextExpiry - now)}</span>
           </div>
@@ -118,7 +118,7 @@ export function HourlyBoard({ selected, onPick }: { selected: { symbol: string; 
           ))}
         </div>
       )}
-      {error && !markets.length && <p className="py-6 text-center text-sm text-[#f58a93]">Order books unavailable. Retrying shortly.</p>}
+      {error && !markets.length && <p className="py-6 text-center text-sm text-[#ff85ad]">Order books unavailable. Retrying shortly.</p>}
       {!isLoading && !error && !markets.length && <p className="py-6 text-center text-sm text-slate-400">Between rounds. The next one opens in a moment.</p>}
 
       {markets.length > 0 && (
@@ -128,11 +128,11 @@ export function HourlyBoard({ selected, onPick }: { selected: { symbol: string; 
             return (
               <li
                 key={m.symbol}
-                className={`flex min-w-0 flex-col gap-2.5 rounded-lg border p-3 transition ${active ? "border-[#f2b33d]/60 bg-[#f2b33d]/[0.06]" : "border-white/10 bg-black/25"}`}
+                className={`flex min-w-0 flex-col gap-2.5 rounded-lg border p-3 transition ${active ? "border-[#29e6ff]/60 bg-[#29e6ff]/[0.06]" : "border-white/10 bg-black/25"}`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-display text-sm font-bold tracking-wide text-white">{m.asset}</span>
-                  <span className="font-display text-lg font-bold tabular-nums text-[#f2b33d]">{m.chance === null ? "—" : `${m.chance}%`}</span>
+                  <span className="font-display text-lg font-bold tabular-nums text-[#29e6ff]">{m.chance === null ? "—" : `${m.chance}%`}</span>
                 </div>
                 <div className="flex flex-col gap-0.5 text-xs">
                   <span className="truncate text-slate-400">
@@ -170,10 +170,10 @@ function BookLadder({ m }: { m: HourlyMarket }) {
     <li key={`${tone}-${l.price}`} className="relative flex justify-between px-2 py-1 font-mono text-xs tabular-nums">
       <span
         aria-hidden="true"
-        className={`absolute inset-y-0 right-0 ${tone === "ask" ? "bg-[#f0616d]/15" : "bg-[#3dd68c]/12"}`}
+        className={`absolute inset-y-0 right-0 ${tone === "ask" ? "bg-[#ff3d7f]/15" : "bg-[#3dff9a]/12"}`}
         style={{ width: `${(l.size / max) * 100}%` }}
       />
-      <span className={`relative ${tone === "ask" ? "text-[#f0616d]" : "text-[#3dd68c]"}`}>{cents(l.price)}</span>
+      <span className={`relative ${tone === "ask" ? "text-[#ff3d7f]" : "text-[#3dff9a]"}`}>{cents(l.price)}</span>
       <span className="relative text-slate-300">{l.size.toLocaleString("en-US")}</span>
     </li>
   )
@@ -249,10 +249,10 @@ export function HourlyTicket({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-[#f2b33d]/30 bg-[#111317] p-4">
+    <div className="flex flex-col gap-4 rounded-lg border border-[#29e6ff]/30 bg-[#110d22] p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <span className="font-display text-[11px] font-bold tracking-normal text-[#3dd68c]">Crypto round</span>
+          <span className="font-display text-[11px] font-bold tracking-normal text-[#3dff9a]">Crypto round</span>
           <h2 className="font-display text-lg font-bold leading-snug text-white text-pretty">
             {m ? `${m.name} above ${usd(m.strike)}?` : "Round ended"}
           </h2>
@@ -270,7 +270,7 @@ export function HourlyTicket({
           <div className="flex items-center justify-between gap-3 text-xs">
             <Distance m={m} />
             <span className="flex items-center gap-1.5 font-mono tabular-nums text-slate-300">
-              <Timer size={13} className="text-[#f2b33d]" aria-hidden="true" />
+              <Timer size={13} className="text-[#29e6ff]" aria-hidden="true" />
               {clock(m.expiresAt - now)}
             </span>
           </div>
@@ -291,7 +291,7 @@ export function HourlyTicket({
               inputMode="numeric"
               value={stake}
               onChange={(e) => setStake(e.target.value.replace(/[^\d]/g, "").slice(0, 6))}
-              className="rounded-md border border-white/10 bg-black/30 px-3 py-2.5 font-mono text-base text-white focus:border-[#f2b33d]/60 focus:outline-none"
+              className="rounded-md border border-white/10 bg-black/30 px-3 py-2.5 font-mono text-base text-white focus:border-[#29e6ff]/60 focus:outline-none"
             />
           </label>
           <div className="flex gap-2">
@@ -315,18 +315,18 @@ export function HourlyTicket({
             <button
               onClick={place}
               disabled={busy || !open || price === null || stakeN < minStake || (balance !== null && stakeN > balance)}
-              className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#29e6ff] py-3 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8ef3ff] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {busy && <Loader2 size={15} className="animate-spin" />}
               {!open ? "Round closing" : price === null ? "No liquidity on this side" : "Place pick"}
             </button>
           ) : (
-            <button onClick={onConnect} className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766]">
+            <button onClick={onConnect} className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#29e6ff] py-3 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8ef3ff]">
               <Wallet size={15} /> Connect to pick
             </button>
           )}
           {notice && (
-            <p role="status" className={`text-sm ${notice.tone === "ok" ? "text-[#3dd68c]" : "text-[#f58a93]"}`}>
+            <p role="status" className={`text-sm ${notice.tone === "ok" ? "text-[#3dff9a]" : "text-[#ff85ad]"}`}>
               {notice.text}
             </p>
           )}

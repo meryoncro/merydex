@@ -60,9 +60,9 @@ interface DegenScore {
 }
 
 const PLAYERS: { id: PlayerId; name: string; tagline: string; accent: string; glow: string }[] = [
-  { id: "cat", name: "Cat Lover", tagline: "Nine lives, zero regrets. Stacks every cat coin on the chain.", accent: "#f2b33d", glow: "neon-cyan" },
-  { id: "dog", name: "Dog Lover", tagline: "Loyal to the pack. Holds the dogs through every dip.", accent: "#3dd68c", glow: "neon-lime" },
-  { id: "degen", name: "Degen", tagline: "Zero or hero. Full send on whatever moves next.", accent: "#f0616d", glow: "neon-pink" },
+  { id: "cat", name: "Cat Lover", tagline: "Nine lives, zero regrets. Stacks every cat coin on the chain.", accent: "#29e6ff", glow: "neon-cyan" },
+  { id: "dog", name: "Dog Lover", tagline: "Loyal to the pack. Holds the dogs through every dip.", accent: "#3dff9a", glow: "neon-lime" },
+  { id: "degen", name: "Degen", tagline: "Zero or hero. Full send on whatever moves next.", accent: "#ff3d7f", glow: "neon-pink" },
 ]
 
 const PLAYER_STORAGE_KEY = "merydex:arcade-player"
@@ -203,17 +203,17 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
   const tfLabel = TIMEFRAMES.find((t) => t.id === timeframe)?.label ?? "24H"
 
   return (
-    <div className="arcade-panel rounded-2xl border border-white/15 bg-[#16181d]/70 p-4 sm:p-6">
+    <div className="arcade-panel rounded-2xl border border-white/15 bg-[#171230]/70 p-4 sm:p-6">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 font-display text-xs font-bold tracking-normal text-[#f0616d]">
+          <div className="flex items-center gap-2 font-display text-xs font-bold tracking-normal text-[#ff3d7f]">
             <Gamepad2 size={15} /> Degen Arcade
           </div>
           <h2 className="mt-1 text-balance font-display text-xl font-bold leading-tight tracking-tight sm:text-2xl">Pick your player</h2>
         </div>
         <div className="shrink-0 text-right">
           <div className="font-display text-xs tracking-normal text-slate-400">DegenScore</div>
-          <div className="font-display text-xl font-bold tabular-nums text-[#3dd68c] sm:text-2xl">
+          <div className="font-display text-xl font-bold tabular-nums text-[#3dff9a] sm:text-2xl">
             {account ? (score?.me?.score ?? 0).toLocaleString() : "—"}
           </div>
           <div className="font-display text-xs tracking-normal text-slate-400">
@@ -250,7 +250,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
 
       {feed && feed.trades.length > 0 && <div className="mt-4"><TradeTicker trades={feed.trades} /></div>}
 
-      <div className="mt-4 grid grid-cols-4 gap-1 arcade-panel rounded-xl border border-white/15 bg-[#111317] p-1" role="tablist" aria-label="Arcade sections">
+      <div className="mt-4 grid grid-cols-4 gap-1 arcade-panel rounded-xl border border-white/15 bg-[#110d22] p-1" role="tablist" aria-label="Arcade sections">
         {SECTIONS.map(({ id, label, icon: Icon }) => {
           const selected = section === id
           return (
@@ -260,7 +260,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
               aria-selected={selected}
               onClick={() => { setSection(id); if (id === "profile") setProfileTarget(null) }}
               className={`flex flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 font-display text-[11px] font-bold tracking-normal transition sm:flex-row sm:gap-1.5 sm:px-2 sm:text-[13px] ${
-                selected ? "bg-[#f0616d] text-[#0e0f12]" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                selected ? "bg-[#ff3d7f] text-[#0b0816]" : "text-slate-300 hover:bg-white/5 hover:text-white"
               }`}
             >
               <Icon size={14} aria-hidden="true" />
@@ -274,7 +274,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
       <p className="mt-4 text-pretty text-xs leading-5 text-slate-300">{active.tagline}</p>
 
       <div className="mt-3 flex items-center gap-2">
-        <label className="flex flex-1 items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 focus-within:border-[#f2b33d]/60">
+        <label className="flex flex-1 items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 focus-within:border-[#29e6ff]/60">
           <Search size={14} className="shrink-0 text-slate-400" aria-hidden="true" />
           <span className="sr-only">Search tokens</span>
           <input
@@ -293,7 +293,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
         <button
           onClick={() => setReload((n) => n + 1)}
           disabled={loading}
-          className="shrink-0 rounded-md p-2 text-slate-300 hover:bg-white/5 hover:text-[#f2b33d] disabled:opacity-40"
+          className="shrink-0 rounded-md p-2 text-slate-300 hover:bg-white/5 hover:text-[#29e6ff] disabled:opacity-40"
           aria-label="Refresh token list"
         >
           <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
@@ -311,10 +311,10 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
                 aria-selected={selected}
                 onClick={() => setSort(id)}
                 className={`flex min-w-0 items-center justify-center gap-1 rounded-md border px-1.5 py-2 font-display text-xs font-bold tracking-normal transition sm:shrink-0 sm:px-2.5 sm:py-1.5 ${
-                  selected ? "border-[#f2b33d]/60 bg-[#f2b33d]/10 text-[#f2b33d]" : "border-white/10 text-slate-300 hover:text-white"
+                  selected ? "border-[#29e6ff]/60 bg-[#29e6ff]/10 text-[#29e6ff]" : "border-white/10 text-slate-300 hover:text-white"
                 }`}
               >
-                <Icon size={12} aria-hidden="true" className={`hidden shrink-0 min-[400px]:block ${id === "hot" && selected ? "text-[#f0616d]" : ""}`} />
+                <Icon size={12} aria-hidden="true" className={`hidden shrink-0 min-[400px]:block ${id === "hot" && selected ? "text-[#ff3d7f]" : ""}`} />
                 <span className="sm:hidden">{short ?? label}</span>
                 <span className="hidden sm:inline">{label}</span>
                 {id === "watchlist" && watched.size > 0 && <span className="tabular-nums text-slate-400">{watched.size}</span>}
@@ -338,7 +338,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
           </div>
         ) : null}
       </div>
-      {watchError && <p className="mt-2 text-[13px] text-[#f0616d]" role="alert">{watchError}</p>}
+      {watchError && <p className="mt-2 text-[13px] text-[#ff3d7f]" role="alert">{watchError}</p>}
 
       <div className="mt-3 flex items-center justify-between border-b border-white/10 pb-2 font-display text-xs tracking-normal text-slate-400">
         <span>
@@ -419,7 +419,7 @@ export function DegenArcade({ tokens, account, swapping, selectedAddress, onPick
 export function ScoreBoost() {
   return (
     <span
-      className="shrink-0 rounded border border-[#f2b33d]/50 bg-[#f2b33d]/15 px-1.5 py-0.5 font-display text-[10px] font-bold leading-none tracking-normal text-[#f2b33d]"
+      className="shrink-0 rounded border border-[#29e6ff]/50 bg-[#29e6ff]/15 px-1.5 py-0.5 font-display text-[10px] font-bold leading-none tracking-normal text-[#29e6ff]"
       title="Trades in $MERY earn 2x DegenScore"
     >
       2x score
@@ -494,14 +494,14 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
             <span className="truncate font-display text-sm font-bold text-white">{row.symbol}</span>
             {isMery(row.address) && <ScoreBoost />}
             <span
-              className={`flex items-center gap-0.5 font-display text-xs font-bold tabular-nums ${up ? "text-[#3dd68c]" : "text-[#f0616d]"}`}
+              className={`flex items-center gap-0.5 font-display text-xs font-bold tabular-nums ${up ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}
               title={`${tfLabel} change`}
             >
               {up ? <TrendingUp size={11} aria-hidden="true" /> : <TrendingDown size={11} aria-hidden="true" />}
               {frame.change == null ? "—" : `${up ? "+" : ""}${frame.change.toFixed(1)}%`}
             </span>
             {isNew && (
-              <span className="rounded bg-[#f2b33d]/15 px-1 py-px font-display text-[11px] font-bold tracking-normal text-[#f2b33d]">
+              <span className="rounded bg-[#29e6ff]/15 px-1 py-px font-display text-[11px] font-bold tracking-normal text-[#29e6ff]">
                 New {row.pairCreatedAt ? timeAgo(new Date(row.pairCreatedAt).toISOString()) : ""}
               </span>
             )}
@@ -513,15 +513,15 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
             <span className="hidden tabular-nums md:inline" title={`${tfLabel} volume`}>Vol {formatUsd(frame.volume)}</span>
             {row.marketCap != null && <span className="hidden tabular-nums md:inline" title="Market cap">MC {formatUsd(row.marketCap)}</span>}
           </div>
-          <div className="mt-1.5 hidden h-1 w-full max-w-40 overflow-hidden rounded-full bg-[#f0616d]/40 sm:block" role="img" aria-label={`${buyShare}% buys in ${tfLabel}`}>
-            <div className="h-full rounded-full bg-[#3dd68c]" style={{ width: `${buyShare}%` }} />
+          <div className="mt-1.5 hidden h-1 w-full max-w-40 overflow-hidden rounded-full bg-[#ff3d7f]/40 sm:block" role="img" aria-label={`${buyShare}% buys in ${tfLabel}`}>
+            <div className="h-full rounded-full bg-[#3dff9a]" style={{ width: `${buyShare}%` }} />
           </div>
         </div>
         <button
           onClick={() => onToggleWatch(row.address)}
           aria-pressed={watched}
           aria-label={watched ? `Remove ${row.symbol} from watchlist` : `Add ${row.symbol} to watchlist`}
-          className={`shrink-0 rounded-md p-2 transition hover:bg-white/5 sm:p-1.5 ${watched ? "text-[#3dd68c]" : "text-slate-400 hover:text-slate-300"}`}
+          className={`shrink-0 rounded-md p-2 transition hover:bg-white/5 sm:p-1.5 ${watched ? "text-[#3dff9a]" : "text-slate-400 hover:text-slate-300"}`}
         >
           <Star size={16} fill={watched ? "currentColor" : "none"} aria-hidden="true" />
         </button>
@@ -529,7 +529,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
           <button
             onClick={() => token && onBuy(token)}
             disabled={!tradable || buyDisabled}
-            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md bg-[#3dd68c] px-3 py-2.5 sm:py-1.5 font-display text-[13px] font-bold tracking-normal text-[#0e0f12] transition hover:bg-[#6ee7a8] disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md bg-[#3dff9a] px-3 py-2.5 sm:py-1.5 font-display text-[13px] font-bold tracking-normal text-[#0b0816] transition hover:bg-[#8cffc0] disabled:cursor-not-allowed disabled:opacity-30"
             aria-label={`${buyLabel} CRO of ${row.symbol}`}
           >
             {pending === "buy" ? <Loader2 size={13} className="animate-spin" /> : buyLabel}
@@ -537,7 +537,7 @@ function ArcadeRow({ rank, row, accent, token, buyLabel, sellLabel, busy, pendin
           <button
             onClick={() => token && onSell(token)}
             disabled={!tradable}
-            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md border border-[#f0616d]/50 px-3 py-2.5 sm:py-1.5 font-display text-[13px] font-bold tracking-normal text-[#f0616d] transition hover:bg-[#f0616d]/10 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex min-w-[76px] items-center justify-center gap-1 rounded-md border border-[#ff3d7f]/50 px-3 py-2.5 sm:py-1.5 font-display text-[13px] font-bold tracking-normal text-[#ff3d7f] transition hover:bg-[#ff3d7f]/10 disabled:cursor-not-allowed disabled:opacity-30"
             aria-label={`${sellLabel} of ${row.symbol}`}
           >
             {pending === "sell" ? <Loader2 size={13} className="animate-spin" /> : sellLabel}

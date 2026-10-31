@@ -119,16 +119,16 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
   }
 
   return (
-    <aside aria-label={title} className="flex h-[420px] flex-col sm:h-[560px] overflow-hidden rounded-xl border border-[#f2b33d]/25 bg-[#111317]/90 lg:sticky lg:top-24">
+    <aside aria-label={title} className="flex h-[420px] flex-col sm:h-[560px] overflow-hidden rounded-xl border border-[#29e6ff]/25 bg-[#110d22]/90 lg:sticky lg:top-24">
       <header className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageSquare size={16} className="text-[#f2b33d]" aria-hidden="true" />
+          <MessageSquare size={16} className="text-[#29e6ff]" aria-hidden="true" />
           <h2 className="font-display text-xs font-bold tracking-normal">{title}</h2>
         </div>
         <span className="flex items-center gap-1.5 text-[13px] text-slate-300">
           <span className="relative flex h-2 w-2" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3dd68c] opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#3dd68c]" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3dff9a] opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#3dff9a]" />
           </span>
           {data ? `${data.activeChatters} active` : "Live"}
         </span>
@@ -147,12 +147,12 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
           return (
             <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`}>
               <div className="flex items-center gap-2 text-xs text-slate-400">
-                <span className="font-mono font-bold" style={{ color: mine ? "#3dd68c" : `hsl(${walletHue(m.address)} 90% 70%)` }}>
+                <span className="font-mono font-bold" style={{ color: mine ? "#3dff9a" : `hsl(${walletHue(m.address)} 90% 70%)` }}>
                   {mine ? "You" : short(m.address)}
                 </span>
                 <time dateTime={m.createdAt}>{clock(m.createdAt)}</time>
               </div>
-              <p className={`max-w-[85%] break-words rounded-lg px-3 py-2 text-sm leading-relaxed ${mine ? "bg-[#3dd68c]/15 text-[#d5f5e3]" : "bg-white/5 text-slate-200"}`}>
+              <p className={`max-w-[85%] break-words rounded-lg px-3 py-2 text-sm leading-relaxed ${mine ? "bg-[#3dff9a]/15 text-[#d5f5e3]" : "bg-white/5 text-slate-200"}`}>
                 {m.body}
               </p>
             </div>
@@ -161,13 +161,13 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
       </div>
 
       <div className="border-t border-white/10 p-3">
-        {notice && <p role="status" className="mb-2 text-xs text-[#f0616d]">{notice}</p>}
+        {notice && <p role="status" className="mb-2 text-xs text-[#ff3d7f]">{notice}</p>}
         {!me ? (
-          <button type="button" onClick={onConnect} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#f2b33d] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#111317] transition hover:brightness-110">
+          <button type="button" onClick={onConnect} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#29e6ff] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#110d22] transition hover:brightness-110">
             <Wallet size={15} aria-hidden="true" /> Connect wallet to chat
           </button>
         ) : !token ? (
-          <button type="button" onClick={signIn} disabled={signingIn} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3dd68c] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#111317] transition hover:brightness-110 disabled:opacity-60">
+          <button type="button" onClick={signIn} disabled={signingIn} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3dff9a] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#110d22] transition hover:brightness-110 disabled:opacity-60">
             {signingIn ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : <ShieldCheck size={15} aria-hidden="true" />}
             {signingIn ? "Check your wallet…" : "Sign in to chat (free)"}
           </button>
@@ -182,9 +182,9 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
               maxLength={CHAT_MAX_LENGTH}
               placeholder="Say something…"
               autoComplete="off"
-              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 focus:border-[#f2b33d]/60 focus:outline-none"
+              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 focus:border-[#29e6ff]/60 focus:outline-none"
             />
-            <button type="submit" disabled={!draft.trim() || sending} aria-label="Send message" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f2b33d] text-[#111317] transition hover:brightness-110 disabled:opacity-40">
+            <button type="submit" disabled={!draft.trim() || sending} aria-label="Send message" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#29e6ff] text-[#110d22] transition hover:brightness-110 disabled:opacity-40">
               {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
             </button>
           </form>

@@ -48,7 +48,7 @@ function OddsBar({ c }: { c: Contract }) {
         <span className="font-display font-bold tabular-nums text-white">{Math.round(c.chance)}%</span>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-[#f2b33d]" style={{ width: `${Math.min(100, c.chance)}%`, backgroundColor: c.color ?? undefined }} />
+        <div className="h-full rounded-full bg-[#29e6ff]" style={{ width: `${Math.min(100, c.chance)}%`, backgroundColor: c.color ?? undefined }} />
       </div>
     </div>
   )
@@ -58,12 +58,12 @@ function EventCard({ event, active, onOpen }: { event: PEvent; active: boolean; 
   return (
     <button
       onClick={onOpen}
-      className={`flex flex-col gap-3 rounded-lg border p-4 text-left transition ${active ? "border-[#f2b33d]/60 bg-[#f2b33d]/[0.06] shadow-sm" : "border-white/10 bg-white/[0.03] hover:border-white/25"}`}
+      className={`flex flex-col gap-3 rounded-lg border p-4 text-left transition ${active ? "border-[#29e6ff]/60 bg-[#29e6ff]/[0.06] shadow-sm" : "border-white/10 bg-white/[0.03] hover:border-white/25"}`}
     >
       <div className="flex items-center gap-2">
-        <span className="rounded bg-[#f0616d]/15 px-2 py-0.5 font-display text-[10px] font-bold tracking-normal text-[#f0616d]">{event.kindLabel}</span>
+        <span className="rounded bg-[#ff3d7f]/15 px-2 py-0.5 font-display text-[10px] font-bold tracking-normal text-[#ff3d7f]">{event.kindLabel}</span>
         {event.trending && (
-          <span className="flex items-center gap-1 font-display text-[10px] font-bold tracking-normal text-[#3dd68c]">
+          <span className="flex items-center gap-1 font-display text-[10px] font-bold tracking-normal text-[#3dff9a]">
             <Flame size={12} aria-hidden="true" /> Trending
           </span>
         )}
@@ -130,7 +130,7 @@ function Ticket({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-[#f2b33d]/30 bg-[#111317] p-4">
+    <div className="flex flex-col gap-4 rounded-lg border border-[#29e6ff]/30 bg-[#110d22] p-4">
       <div className="flex items-start justify-between gap-3">
         <h2 className="font-display text-lg font-bold leading-snug text-white text-pretty">{event?.title ?? "Loading market…"}</h2>
         <button onClick={onClose} aria-label="Close ticket" className="rounded p-1 text-slate-400 hover:text-white">
@@ -138,7 +138,7 @@ function Ticket({
         </button>
       </div>
 
-      {error && !event && <p className="text-sm text-[#f58a93]">Couldn&apos;t load this market.</p>}
+      {error && !event && <p className="text-sm text-[#ff85ad]">Couldn&apos;t load this market.</p>}
       {!event && !error && <Loader2 size={18} className="animate-spin text-slate-400" aria-label="Loading" />}
 
       {event && (
@@ -149,12 +149,12 @@ function Ticket({
                 <button
                   onClick={() => setContractId(c.id)}
                   aria-pressed={contract?.id === c.id}
-                  className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2 text-left text-sm transition ${contract?.id === c.id ? "border-[#f2b33d]/60 bg-[#f2b33d]/10" : "border-white/10 hover:border-white/25"}`}
+                  className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2 text-left text-sm transition ${contract?.id === c.id ? "border-[#29e6ff]/60 bg-[#29e6ff]/10" : "border-white/10 hover:border-white/25"}`}
                 >
                   <span className="truncate text-slate-100">{c.title}</span>
                   <span className="flex shrink-0 gap-2 font-mono text-xs tabular-nums">
-                    <span className="text-[#3dd68c]">Y {cents(c.yes)}</span>
-                    <span className="text-[#f0616d]">N {cents(c.no)}</span>
+                    <span className="text-[#3dff9a]">Y {cents(c.yes)}</span>
+                    <span className="text-[#ff3d7f]">N {cents(c.no)}</span>
                   </span>
                 </button>
               </li>
@@ -170,7 +170,7 @@ function Ticket({
                     onClick={() => setSide(s)}
                     aria-pressed={side === s}
                     className={`rounded-md py-2.5 font-display text-xs font-bold tracking-normal transition ${
-                      side === s ? (s === "yes" ? "bg-[#3dd68c] text-[#0e0f12]" : "bg-[#f0616d] text-white") : "border border-white/15 text-slate-300"
+                      side === s ? (s === "yes" ? "bg-[#3dff9a] text-[#0b0816]" : "bg-[#ff3d7f] text-white") : "border border-white/15 text-slate-300"
                     }`}
                   >
                     {s} {cents(s === "yes" ? contract.yes : contract.no)}
@@ -186,7 +186,7 @@ function Ticket({
                   inputMode="numeric"
                   value={stake}
                   onChange={(e) => setStake(e.target.value.replace(/[^\d]/g, "").slice(0, 6))}
-                  className="rounded-md border border-white/10 bg-black/30 px-3 py-2.5 font-mono text-base text-white focus:border-[#f2b33d]/60 focus:outline-none"
+                  className="rounded-md border border-white/10 bg-black/30 px-3 py-2.5 font-mono text-base text-white focus:border-[#29e6ff]/60 focus:outline-none"
                 />
               </label>
               <div className="flex gap-2">
@@ -209,18 +209,18 @@ function Ticket({
                 <button
                   onClick={place}
                   disabled={busy || !tradable || stakeN < minStake || (balance !== null && stakeN > balance)}
-                  className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#29e6ff] py-3 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8ef3ff] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {busy && <Loader2 size={15} className="animate-spin" />}
                   {tradable ? "Place pick" : "Market not tradable"}
                 </button>
               ) : (
-                <button onClick={onConnect} className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#f2b33d] py-3 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#f7c766]">
+                <button onClick={onConnect} className="flex items-center justify-center gap-2 rounded-md arcade-btn bg-[#29e6ff] py-3 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8ef3ff]">
                   <Wallet size={15} /> Connect to pick
                 </button>
               )}
               {notice && (
-                <p role="status" className={`text-sm ${notice.tone === "ok" ? "text-[#3dd68c]" : "text-[#f58a93]"}`}>
+                <p role="status" className={`text-sm ${notice.tone === "ok" ? "text-[#3dff9a]" : "text-[#ff85ad]"}`}>
                   {notice.text}
                 </p>
               )}
@@ -242,7 +242,7 @@ function MyPicks({ account, data, onConnect, onChanged }: { account: string | nu
       <div className="flex flex-col items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4">
         <h2 className="font-display text-sm font-bold tracking-normal text-white">Your picks</h2>
         <p className="text-sm leading-relaxed text-slate-400">Connect a wallet to get 1,000 free points and start calling markets.</p>
-        <button onClick={onConnect} className="flex items-center gap-2 rounded-md border border-[#f2b33d]/50 px-3 py-2 font-display text-xs font-bold tracking-normal text-[#f2b33d]">
+        <button onClick={onConnect} className="flex items-center gap-2 rounded-md border border-[#29e6ff]/50 px-3 py-2 font-display text-xs font-bold tracking-normal text-[#29e6ff]">
           <Wallet size={14} /> Connect wallet
         </button>
       </div>
@@ -282,11 +282,11 @@ function MyPicks({ account, data, onConnect, onChanged }: { account: string | nu
             ].map(([k, v], i) => (
               <div key={k} className="flex flex-col gap-0.5 rounded-md bg-black/25 p-2.5">
                 <dt className="font-display text-[10px] font-bold tracking-normal text-slate-400">{k}</dt>
-                <dd className={`font-display text-base font-bold tabular-nums ${i === 2 ? (p.netWorth >= p.startingPoints ? "text-[#3dd68c]" : "text-[#f0616d]") : "text-white"}`}>{v}</dd>
+                <dd className={`font-display text-base font-bold tabular-nums ${i === 2 ? (p.netWorth >= p.startingPoints ? "text-[#3dff9a]" : "text-[#ff3d7f]") : "text-white"}`}>{v}</dd>
               </div>
             ))}
           </dl>
-          {err && <p role="status" className="text-xs text-[#f58a93]">{err}</p>}
+          {err && <p role="status" className="text-xs text-[#ff85ad]">{err}</p>}
           {open.length === 0 && closed.length === 0 && <p className="text-sm text-slate-400">No picks yet. Open a market and make your call.</p>}
           {open.length > 0 && (
             <ul className="flex flex-col divide-y divide-white/5">
@@ -295,11 +295,11 @@ function MyPicks({ account, data, onConnect, onChanged }: { account: string | nu
                   <span className="truncate text-xs text-slate-400">{x.eventTitle}</span>
                   <div className="flex items-center justify-between gap-2">
                     <span className="min-w-0 truncate text-sm text-slate-100">
-                      <span className={`mr-1.5 font-display text-[11px] font-bold ${x.side === "yes" ? "text-[#3dd68c]" : "text-[#f0616d]"}`}>{x.side}</span>
+                      <span className={`mr-1.5 font-display text-[11px] font-bold ${x.side === "yes" ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}>{x.side}</span>
                       {x.contractTitle}
                     </span>
                     {x.settling ? (
-                      <span className="flex shrink-0 items-center gap-1 rounded bg-[#f2b33d]/10 px-2 py-1 font-display text-[10px] font-bold tracking-normal text-[#f2b33d]">
+                      <span className="flex shrink-0 items-center gap-1 rounded bg-[#29e6ff]/10 px-2 py-1 font-display text-[10px] font-bold tracking-normal text-[#29e6ff]">
                         <Loader2 size={12} className="animate-spin" aria-hidden="true" /> Settling
                       </span>
                     ) : (
@@ -314,7 +314,7 @@ function MyPicks({ account, data, onConnect, onChanged }: { account: string | nu
                   </div>
                   <span className="font-mono text-[11px] tabular-nums text-slate-400">
                     {pts(x.stake)} @ {cents(x.entryPrice)} → {x.settling ? "at expiry" : x.currentPrice === null ? "—" : cents(x.currentPrice)}
-                    {x.pnl !== null && <span className={`ml-2 ${x.pnl >= 0 ? "text-[#3dd68c]" : "text-[#f0616d]"}`}>{x.pnl >= 0 ? "+" : ""}{pts(x.pnl)}</span>}
+                    {x.pnl !== null && <span className={`ml-2 ${x.pnl >= 0 ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}>{x.pnl >= 0 ? "+" : ""}{pts(x.pnl)}</span>}
                   </span>
                 </li>
               ))}
@@ -327,7 +327,7 @@ function MyPicks({ account, data, onConnect, onChanged }: { account: string | nu
                 {closed.map((x) => (
                   <li key={x.id} className="flex justify-between gap-2">
                     <span className="truncate">{x.side.toUpperCase()} {x.contractTitle}</span>
-                    <span className={`shrink-0 font-mono ${(x.pnl ?? 0) >= 0 ? "text-[#3dd68c]" : "text-[#f0616d]"}`}>{(x.pnl ?? 0) >= 0 ? "+" : ""}{pts(x.pnl ?? 0)}</span>
+                    <span className={`shrink-0 font-mono ${(x.pnl ?? 0) >= 0 ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}>{(x.pnl ?? 0) >= 0 ? "+" : ""}{pts(x.pnl ?? 0)}</span>
                   </li>
                 ))}
               </ul>
@@ -394,9 +394,9 @@ export function PredictHub({ account, onConnect }: { account: string | null; onC
   return (
     <section className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <span className="font-display text-xs font-bold tracking-normal text-[#f0616d]">Predict</span>
+        <span className="font-display text-xs font-bold tracking-normal text-[#ff3d7f]">Predict</span>
         <h1 className="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-          Call the <span className="text-[#3dd68c]">future</span>
+          Call the <span className="text-[#3dff9a]">future</span>
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-slate-300 text-pretty">
           Live odds on crypto, politics, economics and sport from Crypto.com prediction markets. Pick a side with free points, close early or ride it out, and climb the board.
@@ -434,7 +434,7 @@ export function PredictHub({ account, onConnect }: { account: string | null; onC
                 setDraft("")
               }}
               aria-pressed={!q && kind === c.kind}
-              className={`shrink-0 rounded-md px-3 py-2 font-display text-xs font-bold tracking-normal transition ${!q && kind === c.kind ? "bg-[#f0616d]/15 text-[#f2b33d]" : "bg-white/[0.04] text-slate-300 hover:text-white"}`}
+              className={`shrink-0 rounded-md px-3 py-2 font-display text-xs font-bold tracking-normal transition ${!q && kind === c.kind ? "bg-[#ff3d7f]/15 text-[#29e6ff]" : "bg-white/[0.04] text-slate-300 hover:text-white"}`}
             >
               {c.label}
             </button>
@@ -445,7 +445,7 @@ export function PredictHub({ account, onConnect }: { account: string | null; onC
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex flex-col gap-4">
           <HourlyBoard selected={hourly} onPick={openHourly} />
-          {error && events.length === 0 && <p className="py-10 text-center text-sm text-[#f58a93]">Couldn&apos;t load markets. Retrying shortly.</p>}
+          {error && events.length === 0 && <p className="py-10 text-center text-sm text-[#ff85ad]">Couldn&apos;t load markets. Retrying shortly.</p>}
           {isLoading && <div className="grid gap-3 sm:grid-cols-2">{Array.from({ length: 6 }, (_, i) => <div key={i} className="h-44 animate-pulse rounded-lg bg-white/[0.04]" />)}</div>}
           {!isLoading && !error && events.length === 0 && <p className="py-10 text-center text-sm text-slate-400">No open markets here right now.</p>}
           <div className="grid gap-3 sm:grid-cols-2">
@@ -469,7 +469,7 @@ export function PredictHub({ account, onConnect }: { account: string | null; onC
           <MyPicks account={account} data={picks} onConnect={onConnect} onChanged={() => mutate()} />
           <div className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4">
             <h2 className="flex items-center gap-2 font-display text-sm font-bold tracking-normal text-white">
-              <Trophy size={15} className="text-[#3dd68c]" aria-hidden="true" /> Top callers
+              <Trophy size={15} className="text-[#3dff9a]" aria-hidden="true" /> Top callers
             </h2>
             {!picks?.leaders.length ? (
               <p className="text-sm text-slate-400">Close a pick to get on the board.</p>
@@ -478,10 +478,10 @@ export function PredictHub({ account, onConnect }: { account: string | null; onC
                 {picks.leaders.map((l, i) => (
                   <li key={l.wallet} className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-mono text-slate-300">
-                      <span className="mr-2 font-display font-bold text-[#f2b33d]">{i + 1}</span>
+                      <span className="mr-2 font-display font-bold text-[#29e6ff]">{i + 1}</span>
                       {l.wallet}
                     </span>
-                    <span className={`font-mono tabular-nums ${l.realized >= 0 ? "text-[#3dd68c]" : "text-[#f0616d]"}`}>{l.realized >= 0 ? "+" : ""}{pts(l.realized)}</span>
+                    <span className={`font-mono tabular-nums ${l.realized >= 0 ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}>{l.realized >= 0 ? "+" : ""}{pts(l.realized)}</span>
                   </li>
                 ))}
               </ol>

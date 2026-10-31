@@ -24,10 +24,10 @@ export function NetworkSwitch({ onUnavailable }: NetworkSwitchProps) {
         aria-checked="true"
         aria-label="Cronos Mainnet"
         title="Cronos Mainnet"
-        className="flex items-center gap-2 rounded bg-[#3dd68c]/10 px-2 py-1.5 ring-1 ring-[#3dd68c]/40 transition"
+        className="flex items-center gap-2 rounded bg-[#3dff9a]/10 px-2 py-1.5 ring-1 ring-[#3dff9a]/40 transition"
       >
         <img src="/chains/cronos.png" alt="" width={20} height={20} className="h-5 w-5 rounded-full" />
-        <span className="hidden font-display text-xs font-bold tracking-normal text-[#3dd68c] lg:inline">Cronos</span>
+        <span className="hidden font-display text-xs font-bold tracking-normal text-[#3dff9a] lg:inline">Cronos</span>
       </button>
       <button
         type="button"

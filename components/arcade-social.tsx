@@ -107,9 +107,9 @@ function Avatar({ wallet, size = 28 }: { wallet: string; size?: number }) {
 }
 
 function SideBadge({ side }: { side: FeedTrade["side"] }) {
-  if (side === "buy") return <span className="flex items-center gap-0.5 font-display text-xs font-bold text-[#3dd68c]"><ArrowUpRight size={12} />Bought</span>
-  if (side === "sell") return <span className="flex items-center gap-0.5 font-display text-xs font-bold text-[#f0616d]"><ArrowDownRight size={12} />Sold</span>
-  return <span className="flex items-center gap-0.5 font-display text-xs font-bold text-[#f2b33d]"><Repeat size={11} />Swapped</span>
+  if (side === "buy") return <span className="flex items-center gap-0.5 font-display text-xs font-bold text-[#3dff9a]"><ArrowUpRight size={12} />Bought</span>
+  if (side === "sell") return <span className="flex items-center gap-0.5 font-display text-xs font-bold text-[#ff3d7f]"><ArrowDownRight size={12} />Sold</span>
+  return <span className="flex items-center gap-0.5 font-display text-xs font-bold text-[#29e6ff]"><Repeat size={11} />Swapped</span>
 }
 
 function FollowButton({ account, target, following, onConnect, onChanged, compact }: {
@@ -133,13 +133,13 @@ function FollowButton({ account, target, following, onConnect, onChanged, compac
         disabled={busy}
         aria-pressed={following}
         className={`flex items-center gap-1 rounded-md border font-display font-bold tracking-normal transition disabled:opacity-50 ${compact ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-[13px]"} ${
-          following ? "border-[#f2b33d]/50 bg-[#f2b33d]/10 text-[#f2b33d]" : "border-white/15 text-slate-300 hover:border-[#f2b33d]/60 hover:text-[#f2b33d]"
+          following ? "border-[#29e6ff]/50 bg-[#29e6ff]/10 text-[#29e6ff]" : "border-white/15 text-slate-300 hover:border-[#29e6ff]/60 hover:text-[#29e6ff]"
         }`}
       >
         {busy ? <Loader2 size={12} className="animate-spin" /> : following ? <UserCheck size={12} /> : <UserPlus size={12} />}
         {following ? "Following" : "Follow"}
       </button>
-      {err && <span className="text-xs text-[#f0616d]" role="alert">{err}</span>}
+      {err && <span className="text-xs text-[#ff3d7f]" role="alert">{err}</span>}
     </span>
   )
 }
@@ -150,9 +150,9 @@ export function TradeTicker({ trades }: { trades: FeedTrade[] }) {
   if (trades.length === 0) return null
   const loop = [...trades.slice(0, 14), ...trades.slice(0, 14)]
   return (
-    <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[#111317]" aria-label="Latest MCRO.FUN trades">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center gap-1.5 bg-[#111317] pl-3 pr-2 font-display text-xs font-bold tracking-normal text-[#f0616d]">
-        <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f0616d] opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#f0616d]" /></span>
+    <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[#110d22]" aria-label="Latest MCRO.FUN trades">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center gap-1.5 bg-[#110d22] pl-3 pr-2 font-display text-xs font-bold tracking-normal text-[#ff3d7f]">
+        <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff3d7f] opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff3d7f]" /></span>
         Live
       </div>
       <div className="animate-marquee flex w-max gap-6 py-2 pl-20 hover:[animation-play-state:paused]">
@@ -160,7 +160,7 @@ export function TradeTicker({ trades }: { trades: FeedTrade[] }) {
           <span key={`${t.id}-${i}`} className="flex items-center gap-1.5 whitespace-nowrap text-[13px]" aria-hidden={i >= loop.length / 2}>
             <Avatar wallet={t.wallet} size={12} />
             <span className="font-mono text-slate-300">{shortWallet(t.wallet)}</span>
-            <span className={t.side === "sell" ? "text-[#f0616d]" : t.side === "buy" ? "text-[#3dd68c]" : "text-[#f2b33d]"}>
+            <span className={t.side === "sell" ? "text-[#ff3d7f]" : t.side === "buy" ? "text-[#3dff9a]" : "text-[#29e6ff]"}>
               {t.side === "sell" ? "sold" : t.side === "buy" ? "aped" : "swapped"}
             </span>
             <span className="font-display font-bold text-white">{t.token}</span>
@@ -188,7 +188,7 @@ export function TradeFeed({ account, trades, onOpenTrader }: { account: string |
     <div>
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 font-display text-xs font-bold tracking-normal text-slate-300">
-          <Radio size={13} className="text-[#f0616d]" /> What degens are buying
+          <Radio size={13} className="text-[#ff3d7f]" /> What degens are buying
         </div>
         <div className="flex gap-1" role="tablist" aria-label="Feed scope">
           {(["all", "following"] as const).map((s) => (
@@ -197,7 +197,7 @@ export function TradeFeed({ account, trades, onOpenTrader }: { account: string |
               role="tab"
               aria-selected={scope === s}
               onClick={() => setScope(s)}
-              className={`rounded-md px-2.5 py-1 font-display text-xs font-bold tracking-normal transition ${scope === s ? "bg-[#f0616d]/15 text-[#f0616d]" : "text-slate-400 hover:text-white"}`}
+              className={`rounded-md px-2.5 py-1 font-display text-xs font-bold tracking-normal transition ${scope === s ? "bg-[#ff3d7f]/15 text-[#ff3d7f]" : "text-slate-400 hover:text-white"}`}
             >
               {s === "all" ? "Everyone" : "Following"}
             </button>
@@ -219,7 +219,7 @@ export function TradeFeed({ account, trades, onOpenTrader }: { account: string |
                 <Avatar wallet={t.wallet} />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className={`font-mono text-xs ${t.wallet === me ? "text-[#3dd68c]" : "text-slate-300"}`}>{shortWallet(t.wallet)}{t.wallet === me ? " (you)" : ""}</span>
+                    <span className={`font-mono text-xs ${t.wallet === me ? "text-[#3dff9a]" : "text-slate-300"}`}>{shortWallet(t.wallet)}{t.wallet === me ? " (you)" : ""}</span>
                     <SideBadge side={t.side} />
                   </span>
                   <span className="mt-0.5 block truncate text-[13px] text-slate-400">
@@ -234,7 +234,7 @@ export function TradeFeed({ account, trades, onOpenTrader }: { account: string |
                   href={`https://cronoscan.com/tx/${t.txHash}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-end gap-0.5 text-xs text-slate-400 hover:text-[#f2b33d]"
+                  className="flex items-center justify-end gap-0.5 text-xs text-slate-400 hover:text-[#29e6ff]"
                 >
                   {timeAgo(t.createdAt)} ago <ExternalLink size={9} />
                 </a>
@@ -257,27 +257,27 @@ export function Leaderboard({ account, onConnect, onOpenTrader }: { account: str
   return (
     <div>
       <div className="mb-3 flex items-center gap-2 font-display text-xs font-bold tracking-normal text-slate-300">
-        <Crown size={13} className="text-[#3dd68c]" /> Become a legend · top the board
+        <Crown size={13} className="text-[#3dff9a]" /> Become a legend · top the board
       </div>
       {!leaders ? <Skeleton /> : leaders.length === 0 ? <Empty>No legends yet. Trade to claim the crown.</Empty> : (
         <ol className="max-h-[520px] overflow-y-auto">
           {leaders.map((l, i) => {
             const mine = l.wallet === me
-            const podium = ["#3dd68c", "#f2b33d", "#f0616d"][i]
+            const podium = ["#3dff9a", "#29e6ff", "#ff3d7f"][i]
             return (
-              <li key={l.wallet} className={`flex items-center gap-3 border-b border-white/[0.06] py-2.5 last:border-0 ${mine ? "bg-[#3dd68c]/[0.04]" : ""}`}>
+              <li key={l.wallet} className={`flex items-center gap-3 border-b border-white/[0.06] py-2.5 last:border-0 ${mine ? "bg-[#3dff9a]/[0.04]" : ""}`}>
                 <span className="w-6 shrink-0 text-center font-display text-sm font-bold tabular-nums" style={{ color: podium ?? "#64748b" }}>{i + 1}</span>
                 <button type="button" onClick={() => onOpenTrader(l.wallet)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                   <Avatar wallet={l.wallet} size={32} />
                   <span className="min-w-0">
-                    <span className={`block font-mono text-xs ${mine ? "text-[#3dd68c]" : "text-slate-200"}`}>{shortWallet(l.wallet)}{mine ? " (you)" : ""}</span>
+                    <span className={`block font-mono text-xs ${mine ? "text-[#3dff9a]" : "text-slate-200"}`}>{shortWallet(l.wallet)}{mine ? " (you)" : ""}</span>
                     <span className="block text-[13px] text-slate-400">
                       {l.trades} trades · {formatUsd(l.volume)} vol · {l.followers} {l.followers === 1 ? "follower" : "followers"}
                     </span>
                   </span>
                 </button>
                 <span className="hidden shrink-0 text-right sm:block">
-                  <span className="block font-display text-sm font-bold tabular-nums text-[#3dd68c]">{l.score.toLocaleString()}</span>
+                  <span className="block font-display text-sm font-bold tabular-nums text-[#3dff9a]">{l.score.toLocaleString()}</span>
                   <span className="block font-display text-[11px] tracking-normal text-slate-400">score</span>
                 </span>
                 <FollowButton account={account} target={l.wallet} following={l.following} onConnect={onConnect} onChanged={() => mutate()} compact />
@@ -286,7 +286,7 @@ export function Leaderboard({ account, onConnect, onOpenTrader }: { account: str
           })}
         </ol>
       )}
-      <p className="mt-3 text-[13px] leading-5 text-slate-400">DegenScore = 10 points per swap + 1 point per $1 traded on MCRO.FUN. Trades in <span className="font-bold text-[#f2b33d]">$MERY</span> score 2x.</p>
+      <p className="mt-3 text-[13px] leading-5 text-slate-400">DegenScore = 10 points per swap + 1 point per $1 traded on MCRO.FUN. Trades in <span className="font-bold text-[#29e6ff]">$MERY</span> score 2x.</p>
     </div>
   )
 }
@@ -308,7 +308,7 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
     return (
       <div className="flex flex-col items-center gap-3 py-12 text-center">
         <p className="text-sm text-slate-300">Connect your wallet to see your trader card.</p>
-        <button onClick={onConnect} className="rounded-md bg-[#3dd68c] px-4 py-2 font-display text-xs font-bold tracking-normal text-[#0e0f12]">Connect wallet</button>
+        <button onClick={onConnect} className="rounded-md bg-[#3dff9a] px-4 py-2 font-display text-xs font-bold tracking-normal text-[#0b0816]">Connect wallet</button>
       </div>
     )
   }
@@ -323,11 +323,11 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
           <X size={12} /> Close profile
         </button>
       )}
-      <div className="relative overflow-hidden arcade-panel rounded-xl border border-white/15 bg-[#111317] p-4">
+      <div className="relative overflow-hidden arcade-panel rounded-xl border border-white/15 bg-[#110d22] p-4">
         <div
           aria-hidden="true"
           className="absolute inset-x-0 top-0 h-1"
-          style={{ background: `linear-gradient(90deg, hsl(${walletHue(wallet)} 90% 60%), #f0616d, #f2b33d)` }}
+          style={{ background: `linear-gradient(90deg, hsl(${walletHue(wallet)} 90% 60%), #ff3d7f, #29e6ff)` }}
         />
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -344,22 +344,22 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
         </div>
 
         <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <Stat label="DegenScore" value={data ? data.score.toLocaleString() : "…"} color="#3dd68c" />
+          <Stat label="DegenScore" value={data ? data.score.toLocaleString() : "…"} color="#3dff9a" />
           <Stat label="Volume" value={data ? formatUsd(data.volume) : "…"} />
-          <Stat label="Net CRO flow" value={data ? formatUsd(data.netFlow) : "…"} color={data && data.netFlow < 0 ? "#f0616d" : "#3dd68c"} />
+          <Stat label="Net CRO flow" value={data ? formatUsd(data.netFlow) : "…"} color={data && data.netFlow < 0 ? "#ff3d7f" : "#3dff9a"} />
           <Stat label="Biggest trade" value={data ? formatUsd(data.biggest) : "…"} />
         </dl>
 
         {data && data.trades > 0 && (
           <div className="mt-3">
             <div className="mb-1 flex justify-between font-display text-xs tracking-normal text-slate-400">
-              <span className="text-[#3dd68c]">{data.buys} buys</span>
+              <span className="text-[#3dff9a]">{data.buys} buys</span>
               <span>{data.trades} trades</span>
-              <span className="text-[#f0616d]">{data.sells} sells</span>
+              <span className="text-[#ff3d7f]">{data.sells} sells</span>
             </div>
             <div className="flex h-1.5 overflow-hidden rounded-full bg-white/5" role="img" aria-label={`${100 - winRate}% buys, ${winRate}% sells`}>
-              <div className="bg-[#3dd68c]" style={{ width: `${(data.buys / data.trades) * 100}%` }} />
-              <div className="ml-auto bg-[#f0616d]" style={{ width: `${(data.sells / data.trades) * 100}%` }} />
+              <div className="bg-[#3dff9a]" style={{ width: `${(data.buys / data.trades) * 100}%` }} />
+              <div className="ml-auto bg-[#ff3d7f]" style={{ width: `${(data.sells / data.trades) * 100}%` }} />
             </div>
           </div>
         )}
@@ -403,7 +403,7 @@ function TradeFeedList({ trades }: { trades: FeedTrade[] }) {
           </span>
           <span className="flex items-center gap-3">
             <span className="tabular-nums text-slate-300">{formatUsd(t.usd)}</span>
-            <a href={`https://cronoscan.com/tx/${t.txHash}`} target="_blank" rel="noreferrer" className="flex items-center gap-0.5 text-xs text-slate-400 hover:text-[#f2b33d]">
+            <a href={`https://cronoscan.com/tx/${t.txHash}`} target="_blank" rel="noreferrer" className="flex items-center gap-0.5 text-xs text-slate-400 hover:text-[#29e6ff]">
               {timeAgo(t.createdAt)} <ExternalLink size={9} />
             </a>
           </span>

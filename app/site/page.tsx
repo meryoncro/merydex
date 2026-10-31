@@ -30,7 +30,7 @@ export default async function SitePage() {
   const appHref = isSiteHost(host) ? APP_URL : "/"
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#0e0f12] text-slate-100">
+    <div className="arcade-lights min-h-screen overflow-x-hidden text-slate-100">
       <SiteHeader appHref={appHref} />
       <main>
         <SiteHero appHref={appHref} />

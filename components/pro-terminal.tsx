@@ -74,7 +74,7 @@ function CandleChart({ candles }: { candles: Candle[] }) {
         <span>O <span className="text-slate-200">{fmtPrice(shown.o)}</span></span>
         <span>H <span className="text-slate-200">{fmtPrice(shown.h)}</span></span>
         <span>L <span className="text-slate-200">{fmtPrice(shown.l)}</span></span>
-        <span>C <span className={shown.c >= shown.o ? "text-[#3dd68c]" : "text-[#f0616d]"}>{fmtPrice(shown.c)}</span></span>
+        <span>C <span className={shown.c >= shown.o ? "text-[#3dff9a]" : "text-[#ff3d7f]"}>{fmtPrice(shown.c)}</span></span>
       </div>
       <svg
         viewBox={`0 0 ${W} ${H}`}
@@ -100,7 +100,7 @@ function CandleChart({ candles }: { candles: Candle[] }) {
         ))}
         {candles.map((c, i) => {
           const up = c.c >= c.o
-          const color = up ? "#3dd68c" : "#f0616d"
+          const color = up ? "#3dff9a" : "#ff3d7f"
           const cx = i * geo.step + geo.step / 2
           const bw = Math.max(1, geo.step * 0.62)
           const top = geo.y(Math.max(c.o, c.c))
@@ -114,9 +114,9 @@ function CandleChart({ candles }: { candles: Candle[] }) {
             </g>
           )
         })}
-        <line x1={0} x2={W - PAD_R} y1={geo.y(last.c)} y2={geo.y(last.c)} stroke="#f2b33d" strokeDasharray="4 4" strokeWidth={1} />
-        <rect x={W - PAD_R + 2} y={geo.y(last.c) - 9} width={PAD_R - 4} height={18} rx={3} fill="#f2b33d" />
-        <text x={W - PAD_R + 6} y={geo.y(last.c) + 4} fill="#0e0f12" fontSize="11" fontWeight="700" fontFamily="monospace">
+        <line x1={0} x2={W - PAD_R} y1={geo.y(last.c)} y2={geo.y(last.c)} stroke="#29e6ff" strokeDasharray="4 4" strokeWidth={1} />
+        <rect x={W - PAD_R + 2} y={geo.y(last.c) - 9} width={PAD_R - 4} height={18} rx={3} fill="#29e6ff" />
+        <text x={W - PAD_R + 6} y={geo.y(last.c) + 4} fill="#0b0816" fontSize="11" fontWeight="700" fontFamily="monospace">
           {fmtPrice(last.c)}
         </text>
         {hover !== null && (
@@ -136,10 +136,10 @@ function OrderBook({ book, last }: { book: View["book"]; last: number }) {
     <li key={`${side}${l.price}`} className="relative flex justify-between px-3 py-1 font-mono text-xs tabular-nums">
       <span
         aria-hidden="true"
-        className={`absolute inset-y-0 right-0 ${side === "ask" ? "bg-[#f0616d]/15" : "bg-[#3dd68c]/10"}`}
+        className={`absolute inset-y-0 right-0 ${side === "ask" ? "bg-[#ff3d7f]/15" : "bg-[#3dff9a]/10"}`}
         style={{ width: `${(l.size / max) * 100}%` }}
       />
-      <span className={`relative ${side === "ask" ? "text-[#f0616d]" : "text-[#3dd68c]"}`}>{fmtPrice(l.price)}</span>
+      <span className={`relative ${side === "ask" ? "text-[#ff3d7f]" : "text-[#3dff9a]"}`}>{fmtPrice(l.price)}</span>
       <span className="relative text-slate-300">{fmtCompact(l.size)}</span>
     </li>
   )
@@ -151,7 +151,7 @@ function OrderBook({ book, last }: { book: View["book"]; last: number }) {
       </div>
       <ul aria-label="Asks">{asks.map((l) => row(l, "ask"))}</ul>
       <div className="my-1 flex items-center justify-between border-y border-white/10 px-3 py-2">
-        <span className="font-mono text-sm font-bold text-[#f2b33d]">{fmtPrice(last)}</span>
+        <span className="font-mono text-sm font-bold text-[#29e6ff]">{fmtPrice(last)}</span>
         <span className="font-mono text-[11px] text-slate-400">Spread {fmtPrice(spread)}</span>
       </div>
       <ul aria-label="Bids">{bids.map((l) => row(l, "bid"))}</ul>
@@ -183,9 +183,9 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
   return (
     <section className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <span className="font-display text-xs font-bold tracking-normal text-[#f0616d]">Pro terminal</span>
+        <span className="font-display text-xs font-bold tracking-normal text-[#ff3d7f]">Pro terminal</span>
         <h1 className="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-          CEX depth, <span className="text-[#f2b33d]">on-chain</span> execution
+          CEX depth, <span className="text-[#29e6ff]">on-chain</span> execution
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-slate-300 text-pretty">
           Live order books, candles and trades from the Crypto.com Exchange, side by side with MCRO.FUN&apos;s on-chain Cronos price.
@@ -212,7 +212,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
               aria-selected={x.instrument === instrument}
               onClick={() => setInstrument(x.instrument)}
               className={`flex shrink-0 flex-col items-start gap-0.5 rounded-md border px-3 py-2 text-left transition ${
-                x.instrument === instrument ? "border-[#f2b33d]/60 bg-[#f2b33d]/10 shadow-sm" : "border-white/10 bg-black/20 hover:border-white/25"
+                x.instrument === instrument ? "border-[#29e6ff]/60 bg-[#29e6ff]/10 shadow-sm" : "border-white/10 bg-black/20 hover:border-white/25"
               }`}
             >
               <span className="font-display text-xs font-bold tracking-normal text-white">
@@ -221,7 +221,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
               </span>
               <span className="flex gap-2 font-mono text-[11px] tabular-nums">
                 <span className="text-slate-300">{fmtPrice(x.last)}</span>
-                <span className={x.change >= 0 ? "text-[#3dd68c]" : "text-[#f0616d]"}>{fmtPct(x.change)}</span>
+                <span className={x.change >= 0 ? "text-[#3dff9a]" : "text-[#ff3d7f]"}>{fmtPct(x.change)}</span>
               </span>
             </button>
           ))}
@@ -235,7 +235,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
               <span className="font-display text-sm font-bold tracking-normal text-slate-300">{instrument.replace("_", " / ")}</span>
               <div className="flex items-baseline gap-3">
                 <span className="font-display text-3xl font-bold tabular-nums text-white">{t ? fmtPrice(t.last) : "—"}</span>
-                {t && <span className={`font-mono text-sm ${t.change >= 0 ? "text-[#3dd68c]" : "text-[#f0616d]"}`}>{fmtPct(t.change)}</span>}
+                {t && <span className={`font-mono text-sm ${t.change >= 0 ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}>{fmtPct(t.change)}</span>}
                 {isLoading && <Loader2 size={14} className="animate-spin text-slate-400" aria-label="Loading" />}
               </div>
             </div>
@@ -245,7 +245,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
                   key={x}
                   onClick={() => setTf(x)}
                   aria-pressed={tf === x}
-                  className={`rounded px-2.5 py-1 font-mono text-xs font-bold transition ${tf === x ? "bg-[#f2b33d] text-[#0e0f12]" : "text-slate-300 hover:text-white"}`}
+                  className={`rounded px-2.5 py-1 font-mono text-xs font-bold transition ${tf === x ? "bg-[#29e6ff] text-[#0b0816]" : "text-slate-300 hover:text-white"}`}
                 >
                   {x}
                 </button>
@@ -270,7 +270,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
           )}
 
           {error && !view ? (
-            <p className="py-16 text-center text-sm text-[#f58a93]">Couldn&apos;t reach the exchange. Retrying shortly.</p>
+            <p className="py-16 text-center text-sm text-[#ff85ad]">Couldn&apos;t reach the exchange. Retrying shortly.</p>
           ) : view ? (
             <CandleChart candles={view.candles} />
           ) : (
@@ -280,7 +280,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
 
         <div className="flex flex-col gap-5">
           {isCro && (
-            <div className="flex flex-col gap-3 rounded-lg border border-[#3dd68c]/30 bg-[#3dd68c]/[0.05] p-4">
+            <div className="flex flex-col gap-3 rounded-lg border border-[#3dff9a]/30 bg-[#3dff9a]/[0.05] p-4">
               <span className="font-display text-[11px] font-bold tracking-normal text-slate-300">CEX vs on-chain CRO</span>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-0.5">
@@ -294,12 +294,12 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
               </div>
               {gap !== null && (
                 <p className="text-xs leading-relaxed text-slate-300">
-                  On-chain is <span className={gap >= 0 ? "text-[#3dd68c]" : "text-[#f0616d]"}>{fmtPct(gap)}</span> vs the exchange.
+                  On-chain is <span className={gap >= 0 ? "text-[#3dff9a]" : "text-[#ff3d7f]"}>{fmtPct(gap)}</span> vs the exchange.
                 </p>
               )}
               <button
                 onClick={onSwap}
-                className="flex items-center justify-center gap-2 rounded-md bg-[#3dd68c] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#0e0f12] hover:bg-[#6ee7a8]"
+                className="flex items-center justify-center gap-2 rounded-md bg-[#3dff9a] px-4 py-2.5 font-display text-xs font-bold tracking-normal text-[#0b0816] hover:bg-[#8cffc0]"
               >
                 <ArrowLeftRight size={15} /> Swap CRO on-chain
               </button>
@@ -317,7 +317,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
         <h2 className="pb-3 font-display text-sm font-bold tracking-normal text-white">Recent trades</h2>
         <div className="max-h-72 overflow-y-auto">
           <table className="w-full font-mono text-xs tabular-nums">
-            <thead className="sticky top-0 bg-[#16181d] text-left font-display text-[11px] tracking-normal text-slate-400">
+            <thead className="sticky top-0 bg-[#171230] text-left font-display text-[11px] tracking-normal text-slate-400">
               <tr>
                 <th className="py-2 font-bold">Time</th>
                 <th className="py-2 text-right font-bold">Price</th>
@@ -328,7 +328,7 @@ export function ProTerminal({ croDexPrice, onSwap }: { croDexPrice: number | nul
               {(view?.trades ?? []).map((x) => (
                 <tr key={x.id} className="border-t border-white/5">
                   <td className="py-1.5 text-slate-400">{new Date(x.t).toLocaleTimeString([], { hour12: false })}</td>
-                  <td className={`py-1.5 text-right ${x.side === "buy" ? "text-[#3dd68c]" : "text-[#f0616d]"}`}>{fmtPrice(x.price)}</td>
+                  <td className={`py-1.5 text-right ${x.side === "buy" ? "text-[#3dff9a]" : "text-[#ff3d7f]"}`}>{fmtPrice(x.price)}</td>
                   <td className="py-1.5 text-right text-slate-200">{fmtCompact(x.size)}</td>
                 </tr>
               ))}
