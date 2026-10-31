@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { UUID_RE } from "@/lib/cdc"
-import { MIN_STAKE, closePick, leaderboard, openPick, portfolioFor } from "@/lib/predict-picks"
+import { FCM_SYMBOL_RE } from "@/lib/fcm"
+import { MIN_STAKE, closePick, leaderboard, openHourlyPick, openPick, portfolioFor } from "@/lib/predict-picks"
 import { rateLimit } from "@/lib/rate-limit"
 import { sessionAddress } from "@/lib/session"
 
@@ -50,6 +51,16 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "invalid_pick" }, { status: 400 })
       }
       const result = await openPick(wallet, { eventId: body.eventId, contractId: body.contractId, side, stake })
+      return NextResponse.json(result, { status: result.ok ? 200 : 409 })
+    }
+    if (body?.action === "open-hourly") {
+      const stake = Number(body.stake)
+      const side = body.side
+      const symbol = String(body.symbol ?? "")
+      if (!FCM_SYMBOL_RE.test(symbol) || (side !== "yes" && side !== "no") || !Number.isInteger(stake) || stake < MIN_STAKE || stake > 100_000) {
+        return NextResponse.json({ error: "invalid_pick" }, { status: 400 })
+      }
+      const result = await openHourlyPick(wallet, { symbol, side, stake })
       return NextResponse.json(result, { status: result.ok ? 200 : 409 })
     }
     if (body?.action === "close") {
