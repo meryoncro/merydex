@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { pool } from "@/lib/db"
 import { sessionAddress } from "@/lib/session"
+import { SCORE_SQL } from "@/lib/score"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -8,7 +9,6 @@ export const dynamic = "force-dynamic"
 const ADDRESS_RE = /^0x[a-f0-9]{40}$/
 const MAX_WATCHLIST = 100
 const MAX_FOLLOWING = 200
-const SCORE_SQL = `(COUNT(*) * 10 + FLOOR(COALESCE(SUM(usd_value), 0)))::int`
 const NATIVE = `('CRO','WCRO')`
 const SIDE_SQL = `CASE WHEN UPPER(from_symbol) IN ${NATIVE} THEN 'buy' WHEN UPPER(to_symbol) IN ${NATIVE} THEN 'sell' ELSE 'swap' END`
 

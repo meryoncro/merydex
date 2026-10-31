@@ -286,7 +286,7 @@ export function Leaderboard({ account, onConnect, onOpenTrader }: { account: str
           })}
         </ol>
       )}
-      <p className="mt-3 text-[13px] leading-5 text-slate-400">DegenScore = 10 points per swap + 1 point per $1 traded on MCRO.FUN.</p>
+      <p className="mt-3 text-[13px] leading-5 text-slate-400">DegenScore = 10 points per swap + 1 point per $1 traded on MCRO.FUN. Trades in <span className="font-bold text-[#f2b84b]">$MERY</span> score 2x.</p>
     </div>
   )
 }
