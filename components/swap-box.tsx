@@ -135,23 +135,23 @@ export function SwapBox(props: SwapBoxProps) {
               ? "No route right now"
               : `${mode === "buy" ? "Buy" : "Sell"} ${token.symbol}`
   const disabled = !!account && (!token || !validAmount || insufficient || swapping || (!!quoteError && quoteFresh))
-  const accent = mode === "buy" ? "#d6ff2b" : "#ff2d95"
+  const accent = mode === "buy" ? "#3dff9a" : "#ff3d7f"
 
   return (
-    <div className="rounded-2xl border border-[#22e4ff]/25 bg-[#130a1f]/90 p-4 backdrop-blur sm:p-5" id="swap-box">
+    <div className="rounded-2xl border border-[#29e6ff]/25 bg-[#171230]/90 p-4 backdrop-blur sm:p-5" id="swap-box">
       <div className="mb-4 flex items-center justify-between gap-2">
-        <div className="grid flex-1 grid-cols-2 gap-1 rounded-xl border border-white/10 bg-[#0d0818] p-1" role="tablist" aria-label="Trade direction">
+        <div className="grid flex-1 grid-cols-2 gap-1 arcade-panel rounded-xl border border-white/15 bg-[#110d22] p-1" role="tablist" aria-label="Trade direction">
           {(["buy", "sell"] as const).map((m) => {
             const selected = mode === m
-            const c = m === "buy" ? "#d6ff2b" : "#ff2d95"
+            const c = m === "buy" ? "#3dff9a" : "#ff3d7f"
             return (
               <button
                 key={m}
                 role="tab"
                 aria-selected={selected}
                 onClick={() => onModeChange(m)}
-                className="rounded-lg py-2 font-display text-sm font-black uppercase tracking-wider transition"
-                style={{ backgroundColor: selected ? c : "transparent", color: selected ? "#0a0510" : "#cbd5e1" }}
+                className="rounded-lg py-2 font-display text-sm font-bold tracking-normal transition"
+                style={{ backgroundColor: selected ? c : "transparent", color: selected ? "#0b0816" : "#cbd5e1" }}
               >
                 {m}
               </button>
@@ -162,18 +162,18 @@ export function SwapBox(props: SwapBoxProps) {
           onClick={() => setShowSettings((s) => !s)}
           aria-expanded={showSettings}
           aria-label="Slippage settings"
-          className={`rounded-lg border p-2.5 transition ${showSettings ? "border-[#22e4ff]/60 text-[#22e4ff]" : "border-white/10 text-slate-300 hover:text-white"}`}
+          className={`rounded-lg border p-2.5 transition ${showSettings ? "border-[#29e6ff]/60 text-[#29e6ff]" : "border-white/10 text-slate-300 hover:text-white"}`}
         >
           <Settings2 size={16} />
         </button>
       </div>
 
       {showSettings && (
-        <div className="mb-3 flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-[#0d0818] px-3 py-2.5">
-          <span className="font-display text-xs font-bold uppercase tracking-wider text-slate-300">Max slippage</span>
+        <div className="mb-3 flex items-center justify-between gap-2 arcade-panel rounded-xl border border-white/15 bg-[#110d22] px-3 py-2.5">
+          <span className="font-display text-xs font-bold tracking-normal text-slate-300">Max slippage</span>
           <div className="flex gap-1">
             {SLIPPAGE_PRESETS.map((s) => (
-              <Chip key={s} selected={slippage === s} onClick={() => setSlippage(s)} color="#22e4ff">{s}%</Chip>
+              <Chip key={s} selected={slippage === s} onClick={() => setSlippage(s)} color="#29e6ff">{s}%</Chip>
             ))}
           </div>
         </div>
@@ -197,7 +197,7 @@ export function SwapBox(props: SwapBoxProps) {
             const v = e.target.value.replace(",", ".")
             if (/^\d*\.?\d*$/.test(v)) { setAmount(v); setPercent(null) }
           }}
-          className="w-full min-w-0 bg-transparent font-display text-3xl font-black tabular-nums text-white outline-none placeholder:text-slate-600"
+          className="w-full min-w-0 bg-transparent font-display text-3xl font-bold tabular-nums text-white outline-none placeholder:text-slate-600"
         />
       </AmountField>
 
@@ -220,7 +220,7 @@ export function SwapBox(props: SwapBoxProps) {
         <button
           onClick={() => onModeChange(mode === "buy" ? "sell" : "buy")}
           aria-label="Flip buy and sell"
-          className="mt-3 rounded-xl border-4 border-[#130a1f] bg-[#22e4ff] p-2 text-[#06131a] transition hover:rotate-180 hover:bg-[#5cefff]"
+          className="mt-3 rounded-xl border-4 border-[#171230] bg-[#29e6ff] p-2 text-[#0b0816] transition hover:rotate-180 hover:bg-[#8ef3ff]"
         >
           <ArrowDownUp size={16} />
         </button>
@@ -234,13 +234,13 @@ export function SwapBox(props: SwapBoxProps) {
         balancesLoading={balancesLoading}
         onPick={mode === "buy" ? () => setPickerOpen(true) : undefined}
       >
-        <div className="flex min-w-0 items-center gap-2 font-display text-3xl font-black tabular-nums" aria-live="polite">
+        <div className="flex min-w-0 items-center gap-2 font-display text-3xl font-bold tabular-nums" aria-live="polite">
           {!token || !validAmount ? (
             <span className="text-slate-600">0</span>
           ) : out != null ? (
             <span className="truncate text-white">{formatOut(out)}</span>
           ) : quoteError && quoteFresh ? (
-            <span className="text-base text-[#ff2d95]">No route</span>
+            <span className="text-base text-[#ff3d7f]">No route</span>
           ) : (
             <span className="h-8 w-28 animate-pulse rounded bg-white/10" aria-label="Fetching price" />
           )}
@@ -249,7 +249,7 @@ export function SwapBox(props: SwapBoxProps) {
       </AmountField>
 
       {token && out != null && rate != null && (
-        <dl className="mt-3 flex flex-col gap-1.5 rounded-xl border border-white/10 bg-[#0d0818] px-3 py-2.5 text-[13px]">
+        <dl className="mt-3 flex flex-col gap-1.5 arcade-panel rounded-xl border border-white/15 bg-[#110d22] px-3 py-2.5 text-[13px]">
           <Row label="Rate">1 {from?.symbol} = {formatOut(rate)} {to?.symbol}</Row>
           <Row label={`Min. received (${slippage}% slippage)`}>{formatOut(minOut ?? 0)} {to?.symbol}</Row>
 
@@ -260,8 +260,8 @@ export function SwapBox(props: SwapBoxProps) {
       <button
         onClick={submit}
         disabled={disabled}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-4 font-display text-base font-black uppercase tracking-wider text-[#0a0510] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-        style={{ backgroundColor: account ? accent : "#22e4ff" }}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-4 font-display text-base font-bold tracking-normal text-[#0b0816] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+        style={{ backgroundColor: account ? accent : "#29e6ff" }}
       >
         {swapping && <Loader2 size={16} className="animate-spin" />}
         {label}
@@ -292,8 +292,8 @@ function AmountField({ label, token, balance, account, balancesLoading, onPick, 
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0d0818] p-4 transition focus-within:border-[#22e4ff]/50">
-      <div className="mb-2 flex items-center justify-between font-display text-xs uppercase tracking-wider text-slate-400">
+    <div className="arcade-panel rounded-xl border border-white/15 bg-[#110d22] p-4 transition focus-within:border-[#29e6ff]/50">
+      <div className="mb-2 flex items-center justify-between font-display text-xs tracking-normal text-slate-400">
         <span>{label}</span>
         <span>
           Balance{" "}
@@ -314,10 +314,10 @@ function TokenButton({ token, onClick }: { token: Token | null; onClick?: () => 
   const content = token ? (
     <>
       <TokenLogo token={token} />
-      <span className="font-display text-sm font-black">{token.symbol}</span>
+      <span className="font-display text-sm font-bold">{token.symbol}</span>
     </>
   ) : (
-    <span className="font-display text-sm font-black">Select token</span>
+    <span className="font-display text-sm font-bold">Select token</span>
   )
   if (!onClick) {
     return <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/5 py-1.5 pl-1.5 pr-3">{content}</div>
@@ -325,7 +325,7 @@ function TokenButton({ token, onClick }: { token: Token | null; onClick?: () => 
   return (
     <button
       onClick={onClick}
-      className={`flex shrink-0 items-center gap-2 rounded-full py-1.5 pr-2.5 transition ${token ? "bg-white/10 pl-1.5 hover:bg-white/15" : "bg-[#22e4ff] pl-3 text-[#06131a] hover:bg-[#5cefff]"}`}
+      className={`flex shrink-0 items-center gap-2 rounded-full py-1.5 pr-2.5 transition ${token ? "bg-white/10 pl-1.5 hover:bg-white/15" : "bg-[#29e6ff] pl-3 text-[#0b0816] hover:bg-[#8ef3ff]"}`}
       aria-label={token ? `Change token, currently ${token.symbol}` : "Select token"}
     >
       {content}
@@ -342,7 +342,7 @@ function TokenLogo({ token, size = 28 }: { token: Token; size?: number }) {
     return <img src={src} alt="" width={size} height={size} className="shrink-0 rounded-full bg-white/5 object-cover" style={{ width: size, height: size }} onError={() => setFailed(true)} />
   }
   return (
-    <span className="flex shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-[11px] font-black" style={{ width: size, height: size }}>
+    <span className="flex shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-[11px] font-bold" style={{ width: size, height: size }}>
       {token.symbol.slice(0, 2)}
     </span>
   )
@@ -367,15 +367,15 @@ function TokenPickerDialog({ tokens, balances, onClose, onSelect }: { tokens: To
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 p-4 pt-20 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true" aria-label="Select a token">
-      <div className="flex max-h-[75vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-[#22e4ff]/30 bg-[#0d0818]" onClick={(e) => e.stopPropagation()}>
+      <div className="flex max-h-[75vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-[#29e6ff]/30 bg-[#110d22]" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-white/10 p-4">
-          <h2 className="font-display text-lg font-black uppercase">Select a token</h2>
+          <h2 className="font-display text-lg font-bold">Select a token</h2>
           <button onClick={onClose} className="rounded-md p-1.5 text-slate-300 hover:bg-white/5 hover:text-white" aria-label="Close">
             <X size={18} />
           </button>
         </div>
         <div className="p-3">
-          <label className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 focus-within:border-[#22e4ff]/60">
+          <label className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 focus-within:border-[#29e6ff]/60">
             <Search size={15} className="shrink-0 text-slate-400" aria-hidden="true" />
             <span className="sr-only">Search tokens</span>
             <input
@@ -397,7 +397,7 @@ function TokenPickerDialog({ tokens, balances, onClose, onSelect }: { tokens: To
                 <button onClick={() => onSelect(t)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition hover:bg-white/5">
                   <TokenLogo token={t} size={34} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-display text-sm font-black">{t.symbol}</span>
+                    <span className="block truncate font-display text-sm font-bold">{t.symbol}</span>
                     <span className="block truncate text-xs text-slate-400">{t.name}</span>
                   </span>
                   {bal > 0 && <span className="shrink-0 font-display text-xs tabular-nums text-slate-300">{formatBalance(bal)}</span>}
@@ -418,7 +418,7 @@ function Chip({ selected, onClick, color, disabled, children }: { selected: bool
       onClick={onClick}
       disabled={disabled}
       aria-pressed={selected}
-      className="rounded-md border px-2.5 py-1.5 font-display text-xs font-black uppercase tabular-nums transition disabled:opacity-40"
+      className="rounded-md border px-2.5 py-1.5 font-display text-xs font-bold tabular-nums transition disabled:opacity-40"
       style={{ borderColor: selected ? color : "rgba(255,255,255,0.1)", backgroundColor: selected ? `${color}1f` : "transparent", color: selected ? color : "#94a3b8" }}
     >
       {children}

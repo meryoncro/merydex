@@ -162,63 +162,100 @@
   }
 }
 
-/* ---------- Arcade theme ---------- */
+/* ---------- mcro.fun theme ---------- */
 @theme inline {
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-pixel), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-pixel), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
-  /* Neon text glows */
-  .neon-pink {
-    text-shadow: 0 0 5px rgba(255, 45, 149, 0.9), 0 0 18px rgba(255, 45, 149, 0.55);
+  /* Neon sign glow on large display headings, tinted by the text's own color */
+  h1.font-display,
+  h2.font-display {
+    text-shadow: 0 0 6px currentColor, 0 0 22px color-mix(in srgb, currentColor 55%, transparent);
   }
-  .neon-cyan {
-    text-shadow: 0 0 5px rgba(34, 228, 255, 0.9), 0 0 18px rgba(34, 228, 255, 0.5);
-  }
-  .neon-lime {
-    text-shadow: 0 0 5px rgba(214, 255, 43, 0.9), 0 0 18px rgba(214, 255, 43, 0.5);
+  .neon-text {
+    text-shadow: 0 0 6px currentColor, 0 0 18px color-mix(in srgb, currentColor 50%, transparent);
   }
 
-  /* Neon box glows */
-  .glow-pink {
-    box-shadow: 0 0 0 1px rgba(255, 45, 149, 0.5), 0 0 22px rgba(255, 45, 149, 0.32),
-      inset 0 0 22px rgba(255, 45, 149, 0.06);
+  /* Arcade push-button: hard drop + neon halo, collapses on press */
+  .arcade-btn {
+    border: 2px solid #0b0816;
+    box-shadow: 0 4px 0 #0a6f86, 0 4px 0 2px #0b0816, 0 0 22px rgba(41, 230, 255, 0.45);
+    transform: translateY(0);
+    transition: transform 80ms ease-out, box-shadow 120ms ease-out, background-color 150ms;
   }
-  .glow-cyan {
-    box-shadow: 0 0 0 1px rgba(34, 228, 255, 0.5), 0 0 22px rgba(34, 228, 255, 0.28),
-      inset 0 0 22px rgba(34, 228, 255, 0.06);
+  .arcade-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #0a6f86, 0 5px 0 2px #0b0816, 0 0 34px rgba(41, 230, 255, 0.7);
   }
-  .glow-lime {
-    box-shadow: 0 0 0 1px rgba(214, 255, 43, 0.55), 0 0 22px rgba(214, 255, 43, 0.3),
-      inset 0 0 18px rgba(214, 255, 43, 0.06);
-  }
-
-  /* Synthwave grid */
-  .arcade-grid {
-    background-image: linear-gradient(rgba(34, 228, 255, 0.11) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 45, 149, 0.09) 1px, transparent 1px);
-    background-size: 46px 46px;
+  .arcade-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #0a6f86, 0 1px 0 2px #0b0816, 0 0 14px rgba(41, 230, 255, 0.5);
   }
 
-  /* CRT scanlines overlay */
-  .arcade-scanlines::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 45;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.16) 0px,
-      rgba(0, 0, 0, 0.16) 1px,
-      transparent 1px,
-      transparent 3px
-    );
+  /* Cabinet panel: neon tube outline glowing magenta + cyan */
+  .arcade-panel {
+    border-width: 2px;
+    border-color: rgba(255, 47, 179, 0.55) !important;
+    box-shadow:
+      0 0 0 1px rgba(41, 230, 255, 0.12),
+      0 0 18px rgba(255, 47, 179, 0.28),
+      inset 0 0 24px rgba(255, 47, 179, 0.06),
+      4px 4px 0 #05030b;
+  }
+
+  .sticker {
+    border: 2px solid #0b0816;
+    box-shadow: 2px 2px 0 #0b0816, 0 0 14px rgba(255, 47, 179, 0.35);
+  }
+
+  /* Arcade room lighting behind everything: magenta + cyan spill and a perspective floor grid */
+  .arcade-lights {
+    background-color: #0b0816;
+    background-image:
+      radial-gradient(60% 45% at 12% -5%, rgba(255, 47, 179, 0.22), transparent 70%),
+      radial-gradient(55% 40% at 92% 0%, rgba(41, 230, 255, 0.18), transparent 70%),
+      radial-gradient(70% 35% at 50% 110%, rgba(255, 47, 179, 0.14), transparent 70%);
+    background-attachment: fixed;
+  }
+
+  /* Physical arcade push-button: hard drop shadow that collapses on press */
+  .arcade-btn {
+    border: 2px solid #0b0816;
+    box-shadow: 0 4px 0 #0a6f86, 0 4px 0 2px #0b0816;
+    transform: translateY(0);
+    transition: transform 80ms ease-out, box-shadow 80ms ease-out, background-color 150ms;
+  }
+  .arcade-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #0a6f86, 0 5px 0 2px #0b0816;
+  }
+  .arcade-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #0a6f86, 0 1px 0 2px #0b0816;
+  }
+
+  /* Cabinet panel: chunky outline + offset shadow, no glow */
+  .arcade-panel {
+    border-width: 2px;
+    box-shadow: 4px 4px 0 #05030b;
+  }
+
+  .sticker {
+    border: 2px solid #0b0816;
+    box-shadow: 2px 2px 0 #0b0816;
+  }
+
+  .pixel-dots {
+    background-image: radial-gradient(rgba(255, 47, 179, 0.14) 1px, transparent 1px);
+    background-size: 14px 14px;
   }
 
   .animate-grid-scroll {

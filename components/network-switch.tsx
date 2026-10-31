@@ -24,10 +24,10 @@ export function NetworkSwitch({ onUnavailable }: NetworkSwitchProps) {
         aria-checked="true"
         aria-label="Cronos Mainnet"
         title="Cronos Mainnet"
-        className="flex items-center gap-2 rounded bg-[#d6ff2b]/10 px-2 py-1.5 ring-1 ring-[#d6ff2b]/40 transition"
+        className="flex items-center gap-2 rounded bg-[#3dff9a]/10 px-2 py-1.5 ring-1 ring-[#3dff9a]/40 transition"
       >
         <img src="/chains/cronos.png" alt="" width={20} height={20} className="h-5 w-5 rounded-full" />
-        <span className="hidden font-display text-xs font-bold uppercase tracking-wider text-[#d6ff2b] lg:inline">Cronos</span>
+        <span className="hidden font-display text-xs font-bold tracking-normal text-[#3dff9a] lg:inline">Cronos</span>
       </button>
       <button
         type="button"
@@ -39,7 +39,7 @@ export function NetworkSwitch({ onUnavailable }: NetworkSwitchProps) {
         className="flex items-center gap-2 rounded px-2 py-1.5 opacity-50 grayscale transition hover:opacity-90 hover:grayscale-0 focus-visible:opacity-90 focus-visible:grayscale-0"
       >
         <img src="/chains/ethereum.svg" alt="" width={20} height={20} className="h-5 w-5" />
-        <span className="hidden font-display text-xs font-bold uppercase tracking-wider text-slate-300 lg:inline">ETH</span>
+        <span className="hidden font-display text-xs font-bold tracking-normal text-slate-300 lg:inline">ETH</span>
       </button>
     </div>
   )

@@ -6,19 +6,20 @@ import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
 import { SiteHero } from "@/components/site/site-hero"
 import { SiteSteps } from "@/components/site/site-steps"
+import { SiteTicker } from "@/components/site/site-ticker"
 import { APP_URL, SITE_URL, isSiteHost } from "@/lib/domains"
 
 export const metadata: Metadata = {
-  title: "MCRO.FUN - The Cronos Memecoin Arcade",
+  title: "mcro.fun - Swap Cronos memecoins the easy way",
   description:
-    "MCRO.FUN turns Cronos trading into an arcade: best-route memecoin swaps, a pro market terminal, prediction markets, PvP arena and a 30% referral program. Non-custodial.",
+    "Best-route memecoin swaps on Cronos, straight from your wallet. Plus a trading view, predictions for fun, NFT battles and 30% referral rewards. Non-custodial.",
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: "MCRO.FUN - The Cronos Memecoin Arcade",
-    description: "Swap, predict and battle on Cronos. Insert coin at app.mcro.fun.",
+    title: "mcro.fun - Swap Cronos memecoins the easy way",
+    description: "Best-route memecoin swaps on Cronos, straight from your wallet.",
     url: SITE_URL,
-    siteName: "MCRO.FUN",
-    images: [{ url: "/images/site-hero.png", width: 1200, height: 900, alt: "Neon arcade cabinet showing a rising trading chart" }],
+    siteName: "mcro.fun",
+    images: [{ url: "/images/mcro-logo.png", width: 512, height: 512, alt: "mcro.fun smiley coin logo" }],
     type: "website",
   },
 }
@@ -29,11 +30,11 @@ export default async function SitePage() {
   const appHref = isSiteHost(host) ? APP_URL : "/"
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#0a0510] text-slate-100">
-      <div aria-hidden className="pointer-events-none fixed inset-0 arcade-grid opacity-40" />
+    <div className="arcade-lights min-h-screen overflow-x-hidden text-slate-100">
       <SiteHeader appHref={appHref} />
-      <main className="relative z-10">
+      <main>
         <SiteHero appHref={appHref} />
+        <SiteTicker />
         <SiteFeatures />
         <SiteSteps appHref={appHref} />
         <SiteFaq />
