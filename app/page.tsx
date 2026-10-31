@@ -12,6 +12,7 @@ import { fetchBalances, formatBalance, type BalanceMap } from "@/lib/balances"
 import { fetchCollection, fetchListings, fetchWalletNfts, buyListing, ensureListingApproval, listingUrl, croFormat, NATIVE_CURRENCY, MERY_SLUG, ARENA_COLLECTIONS, isArenaCollection, fetchArenaNfts, arenaNftName, type ArenaCollection, type ArenaNft, type Collection, type Listing, type WalletNft } from "@/lib/ebisus"
 import { joinArena, leaveArena, getMatch, getArenaStats, getArenaHistory, shortAddr, RPS_MOVES, type ArenaMatch, type ArenaStats, type ArenaMode, type RpsMove, type NftRef } from "@/lib/arena"
 import { DegenArcade, ScoreBoost } from "@/components/degen-arcade"
+import { SwapBox, type SwapMode, type SwapSizing } from "@/components/swap-box"
 import { ReferralPanel, useReferralCapture } from "@/components/referral-panel"
 import { ProTerminal } from "@/components/pro-terminal"
 import { PredictHub } from "@/components/predict-hub"
@@ -378,13 +379,6 @@ export default function Page() {
     }
   }
 
-  const cro = getTokenBySymbol("CRO")
-  const arcadeBuy = (token: Token, croAmount: string) => {
-    if (cro) swapNow(cro, token, { amount: croAmount }, `buy:${token.address.toLowerCase()}`)
-  }
-  const arcadeSell = (token: Token, percent: number) => {
-    if (cro) swapNow(token, cro, { percent }, `sell:${token.address.toLowerCase()}`)
-  }
 
   return (
     <LogoContext.Provider value={logos}>
@@ -410,7 +404,7 @@ export default function Page() {
       <Ticker rows={marketRows} />
 
       <div className="relative z-10 mx-auto max-w-[1320px] px-5 py-8 lg:px-8 lg:py-12">
-        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} pendingTrade={pendingTrade} croBalance={balances.native} slippage={slippage} setSlippage={setSlippage} onBuy={arcadeBuy} onSell={arcadeSell} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
+        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} balances={balances} balancesLoading={balancesLoading} slippage={slippage} setSlippage={setSlippage} onSwap={(from, to, sizing) => swapNow(from, to, sizing, `swap:${to.address.toLowerCase()}`)} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
           <section className="mb-12 flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div>
               <Eyebrow color="pink">Insert coin · Cronos ecosystem</Eyebrow>
@@ -457,25 +451,38 @@ interface SwapPanelProps {
   tokens: Token[]
   account: string | null
   swapping: boolean
-  pendingTrade: string | null
-  croBalance: string | undefined
+  balances: BalanceMap
+  balancesLoading: boolean
   slippage: string
   setSlippage: (value: string) => void
-  onBuy: (token: Token, croAmount: string) => void
-  onSell: (token: Token, percent: number) => void
+  onSwap: (from: Token, to: Token, sizing: SwapSizing) => void
   onConnect: () => void
 }
 
-function SwapPanel(props: SwapPanelProps) {
-  return <section className="mx-auto grid max-w-7xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0">
-    <div className="mb-8 text-center">
-      <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-[#ff2d95]/30 bg-[#ff2d95]/10 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]"><ArrowDownUp size={13} /> MCRO.FUN smart routing</div>
-      <h1 className="font-display text-4xl font-black uppercase tracking-tight">One-click <span className="text-[#22e4ff] neon-cyan">trading</span></h1>
-      <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-6 text-slate-300">Set your size once. Every Buy or Sell grabs a fresh best-route quote and sends it straight to your wallet to confirm.</p>
+function SwapPanel({ tokens, account, swapping, balances, balancesLoading, slippage, setSlippage, onSwap, onConnect }: SwapPanelProps) {
+  const cro = tokens.find((t) => t.isNative)
+  const [token, setToken] = useState<Token | null>(() => tokens.find((t) => isMery(t.address)) ?? tokens.find((t) => !t.isNative) ?? null)
+  const [mode, setMode] = useState<SwapMode>("buy")
+  const pick = (t: Token, m: SwapMode) => {
+    setToken(t)
+    setMode(m)
+    if (window.matchMedia("(max-width: 1023px)").matches) document.getElementById("swap-box")?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+  return <section className="mx-auto grid max-w-7xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+    <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+      <div className="mb-6 text-center lg:text-left">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-[#ff2d95]/30 bg-[#ff2d95]/10 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-[#ff2d95]"><ArrowDownUp size={13} /> MCRO.FUN smart routing</div>
+        <h1 className="text-balance font-display text-4xl font-black uppercase tracking-tight">Swap in <span className="text-[#22e4ff] neon-cyan">seconds</span></h1>
+        <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-6 text-slate-300 lg:mx-0">Pick a token, enter an amount, check what you get, then confirm in your wallet. Nothing is sent until you approve it.</p>
+      </div>
     </div>
-    <DegenArcade {...props} />
-  </div>
-    <LiveChat room="swap" title="Traders chat" account={props.account} onConnect={props.onConnect} />
+    <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      {cro && <SwapBox tokens={tokens} cro={cro} token={token} mode={mode} onTokenChange={setToken} onModeChange={setMode} account={account} balances={balances} balancesLoading={balancesLoading} swapping={swapping} slippage={slippage} setSlippage={setSlippage} onSwap={onSwap} onConnect={onConnect} />}
+      <LiveChat room="swap" title="Traders chat" account={account} onConnect={onConnect} />
+    </div>
+    <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+      <DegenArcade tokens={tokens} account={account} swapping={swapping} selectedAddress={token?.address.toLowerCase() ?? null} onPick={pick} onConnect={onConnect} />
+    </div>
   </section>
 }
 
