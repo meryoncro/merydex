@@ -162,63 +162,16 @@
   }
 }
 
-/* ---------- Arcade theme ---------- */
+/* ---------- mcro.fun theme ---------- */
 @theme inline {
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
-  }
-
-  /* Neon text glows */
-  .neon-pink {
-    text-shadow: 0 0 5px rgba(255, 45, 149, 0.9), 0 0 18px rgba(255, 45, 149, 0.55);
-  }
-  .neon-cyan {
-    text-shadow: 0 0 5px rgba(34, 228, 255, 0.9), 0 0 18px rgba(34, 228, 255, 0.5);
-  }
-  .neon-lime {
-    text-shadow: 0 0 5px rgba(214, 255, 43, 0.9), 0 0 18px rgba(214, 255, 43, 0.5);
-  }
-
-  /* Neon box glows */
-  .glow-pink {
-    box-shadow: 0 0 0 1px rgba(255, 45, 149, 0.5), 0 0 22px rgba(255, 45, 149, 0.32),
-      inset 0 0 22px rgba(255, 45, 149, 0.06);
-  }
-  .glow-cyan {
-    box-shadow: 0 0 0 1px rgba(34, 228, 255, 0.5), 0 0 22px rgba(34, 228, 255, 0.28),
-      inset 0 0 22px rgba(34, 228, 255, 0.06);
-  }
-  .glow-lime {
-    box-shadow: 0 0 0 1px rgba(214, 255, 43, 0.55), 0 0 22px rgba(214, 255, 43, 0.3),
-      inset 0 0 18px rgba(214, 255, 43, 0.06);
-  }
-
-  /* Synthwave grid */
-  .arcade-grid {
-    background-image: linear-gradient(rgba(34, 228, 255, 0.11) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 45, 149, 0.09) 1px, transparent 1px);
-    background-size: 46px 46px;
-  }
-
-  /* CRT scanlines overlay */
-  .arcade-scanlines::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 45;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.16) 0px,
-      rgba(0, 0, 0, 0.16) 1px,
-      transparent 1px,
-      transparent 3px
-    );
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
 
   .animate-grid-scroll {

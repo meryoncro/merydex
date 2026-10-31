@@ -1,54 +1,30 @@
-import Image from "next/image"
+import { ShieldCheck } from "lucide-react"
 import { LaunchButton } from "./launch-button"
-
-const ticker = ["Best-route swaps", "Pro terminal", "Prediction markets", "Hourly crypto rounds", "PvP arena", "NFT gallery", "30% referral share", "Non-custodial"]
+import { SwapPreview } from "./swap-preview"
 
 export function SiteHero({ appHref }: { appHref: string }) {
   return (
-    <section id="top" className="relative">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 pb-14 pt-12 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:px-8">
-        <div className="flex flex-col items-start gap-6">
-          <p className="flex items-center gap-2 rounded-full border border-[#c6ff3a]/40 bg-[#c6ff3a]/10 px-3 py-1 font-display text-xs font-bold uppercase tracking-widest text-[#c6ff3a]">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#c6ff3a] animate-arcade-blink" />
-            Live on Cronos
-          </p>
-          <h1 className="font-display text-4xl font-bold uppercase leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Trade memecoins <span className="text-[#22e4ff] neon-cyan">like an arcade game</span>
-          </h1>
-          <p className="max-w-xl text-base leading-relaxed text-slate-300 text-pretty sm:text-lg">
-            MCRO.FUN is a neon trading arcade for the Cronos ecosystem. Swap memecoins on the best route, read real exchange order books, call prediction markets and battle other players, all from your own wallet.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <LaunchButton href={appHref} label="Insert coin" />
-            <a href="#features" className="rounded-md border border-[#22e4ff]/40 px-6 py-3.5 font-display text-sm font-bold uppercase tracking-wider text-[#22e4ff] transition hover:bg-[#22e4ff]/10">
-              See what&apos;s inside
-            </a>
-          </div>
+    <section id="top" className="mx-auto grid max-w-[1120px] items-center gap-12 px-5 pb-20 pt-14 md:pt-24 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+      <div className="flex flex-col items-start gap-6">
+        <p className="text-sm text-slate-400">Built for the Cronos community</p>
+        <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight text-balance sm:text-5xl lg:text-[56px]">
+          The easy way to swap Cronos memecoins.
+        </h1>
+        <p className="max-w-lg text-lg leading-relaxed text-slate-400 text-pretty">
+          Pick a token, see the price you&apos;ll get, and confirm in your wallet. We find the best route across Cronos DEXs so you don&apos;t have to.
+        </p>
+        <div className="flex flex-wrap items-center gap-4">
+          <LaunchButton href={appHref} label="Start swapping" />
+          <a href="#how" className="text-base font-medium text-slate-300 underline-offset-4 transition hover:text-white hover:underline">
+            How it works
+          </a>
         </div>
-        <div className="relative overflow-hidden rounded-xl border border-[#ff2d95]/30 glow-pink">
-          <Image
-            src="/images/site-hero.png"
-            alt="Neon arcade cabinet with a rising trading chart on its screen"
-            width={1200}
-            height={900}
-            priority
-            className="h-auto w-full object-cover"
-          />
-          <p aria-hidden className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-md bg-[#0a0510]/80 px-4 py-1.5 font-display text-sm font-bold uppercase tracking-[0.3em] text-[#c6ff3a] neon-lime animate-arcade-blink">
-            Insert coin
-          </p>
-        </div>
+        <p className="flex items-center gap-2 text-sm text-slate-500">
+          <ShieldCheck size={16} aria-hidden className="text-[#3dd68c]" />
+          Non-custodial. Your keys never leave your wallet.
+        </p>
       </div>
-      <div className="overflow-hidden border-y border-[#22e4ff]/15 bg-[#130a1f]/80 py-3" aria-label="Platform features">
-        <ul className="flex w-max gap-10 animate-marquee">
-          {[...ticker, ...ticker].map((t, i) => (
-            <li key={i} aria-hidden={i >= ticker.length} className="flex items-center gap-10 whitespace-nowrap font-display text-xs font-bold uppercase tracking-widest text-slate-300">
-              {t}
-              <span aria-hidden className="text-[#ff2d95]">{"//"}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <SwapPreview />
     </section>
   )
 }

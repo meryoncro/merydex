@@ -1,31 +1,32 @@
+import Image from "next/image"
 import { LaunchButton } from "./launch-button"
 
 const steps = [
-  { title: "Open the app", body: "Head to app.mcro.fun. The info site never asks for your wallet." },
-  { title: "Connect your wallet", body: "Use any Cronos-compatible wallet and sign once to start your session. Your keys never leave your wallet." },
-  { title: "Pick a mode and play", body: "Swap, predict, battle or invite friends. Every trade is signed by you and settles on-chain." },
+  { title: "Open the app", body: "Go to app.mcro.fun. This page never asks for your wallet." },
+  { title: "Connect your wallet", body: "Any Cronos wallet works. You sign once to start, and your keys stay with you." },
+  { title: "Swap", body: "Choose the tokens, check the quote and confirm. It settles on-chain in seconds." },
 ]
 
 export function SiteSteps({ appHref }: { appHref: string }) {
   return (
-    <section id="how" className="scroll-mt-20 border-y border-[#22e4ff]/15 bg-[#130a1f]/60">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-5 py-20 lg:px-8">
-        <div className="flex max-w-2xl flex-col gap-3">
-          <p className="font-display text-xs font-bold uppercase tracking-widest text-[#22e4ff]">How it works</p>
-          <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-balance sm:text-4xl">Three steps to player one</h2>
-        </div>
-        <ol className="grid gap-4 md:grid-cols-3">
+    <section id="how" className="scroll-mt-20 border-t border-white/10 bg-[#16181d]">
+      <div className="mx-auto flex max-w-[1120px] flex-col gap-12 px-5 py-20 lg:px-8">
+        <h2 className="font-display text-3xl font-bold tracking-tight text-balance">How it works</h2>
+        <ol className="grid gap-8 md:grid-cols-3">
           {steps.map((s, i) => (
-            <li key={s.title} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#0a0510]/70 p-6">
-              <span className="font-display text-sm font-bold uppercase tracking-widest text-[#ff2d95]">Level {i + 1}</span>
-              <h3 className="font-display text-lg font-bold uppercase tracking-wide">{s.title}</h3>
-              <p className="text-sm leading-relaxed text-slate-300">{s.body}</p>
+            <li key={s.title} className="flex flex-col gap-2 border-t border-white/10 pt-5">
+              <span className="text-sm tabular-nums text-[#f2b33d]">Step {i + 1}</span>
+              <h3 className="text-lg font-semibold text-white">{s.title}</h3>
+              <p className="text-sm leading-relaxed text-slate-400">{s.body}</p>
             </li>
           ))}
         </ol>
-        <div className="flex flex-col items-start justify-between gap-4 rounded-xl border border-[#ff2d95]/30 bg-[#ff2d95]/10 p-6 sm:flex-row sm:items-center">
-          <p className="font-display text-lg font-bold uppercase tracking-wide text-balance">Ready? The cabinet is already on.</p>
-          <LaunchButton href={appHref} />
+        <div className="flex flex-col items-start justify-between gap-6 rounded-2xl bg-[#0e0f12] p-6 sm:flex-row sm:items-center sm:p-8">
+          <div className="flex items-center gap-4">
+            <Image src="/images/mcro-logo.png" alt="" width={48} height={48} className="h-12 w-12 rounded-lg" />
+            <p className="font-display text-xl font-semibold text-balance">Ready when you are.</p>
+          </div>
+          <LaunchButton href={appHref} label="Open app" />
         </div>
       </div>
     </section>

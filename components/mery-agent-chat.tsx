@@ -65,12 +65,12 @@ export function MeryAgentChat({ open, onClose }: { open: boolean; onClose: () =>
     <section
       role="dialog"
       aria-label="Ask MERY, the MERYDEX AI guide"
-      className="fixed inset-x-2 bottom-2 z-[66] flex h-[min(620px,calc(100dvh-1rem))] animate-pop-in flex-col overflow-hidden rounded-xl border border-[#f5b82e]/40 bg-[#130a1f] text-slate-100 shadow-[0_0_40px_rgba(245,184,46,.18)] sm:inset-x-auto sm:bottom-24 sm:right-5 sm:h-[min(600px,calc(100dvh-8rem))] sm:w-[400px]"
+      className="fixed inset-x-2 bottom-2 z-[66] flex h-[min(620px,calc(100dvh-1rem))] animate-pop-in flex-col overflow-hidden rounded-xl border border-[#f2b33d]/40 bg-[#16181d] text-slate-100 sm:inset-x-auto sm:bottom-24 sm:right-5 sm:h-[min(600px,calc(100dvh-8rem))] sm:w-[400px]"
     >
-      <header className="flex items-center gap-3 border-b border-white/10 bg-[#0a0510] px-4 py-3">
-        <img src={LOGO} alt="" className="h-9 w-9 [image-rendering:pixelated] drop-shadow-[0_0_8px_rgba(245,184,46,.5)]" />
+      <header className="flex items-center gap-3 border-b border-white/10 bg-[#0e0f12] px-4 py-3">
+        <img src={LOGO} alt="" className="h-9 w-9 [image-rendering:pixelated]" />
         <div className="flex min-w-0 flex-1 flex-col">
-          <h2 className="font-display text-base font-black uppercase tracking-wide text-[#f5b82e]">Ask MERY</h2>
+          <h2 className="font-display text-base font-bold tracking-wide text-[#f2b33d]">Ask MERY</h2>
           <p className="truncate text-xs text-slate-400">Crypto and markets AI guide with live data</p>
         </div>
         {messages.length > 0 && (
@@ -101,7 +101,7 @@ export function MeryAgentChat({ open, onClose }: { open: boolean; onClose: () =>
                 <button
                   key={s}
                   onClick={() => send(s)}
-                  className="rounded-full border border-[#f5b82e]/30 bg-[#f5b82e]/5 px-3 py-1.5 text-left text-sm text-slate-200 transition hover:border-[#f5b82e]/70 hover:bg-[#f5b82e]/10"
+                  className="rounded-full border border-[#f2b33d]/30 bg-[#f2b33d]/5 px-3 py-1.5 text-left text-sm text-slate-200 transition hover:border-[#f2b33d]/70 hover:bg-[#f2b33d]/10"
                 >
                   {s}
                 </button>
@@ -114,23 +114,23 @@ export function MeryAgentChat({ open, onClose }: { open: boolean; onClose: () =>
 
         {status === "submitted" && (
           <div className="flex items-center gap-2 text-sm text-slate-400">
-            <Loader2 size={14} className="animate-spin text-[#f5b82e]" />
+            <Loader2 size={14} className="animate-spin text-[#f2b33d]" />
             Thinking…
           </div>
         )}
 
         {error && (
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-[#ff2d95]/40 bg-[#ff2d95]/10 px-3 py-2 text-sm text-slate-200">
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-[#f0616d]/40 bg-[#f0616d]/10 px-3 py-2 text-sm text-slate-200">
             <span>MERY tripped over a cable. Try again?</span>
-            <button onClick={() => regenerate()} className="shrink-0 font-display font-bold text-[#f5b82e] hover:underline">
+            <button onClick={() => regenerate()} className="shrink-0 font-display font-bold text-[#f2b33d] hover:underline">
               Retry
             </button>
           </div>
         )}
       </div>
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-2 border-t border-white/10 bg-[#0a0510] px-3 py-3">
-        <div className="flex items-end gap-2 rounded-lg border border-white/15 bg-[#130a1f] p-1.5 focus-within:border-[#f5b82e]/60">
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 border-t border-white/10 bg-[#0e0f12] px-3 py-3">
+        <div className="flex items-end gap-2 rounded-lg border border-white/15 bg-[#16181d] p-1.5 focus-within:border-[#f2b33d]/60">
           <label htmlFor="mery-agent-input" className="sr-only">Message MERY</label>
           <textarea
             id="mery-agent-input"
@@ -152,7 +152,7 @@ export function MeryAgentChat({ open, onClose }: { open: boolean; onClose: () =>
               type="submit"
               disabled={!input.trim()}
               aria-label="Send message"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#f5b82e] text-[#0a0510] transition hover:brightness-110 disabled:opacity-40"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#f2b33d] text-[#0e0f12] transition hover:brightness-110 disabled:opacity-40"
             >
               <ArrowUp size={18} />
             </button>
@@ -176,7 +176,7 @@ function ChatMessage({ message }: { message: MeryAgentUIMessage }) {
             <div
               key={i}
               className={`max-w-[88%] whitespace-pre-wrap break-words rounded-lg px-3 py-2 text-sm leading-relaxed ${
-                isUser ? "bg-[#f5b82e] text-[#0a0510]" : "border border-white/10 bg-white/5 text-slate-100"
+                isUser ? "bg-[#f2b33d] text-[#0e0f12]" : "border border-white/10 bg-white/5 text-slate-100"
               }`}
             >
               {part.text}
@@ -187,8 +187,8 @@ function ChatMessage({ message }: { message: MeryAgentUIMessage }) {
         if (!label || !("state" in part)) return null
         const done = part.state === "output-available"
         return (
-          <div key={i} className="flex items-center gap-1.5 rounded-full border border-[#22e4ff]/30 bg-[#22e4ff]/5 px-2.5 py-1 text-xs text-[#22e4ff]">
-            {done ? <span className="h-1.5 w-1.5 rounded-full bg-[#22e4ff]" aria-hidden /> : <Loader2 size={12} className="animate-spin" />}
+          <div key={i} className="flex items-center gap-1.5 rounded-full border border-[#f2b33d]/30 bg-[#f2b33d]/5 px-2.5 py-1 text-xs text-[#f2b33d]">
+            {done ? <span className="h-1.5 w-1.5 rounded-full bg-[#f2b33d]" aria-hidden /> : <Loader2 size={12} className="animate-spin" />}
             {done ? label.done : label.pending}
           </div>
         )

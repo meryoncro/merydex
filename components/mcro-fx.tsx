@@ -11,13 +11,13 @@ type Particle = { x: number; delay: number; dur: number; size: number; spin: num
 type Burst = { id: number; kind: FxKind; label: string; particles: Particle[] }
 
 const BURST_META: Partial<Record<FxKind, { title: string; color: string; dir: "up" | "down" | "out"; ms: number }>> = {
-  buy: { title: "BUY CONFIRMED", color: "#d6ff2b", dir: "up", ms: 2400 },
-  sell: { title: "SOLD", color: "#ff2d95", dir: "down", ms: 2400 },
-  swap: { title: "SWAP DONE", color: "#22e4ff", dir: "up", ms: 2200 },
-  fight: { title: "FIGHT!", color: "#a855f7", dir: "out", ms: 1400 },
-  win: { title: "VICTORY", color: "#f5b82e", dir: "up", ms: 2800 },
-  lose: { title: "K.O.", color: "#ff2d95", dir: "down", ms: 2400 },
-  draw: { title: "DRAW", color: "#22e4ff", dir: "out", ms: 2000 },
+  buy: { title: "BUY CONFIRMED", color: "#3dd68c", dir: "up", ms: 2400 },
+  sell: { title: "SOLD", color: "#f0616d", dir: "down", ms: 2400 },
+  swap: { title: "SWAP DONE", color: "#f2b33d", dir: "up", ms: 2200 },
+  fight: { title: "FIGHT!", color: "#8b93a7", dir: "out", ms: 1400 },
+  win: { title: "VICTORY", color: "#f2b33d", dir: "up", ms: 2800 },
+  lose: { title: "K.O.", color: "#f0616d", dir: "down", ms: 2400 },
+  draw: { title: "DRAW", color: "#f2b33d", dir: "out", ms: 2000 },
 }
 
 const REACTIONS: Record<FxKind, { line: string; anim: string }> = {
@@ -32,7 +32,7 @@ const REACTIONS: Record<FxKind, { line: string; anim: string }> = {
 }
 
 const IDLE_LINES = ["gm degen", "WAGMI", "Buy the dip?", "Check the Leaders board", "Arena is open", "Chart looking spicy", "Click me!", "Not financial advice"]
-const CLICK_LINES = ["Hehe, that tickles", "Go ape something", "I'm the MCRO coin!", "Up only (maybe)", "Insert coin"]
+const CLICK_LINES = ["Hehe, that tickles", "Go ape something", "I'm the MCRO coin!", "Up only (maybe)", "Swap safe out there"]
 
 const MASCOT = 56
 const pick = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)]
@@ -91,8 +91,8 @@ export function McroFx() {
                 />
               ))}
               <div className="absolute inset-x-0 top-[38%] flex flex-col items-center gap-2 px-4 text-center animate-fx-banner">
-                <div className="font-display text-5xl font-black italic tracking-tight sm:text-7xl" style={{ color: meta.color, textShadow: `0 0 18px ${meta.color}, 0 4px 0 #0a0510` }}>{meta.title}</div>
-                {burst.label && <div className="rounded-md border border-white/15 bg-[#0a0510]/85 px-4 py-2 font-display text-sm font-bold text-white sm:text-base">{burst.label}</div>}
+                <div className="font-display text-5xl font-bold italic tracking-tight sm:text-7xl" style={{ color: meta.color, textShadow: `0 0 18px ${meta.color}, 0 4px 0 #0e0f12` }}>{meta.title}</div>
+                {burst.label && <div className="rounded-md border border-white/15 bg-[#0e0f12]/85 px-4 py-2 font-display text-sm font-bold text-white sm:text-base">{burst.label}</div>}
               </div>
             </div>
           )
@@ -207,7 +207,7 @@ function Mascot({ reduced }: { reduced: boolean }) {
 
   if (hidden) {
     return (
-      <button onClick={show} aria-label="Bring back the MCRO mascot" className="fixed bottom-3 right-3 z-[65] flex h-9 w-9 items-center justify-center rounded-full border border-[#f5b82e]/40 bg-[#130a1f] opacity-70 transition hover:opacity-100">
+      <button onClick={show} aria-label="Bring back the MCRO mascot" className="fixed bottom-3 right-3 z-[65] flex h-9 w-9 items-center justify-center rounded-full border border-[#f2b33d]/40 bg-[#16181d] opacity-70 transition hover:opacity-100">
         <img src={LOGO} alt="" className="h-6 w-6 [image-rendering:pixelated]" />
       </button>
     )
@@ -222,14 +222,14 @@ function Mascot({ reduced }: { reduced: boolean }) {
       style={{ transform: `translate(${pos.x}px, ${pos.y}px)`, transitionDuration: reduced ? "0ms" : "2400ms" }}
     >
       {bubble && (
-        <div className={`absolute bottom-full mb-2 w-max max-w-[200px] animate-pop-in rounded-md border border-[#f5b82e]/50 bg-[#130a1f] px-3 py-1.5 font-display text-sm font-bold text-white shadow-[0_0_16px_rgba(245,184,46,.35)] ${pos.x > (typeof window !== "undefined" ? window.innerWidth / 2 : 0) ? "right-0" : "left-0"}`}>
+        <div className={`absolute bottom-full mb-2 w-max max-w-[200px] animate-pop-in rounded-md border border-[#f2b33d]/50 bg-[#16181d] px-3 py-1.5 font-display text-sm font-bold text-white ${pos.x > (typeof window !== "undefined" ? window.innerWidth / 2 : 0) ? "right-0" : "left-0"}`}>
           {bubble}
         </div>
       )}
       <button
         onClick={hide}
         aria-label="Hide the MCRO mascot"
-        className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-[#0a0510] text-slate-300 opacity-100 ring-1 ring-white/20 transition group-hover:opacity-100 focus-visible:opacity-100 sm:opacity-0"
+        className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-[#0e0f12] text-slate-300 opacity-100 ring-1 ring-white/20 transition group-hover:opacity-100 focus-visible:opacity-100 sm:opacity-0"
       >
         <X size={12} />
       </button>
@@ -237,7 +237,7 @@ function Mascot({ reduced }: { reduced: boolean }) {
         onClick={toggleChat}
         aria-label={chatOpen ? "Close the MERY AI chat" : "Ask MERY, the AI guide, about crypto and markets"}
         aria-expanded={chatOpen}
-        className="block cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#f5b82e]"
+        className="block cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#f2b33d]"
       >
         <div ref={tiltRef} className="mascot-tilt">
           <div className={reduced ? "" : anim || "animate-mascot-bob"}>
@@ -246,7 +246,7 @@ function Mascot({ reduced }: { reduced: boolean }) {
               alt=""
               width={MASCOT}
               height={MASCOT}
-              className="h-12 w-12 drop-shadow-[0_0_10px_rgba(245,184,46,.55)] [image-rendering:pixelated] sm:h-14 sm:w-14"
+              className="h-12 w-12 [image-rendering:pixelated] sm:h-14 sm:w-14"
               style={{ transform: facingLeft ? "scaleX(-1)" : undefined }}
             />
           </div>
