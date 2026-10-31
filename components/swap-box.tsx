@@ -6,7 +6,6 @@ import { ArrowDownUp, ChevronDown, Loader2, Search, Settings2, X } from "lucide-
 import { getRoutingAddress, getTokenLogoUrl, type Token } from "@/lib/tokens"
 import { isWrapPair } from "@/lib/swap"
 import { formatBalance, type BalanceMap } from "@/lib/balances"
-import { FEE_BPS } from "@/lib/fees"
 import { isMery } from "@/lib/score"
 
 export type SwapMode = "buy" | "sell"
@@ -253,7 +252,7 @@ export function SwapBox(props: SwapBoxProps) {
         <dl className="mt-3 flex flex-col gap-1.5 rounded-xl border border-white/10 bg-[#0d0818] px-3 py-2.5 text-[13px]">
           <Row label="Rate">1 {from?.symbol} = {formatOut(rate)} {to?.symbol}</Row>
           <Row label={`Min. received (${slippage}% slippage)`}>{formatOut(minOut ?? 0)} {to?.symbol}</Row>
-          <Row label="Platform fee">{FEE_BPS / 100}% · included</Row>
+
           {quote && quote.route.length > 0 && <Row label="Route">{quote.route.slice(0, 3).join(" + ")}</Row>}
         </dl>
       )}
