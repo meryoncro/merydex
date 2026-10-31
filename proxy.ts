@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { APP_URL, SITE_URL, isAppHost, isSiteHost } from "@/lib/domains"
 import { rateLimit } from "@/lib/rate-limit"
 
 const WINDOW_SECONDS = 60
@@ -20,13 +21,14 @@ const DEFAULT_WRITE_LIMIT = 30
 // Cron is already locked behind CRON_SECRET and must never be throttled.
 const EXEMPT = new Set(["/api/recurring/run"])
 
+const SITE_PATH = "/site"
+
 function clientIp(req: NextRequest): string {
   const forwarded = req.headers.get("x-forwarded-for")
   return forwarded?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "unknown"
 }
 
-export async function proxy(req: NextRequest) {
-  const path = req.nextUrl.pathname
+async function limitApi(req: NextRequest, path: string) {
   if (EXEMPT.has(path)) return NextResponse.next()
 
   const ip = clientIp(req)
@@ -45,6 +47,37 @@ export async function proxy(req: NextRequest) {
   return NextResponse.next()
 }
 
+// mcro.fun is the information site; app.mcro.fun is the dApp. Any other host
+// (localhost, v0 preview, *.vercel.app) serves both, with the site at /site.
+function routeByHost(req: NextRequest, path: string) {
+  const host = req.headers.get("host")
+  const search = req.nextUrl.search
+
+  if (isSiteHost(host)) {
+    // Invite links must land where the wallet connects.
+    if (path === "/" && !req.nextUrl.searchParams.has("ref")) {
+      return NextResponse.rewrite(new URL(SITE_PATH, req.url))
+    }
+    if (path === SITE_PATH) return NextResponse.redirect(SITE_URL, 308)
+    return NextResponse.redirect(`${APP_URL}${path}${search}`, 308)
+  }
+
+  if (isAppHost(host) && (path === SITE_PATH || path.startsWith(`${SITE_PATH}/`))) {
+    return NextResponse.redirect(SITE_URL, 308)
+  }
+
+  return NextResponse.next()
+}
+
+export async function proxy(req: NextRequest) {
+  const path = req.nextUrl.pathname
+  if (path.startsWith("/api/")) return limitApi(req, path)
+  return routeByHost(req, path)
+}
+
 export const config = {
-  matcher: "/api/:path*",
+  matcher: [
+    "/api/:path*",
+    "/((?!_next/|images/|chains/|favicon|.*\\.(?:png|jpg|jpeg|svg|ico|webp|gif|txt|xml|webmanifest)$).*)",
+  ],
 }
