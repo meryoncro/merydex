@@ -14,13 +14,15 @@ import { joinArena, leaveArena, getMatch, getArenaStats, getArenaHistory, shortA
 import { DegenArcade, ScoreBoost } from "@/components/degen-arcade"
 import { RecurringOrders } from "@/components/recurring-orders"
 import { ReferralPanel, useReferralCapture } from "@/components/referral-panel"
+import { ProTerminal } from "@/components/pro-terminal"
+import { PredictHub } from "@/components/predict-hub"
 import { LiveChat } from "@/components/live-chat"
 import { McroFx } from "@/components/mcro-fx"
 import { NetworkSwitch } from "@/components/network-switch"
 import { emitFx } from "@/lib/fx"
 import { recordTrade, fetchLeaderboard, shortWallet, formatVolume, timeAgo, type LeaderRow, type LeaderboardTotals } from "@/lib/leaderboard"
 
-const tabs = ["Overview", "Swap", "Markets", "NFTs", "Game", "Portfolio", "Referral"]
+const tabs = ["Overview", "Swap", "Pro", "Predict", "Markets", "NFTs", "Game", "Portfolio", "Referral"]
 
 // Display order for the market tables. Prices come from the live /api/market proxy.
 const MARKET_TOKENS = [0, 2, 1, 3, 5, 7, 8, 9, 10, 11].map((i) => TOKENS[i])
@@ -138,6 +140,7 @@ export default function Page() {
   const [marketLoading, setMarketLoading] = useState(true)
   const [marketError, setMarketError] = useState(false)
   const [marketReload, setMarketReload] = useState(0)
+  const croDexPrice = market[getTokenBySymbol("WCRO")?.address.toLowerCase() ?? ""]?.priceUsd ?? null
 
   useEffect(() => {
     const controller = new AbortController()
@@ -408,7 +411,7 @@ export default function Page() {
       <Ticker rows={marketRows} />
 
       <div className="relative z-10 mx-auto max-w-[1320px] px-5 py-8 lg:px-8 lg:py-12">
-        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} pendingTrade={pendingTrade} croBalance={balances.native} slippage={slippage} setSlippage={setSlippage} onBuy={arcadeBuy} onSell={arcadeSell} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
+        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} pendingTrade={pendingTrade} croBalance={balances.native} slippage={slippage} setSlippage={setSlippage} onBuy={arcadeBuy} onSell={arcadeSell} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
           <section className="mb-12 flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div>
               <Eyebrow color="pink">Insert coin · Cronos ecosystem</Eyebrow>
