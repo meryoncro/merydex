@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { ethers } from "ethers"
 import { FEE_BPS } from "@/lib/fees"
+import { getObsidianQuote } from "@/lib/obsidian"
 
 export const dynamic = "force-dynamic"
 
@@ -40,6 +41,7 @@ async function getWolfswapQuote(
   outDec: number,
   signal: AbortSignal,
 ): Promise<{
+  netOut: bigint
   amountOut: string
   route: string[]
   quoteId: string | null
@@ -89,6 +91,7 @@ async function getWolfswapQuote(
     // Show what the trader actually receives after the MCRO.FUN partner fee.
     const netOut = (BigInt(best.amountOutTotal) * BigInt(10000 - FEE_BPS)) / BigInt(10000)
     return {
+      netOut,
       amountOut: ethers.formatUnits(netOut, outDec),
       route: Array.from(names),
       quoteId: best.quoteId ?? null,
@@ -123,24 +126,45 @@ export async function POST(request: Request) {
     const to = ethers.getAddress(toAddress)
     const amountInWei = ethers.parseUnits(String(amountIn), inDec)
 
-    // Native CRO pairs arrive here already mapped to WCRO; the client wraps CRO
-    // before the swap and unwraps WCRO after it. All swaps route through
-    // WolfSwap only, so every trade carries the MCRO.FUN partner fee.
-    const result = await getWolfswapQuote(from, to, amountInWei, outDec, request.signal)
+    // Native CRO pairs arrive mapped to WCRO. WolfSwap routes the WCRO address;
+    // Obsidian takes native CRO directly, so the native flags are passed through.
+    // Both quotes are net of each source's fees, so the larger one is the better deal.
+    const [wolf, obsidian] = await Promise.all([
+      getWolfswapQuote(from, to, amountInWei, outDec, request.signal),
+      getObsidianQuote(
+        { from, to, amountInWei, nativeIn: Boolean(nativeIn), nativeOut: Boolean(nativeOut) },
+        request.signal,
+      ),
+    ])
 
-    if (!result) {
+    const headers = { "Cache-Control": "no-store" }
+    if (obsidian && (!wolf || obsidian.netOut > wolf.netOut)) {
+      return NextResponse.json(
+        {
+          amountOut: ethers.formatUnits(obsidian.netOut, outDec),
+          route: ["Obsidian"],
+          quoteId: null,
+          source: "obsidian",
+          approvalSpender: obsidian.approvalSpender,
+          quoteTime: Date.now(),
+        },
+        { headers },
+      )
+    }
+
+    if (!wolf) {
       return NextResponse.json({ error: "No route for this pair" }, { status: 404 })
     }
 
     return NextResponse.json(
       {
-        amountOut: result.amountOut,
-        route: result.route,
-        quoteId: result.quoteId,
-        source: result.source,
+        amountOut: wolf.amountOut,
+        route: wolf.route,
+        quoteId: wolf.quoteId,
+        source: wolf.source,
         quoteTime: Date.now(),
       },
-      { headers: { "Cache-Control": "no-store" } },
+      { headers },
     )
   } catch (error) {
     return NextResponse.json(

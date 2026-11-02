@@ -300,11 +300,69 @@ export default function Page() {
           }),
         })
         const quote = await quoteRes.json().catch(() => null)
+        const expectedOut = Number(quote?.amountOut)
+        const outLabel = Number.isFinite(expectedOut) ? `~${expectedOut.toLocaleString(undefined, { maximumSignificantDigits: 5 })} ` : ""
+        const finish = () => {
+          setMessage(`Done: ${Number(fromAmount).toLocaleString(undefined, { maximumSignificantDigits: 6 })} ${fromToken.symbol} → ${outLabel}${toToken.symbol}`)
+          emitFx({
+            kind: fromToken.isNative ? "buy" : toToken.isNative ? "sell" : "swap",
+            label: `${Number(fromAmount).toLocaleString(undefined, { maximumSignificantDigits: 5 })} ${fromToken.symbol} → ${outLabel}${toToken.symbol}`,
+          })
+        }
+
+        if (quoteRes.ok && quote?.source === "obsidian") {
+          // Obsidian settles native CRO in and out directly, so no wrap/unwrap steps.
+          if (!fromToken.isNative) {
+            const spender: string | undefined = quote.approvalSpender
+            if (!spender) throw new Error("Missing approval contract for this route.")
+            const tokenContract = new Contract(fromToken.address, erc20, signer)
+            const allowance: bigint = await tokenContract.allowance(account, spender)
+            if (allowance < amountInWei) {
+              setMessage("Approve token spending in your wallet…")
+              const approveTx = await tokenContract.approve(spender, amountInWei)
+              await approveTx.wait()
+            }
+          }
+
+          setMessage("Building best route…")
+          const res = await fetch("/api/execute", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              source: "obsidian",
+              fromAddress: getRoutingAddress(fromToken),
+              toAddress: getRoutingAddress(toToken),
+              fromDecimals: fromToken.decimals,
+              amountIn: fromAmount,
+              nativeIn: Boolean(fromToken.isNative),
+              nativeOut: Boolean(toToken.isNative),
+              to: account,
+              slippageBps,
+            }),
+          })
+          const data = await res.json().catch(() => null)
+          if (!res.ok || !data?.address || !data?.calldata) throw new Error(data?.error || "Failed to build swap transaction")
+
+          setMessage("Confirm the swap in your wallet…")
+          const tx = await signer.sendTransaction({
+            to: data.address,
+            data: data.calldata,
+            value: BigInt(data.value ?? "0"),
+            ...(data.gasLimit ? { gasLimit: BigInt(data.gasLimit) } : {}),
+          })
+          logTrade(tx.hash)
+          setMessage(`Swap submitted: ${tx.hash.slice(0, 10)}… Waiting for confirmation.`)
+          const receipt = await tx.wait()
+          if (receipt && receipt.status !== 1) throw new Error("Swap reverted on-chain.")
+          finish()
+          refreshBalances()
+          return
+        }
+
         if (!quoteRes.ok || quote?.source !== "wolfswap" || !quote?.quoteId) {
           throw new Error(`No route for ${fromToken.symbol} → ${toToken.symbol} right now.`)
         }
         const quoteId: string = quote.quoteId
-        const expectedOut = Number(quote.amountOut)
 
         setMessage("Building best route…")
         const res = await fetch("/api/execute", {
@@ -359,12 +417,7 @@ export default function Page() {
             await provider.waitForTransaction(unwrapHash)
           }
         }
-        const outLabel = Number.isFinite(expectedOut) ? `~${expectedOut.toLocaleString(undefined, { maximumSignificantDigits: 5 })} ` : ""
-        setMessage(`Done: ${Number(fromAmount).toLocaleString(undefined, { maximumSignificantDigits: 6 })} ${fromToken.symbol} → ${outLabel}${toToken.symbol}`)
-        emitFx({
-          kind: fromToken.isNative ? "buy" : toToken.isNative ? "sell" : "swap",
-          label: `${Number(fromAmount).toLocaleString(undefined, { maximumSignificantDigits: 5 })} ${fromToken.symbol} → ${outLabel}${toToken.symbol}`,
-        })
+        finish()
       }
       refreshBalances()
     } catch (error) {

@@ -15,7 +15,7 @@ const CHAIN_ID = "cronos"
  * for exactly these addresses when DexScreener can't resolve them.
  */
 const COINGECKO_FALLBACK: Record<string, string> = {
-  "0x66e428c3f67a68767596461f7ee3ec71a3a3bab5": "tether", // USDT
+  "0x66e428c3f67a68878562e79a0234c1f83c208770": "tether", // USDT
   "0x062e66477faf610ffafe27fcadc3c7e6390d4e9c": "wrapped-bitcoin", // WBTC
 }
 
