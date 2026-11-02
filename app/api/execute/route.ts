@@ -9,7 +9,9 @@ function wolfswapBaseUrl(): string | null {
   return trimmed.endsWith("/v2") ? trimmed : `${trimmed}/v2`
 }
 
+import { ethers } from "ethers"
 import { FEE_BPS, FEE_COLLECTOR } from "@/lib/fees"
+import { prepareObsidianSwap } from "@/lib/obsidian"
 
 function isAddress(value: unknown): value is string {
   return typeof value === "string" && /^0x[a-fA-F0-9]{40}$/.test(value)
@@ -20,8 +22,50 @@ function isAddress(value: unknown): value is string {
  * only returns { address, calldata } — it never broadcasts. The browser wallet
  * signs and sends the returned calldata.
  */
+async function executeObsidian(body: Record<string, unknown>) {
+  const { fromAddress, toAddress, fromDecimals, amountIn, nativeIn, nativeOut, to, slippageBps } = body
+  if (!isAddress(fromAddress) || !isAddress(toAddress) || !isAddress(to)) {
+    return NextResponse.json({ error: "Invalid address" }, { status: 400 })
+  }
+  const inDec = Number(fromDecimals)
+  const bps = Number(slippageBps)
+  if (!Number.isInteger(inDec) || inDec < 0 || inDec > 36) {
+    return NextResponse.json({ error: "Invalid decimals" }, { status: 400 })
+  }
+  if (!Number.isFinite(bps) || bps < 1 || bps > 5000) {
+    return NextResponse.json({ error: "Invalid slippage" }, { status: 400 })
+  }
+  if (typeof amountIn !== "string" || !(Number(amountIn) > 0)) {
+    return NextResponse.json({ error: "Invalid input amount" }, { status: 400 })
+  }
+
+  const prepared = await prepareObsidianSwap(
+    {
+      from: ethers.getAddress(fromAddress),
+      to: ethers.getAddress(toAddress),
+      amountInWei: ethers.parseUnits(amountIn, inDec),
+      nativeIn: Boolean(nativeIn),
+      nativeOut: Boolean(nativeOut),
+    },
+    ethers.getAddress(to),
+    bps,
+  )
+  return NextResponse.json(
+    {
+      address: prepared.address,
+      calldata: prepared.calldata,
+      value: prepared.value,
+      gasLimit: prepared.gasLimit,
+    },
+    { headers: { "Cache-Control": "no-store" } },
+  )
+}
+
 export async function POST(request: Request) {
   try {
+    const parsed = await request.clone().json().catch(() => null)
+    if (parsed?.source === "obsidian") return await executeObsidian(parsed)
+
     const base = wolfswapBaseUrl()
     const key = process.env.WOLFSWAP_API_KEY
     if (!base || !key) {
