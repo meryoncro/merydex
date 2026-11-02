@@ -15,6 +15,9 @@ const CRO_GAS_RESERVE = 0.5
 const BUY_PRESETS = ["10", "50", "100", "500"]
 const SELL_PRESETS = [25, 50, 75, 100]
 const SLIPPAGE_PRESETS = ["0.5", "1", "3"]
+const BASE_SYMBOLS = ["USDC"]
+
+const sameToken = (a: Token, b: Token) => a.address.toLowerCase() === b.address.toLowerCase()
 
 interface SwapBoxProps {
   tokens: Token[]
@@ -71,19 +74,34 @@ export function SwapBox(props: SwapBoxProps) {
   const { tokens, cro, token, mode, onTokenChange, onModeChange, account, balances, balancesLoading, swapping, slippage, setSlippage, onSwap, onConnect } = props
   const [amount, setAmount] = useState("")
   const [percent, setPercent] = useState<number | null>(null)
-  const [pickerOpen, setPickerOpen] = useState(false)
+  const [pickerSide, setPickerSide] = useState<"token" | "base" | null>(null)
   const [showSettings, setShowSettings] = useState(false)
   const [debounced, setDebounced] = useState("")
+  const [base, setBase] = useState<Token>(cro)
 
-  const from = mode === "buy" ? cro : token
-  const to = mode === "buy" ? token : cro
+  const quickBases = useMemo(() => {
+    const curated = tokens.filter((t) => !t.imported)
+    return [cro, ...BASE_SYMBOLS.map((s) => curated.find((t) => t.symbol === s)).filter((t): t is Token => Boolean(t))]
+  }, [tokens, cro])
+
+  const from = mode === "buy" ? base : token
+  const to = mode === "buy" ? token : base
   const fromBalance = from ? balanceOf(balances, from) : 0
   const toBalance = to ? balanceOf(balances, to) : 0
 
   useEffect(() => {
     setAmount(mode === "buy" ? "50" : "")
     setPercent(null)
-  }, [mode, token?.address])
+  }, [mode, token?.address, base.address])
+
+  const chooseBase = (t: Token) => {
+    if (token && sameToken(t, token)) onTokenChange(base)
+    setBase(t)
+  }
+  const chooseToken = (t: Token) => {
+    if (sameToken(t, base)) setBase(token && !sameToken(token, t) ? token : sameToken(t, cro) ? quickBases[1] ?? cro : cro)
+    onTokenChange(t)
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(amount), 400)
@@ -179,13 +197,24 @@ export function SwapBox(props: SwapBoxProps) {
         </div>
       )}
 
+      <div className="mb-3 flex flex-wrap items-center gap-1.5">
+        <span className="mr-1 font-display text-xs font-bold text-slate-400">{mode === "buy" ? "Pay with" : "Receive in"}</span>
+        {quickBases.map((t) => (
+          <Chip key={t.address} selected={sameToken(base, t)} onClick={() => chooseBase(t)} color="#29e6ff">{t.symbol}</Chip>
+        ))}
+        {!quickBases.some((t) => sameToken(t, base)) && (
+          <Chip selected onClick={() => setPickerSide("base")} color="#29e6ff">{base.symbol}</Chip>
+        )}
+        <Chip selected={false} onClick={() => setPickerSide("base")} color="#29e6ff">More…</Chip>
+      </div>
+
       <AmountField
         label="You pay"
         token={from}
         balance={from ? fromBalance : null}
         account={account}
         balancesLoading={balancesLoading}
-        onPick={mode === "sell" ? () => setPickerOpen(true) : undefined}
+        onPick={() => setPickerSide(mode === "sell" ? "token" : "base")}
       >
         <input
           inputMode="decimal"
@@ -205,7 +234,7 @@ export function SwapBox(props: SwapBoxProps) {
         {mode === "buy"
           ? <>
               {BUY_PRESETS.map((v) => (
-                <Chip key={v} selected={percent == null && amount === v} onClick={() => setPresetAmount(v)} color={accent}>{v} CRO</Chip>
+                <Chip key={v} selected={percent == null && amount === v} onClick={() => setPresetAmount(v)} color={accent}>{v} {base.symbol}</Chip>
               ))}
               {account && <Chip selected={percent === 100} onClick={() => setPresetPercent(100)} color={accent}>Max</Chip>}
             </>
@@ -232,7 +261,7 @@ export function SwapBox(props: SwapBoxProps) {
         balance={to ? toBalance : null}
         account={account}
         balancesLoading={balancesLoading}
-        onPick={mode === "buy" ? () => setPickerOpen(true) : undefined}
+        onPick={() => setPickerSide(mode === "buy" ? "token" : "base")}
       >
         <div className="flex min-w-0 items-center gap-2 font-display text-3xl font-bold tabular-nums" aria-live="polite">
           {!token || !validAmount ? (
@@ -270,12 +299,13 @@ export function SwapBox(props: SwapBoxProps) {
         <p className="mt-2 text-center text-xs text-slate-400">Keeps {CRO_GAS_RESERVE} CRO in your wallet for gas.</p>
       )}
 
-      {pickerOpen && (
+      {pickerSide && (
         <TokenPickerDialog
           tokens={tokens}
+          pinned={quickBases}
           balances={balances}
-          onClose={() => setPickerOpen(false)}
-          onSelect={(t) => { onTokenChange(t); setPickerOpen(false) }}
+          onClose={() => setPickerSide(null)}
+          onSelect={(t) => { if (pickerSide === "base") chooseBase(t); else chooseToken(t); setPickerSide(null) }}
         />
       )}
     </div>
@@ -348,7 +378,7 @@ function TokenLogo({ token, size = 28 }: { token: Token; size?: number }) {
   )
 }
 
-function TokenPickerDialog({ tokens, balances, onClose, onSelect }: { tokens: Token[]; balances: BalanceMap; onClose: () => void; onSelect: (t: Token) => void }) {
+function TokenPickerDialog({ tokens, pinned, balances, onClose, onSelect }: { tokens: Token[]; pinned: Token[]; balances: BalanceMap; onClose: () => void; onSelect: (t: Token) => void }) {
   const [query, setQuery] = useState("")
 
   useEffect(() => {
@@ -359,9 +389,8 @@ function TokenPickerDialog({ tokens, balances, onClose, onSelect }: { tokens: To
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase()
-    const pool = tokens.filter((t) => !t.isNative)
-    const matched = q ? pool.filter((t) => t.symbol.toLowerCase().includes(q) || t.name.toLowerCase().includes(q) || t.address.toLowerCase() === q) : pool
-    const held = (t: Token) => Number(balances[t.address.toLowerCase()] ?? 0)
+    const matched = q ? tokens.filter((t) => t.symbol.toLowerCase().includes(q) || t.name.toLowerCase().includes(q) || t.address.toLowerCase() === q) : tokens
+    const held = (t: Token) => balanceOf(balances, t)
     return [...matched].sort((a, b) => Number(isMery(b.address)) - Number(isMery(a.address)) || Number(held(b) > 0) - Number(held(a) > 0)).slice(0, 80)
   }, [tokens, balances, query])
 
@@ -386,12 +415,20 @@ function TokenPickerDialog({ tokens, balances, onClose, onSelect }: { tokens: To
               className="w-full min-w-0 bg-transparent text-sm text-white outline-none placeholder:text-slate-400"
             />
           </label>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {pinned.map((t) => (
+              <button key={t.address} onClick={() => onSelect(t)} className="flex items-center gap-1.5 rounded-full border border-white/15 py-1 pl-1 pr-3 font-display text-xs font-bold transition hover:border-[#29e6ff]/60 hover:text-[#29e6ff]">
+                <TokenLogo token={t} size={20} />
+                {t.symbol}
+              </button>
+            ))}
+          </div>
         </div>
         <ul className="overflow-y-auto px-2 pb-2">
           {list.length === 0 ? (
             <li className="py-8 text-center text-sm text-slate-400">No tokens found.</li>
           ) : list.map((t) => {
-            const bal = Number(balances[t.address.toLowerCase()] ?? 0)
+            const bal = balanceOf(balances, t)
             return (
               <li key={t.address}>
                 <button onClick={() => onSelect(t)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition hover:bg-white/5">

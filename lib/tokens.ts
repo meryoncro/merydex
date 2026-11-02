@@ -51,13 +51,6 @@ export const TOKENS: Token[] = [
     color: "#2775CA",
   },
   {
-    address: "0x66e428c3f67a68767596461f7ee3ec71a3a3bab5",
-    symbol: "USDT",
-    name: "Tether",
-    decimals: 6,
-    color: "#26A17B",
-  },
-  {
     address: "0x062E66477Faf610fFaFe27FCADC3c7E6390d4E9c",
     symbol: "WBTC",
     name: "Wrapped Bitcoin",
