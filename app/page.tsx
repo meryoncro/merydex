@@ -18,9 +18,10 @@ import { ProTerminal } from "@/components/pro-terminal"
 import { PredictHub } from "@/components/predict-hub"
 import { LiveChat } from "@/components/live-chat"
 import { McroFx } from "@/components/mcro-fx"
-import { NetworkSwitch } from "@/components/network-switch"
+import { NetworkSwitch, type SwapNetwork } from "@/components/network-switch"
 import { WalletPicker } from "@/components/wallet-picker"
-import { connectWallet as openWallet, disconnectWallet, getEthereum, onWalletAccountChange, type WalletKind } from "@/lib/wallet-provider"
+import { connectWallet as openWallet, disconnectWallet, ensureChain, getEthereum, onWalletAccountChange, type WalletKind } from "@/lib/wallet-provider"
+import { EthSwapBox } from "@/components/eth-swap-box"
 import { useCroNames } from "@/lib/use-cro-names"
 import { emitFx } from "@/lib/fx"
 import { recordTrade, fetchLeaderboard, shortWallet, formatVolume, timeAgo, type LeaderRow, type LeaderboardTotals } from "@/lib/leaderboard"
@@ -108,6 +109,14 @@ function Ticker({ rows }: { rows: MarketRow[] }) {
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Overview")
+  const [swapNetwork, setSwapNetwork] = useState<SwapNetwork>("cronos")
+  const selectNetwork = (n: SwapNetwork) => {
+    setSwapNetwork(n)
+    if (n === "ethereum" && activeTab !== "Swap") {
+      setActiveTab("Swap")
+      window.scrollTo({ top: 0 })
+    }
+  }
   const [account, setAccount] = useState<string | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
   const [connecting, setConnecting] = useState(false)
@@ -259,6 +268,7 @@ export default function Page() {
     setSwapping(true)
     setPendingTrade(tag)
     try {
+      await ensureChain(ACTIVE_CHAIN.chainIdNumber)
       const provider = new BrowserProvider(ethereum as ConstructorParameters<typeof BrowserProvider>[0])
       const signer = await provider.getSigner()
       const slippageBps = Math.round(Number(slippage || "1") * 100)
@@ -463,7 +473,7 @@ export default function Page() {
             </button>
             <nav className="hidden items-center gap-1 md:flex">{tabs.map(tab => <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-md px-3 py-2 text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.07] text-white" : "text-slate-400 hover:text-white"}`}>{tab}</button>)}</nav>
           </div>
-          <div className="flex items-center gap-3"><NetworkSwitch onUnavailable={setMessage} /><button onClick={account ? disconnect : connectWallet} title={account ? `${account} · click to disconnect` : undefined} className="arcade-btn max-w-[180px] truncate rounded-md bg-[#29e6ff] px-4 py-2 font-display text-sm font-bold text-[#0b0816] hover:bg-[#8ef3ff]">{account ? (croNameOf(account) ?? `${account.slice(0, 6)}...${account.slice(-4)}`) : "Connect wallet"}</button><WalletPicker open={pickerOpen} busy={connecting} onClose={() => setPickerOpen(false)} onPick={pickWallet} /><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
+          <div className="flex items-center gap-3"><NetworkSwitch network={activeTab === "Swap" ? swapNetwork : "cronos"} onSelect={selectNetwork} /><button onClick={account ? disconnect : connectWallet} title={account ? `${account} · click to disconnect` : undefined} className="arcade-btn max-w-[180px] truncate rounded-md bg-[#29e6ff] px-4 py-2 font-display text-sm font-bold text-[#0b0816] hover:bg-[#8ef3ff]">{account ? (croNameOf(account) ?? `${account.slice(0, 6)}...${account.slice(-4)}`) : "Connect wallet"}</button><WalletPicker open={pickerOpen} busy={connecting} onClose={() => setPickerOpen(false)} onPick={pickWallet} /><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
         </div>
         {mobileOpen && <nav aria-label="Mobile navigation" className="grid grid-cols-3 gap-2 border-t border-white/10 px-5 py-3 md:hidden">{tabs.map(tab => <button key={tab} onClick={() => { setActiveTab(tab); setMobileOpen(false) }} aria-current={activeTab === tab ? "page" : undefined} className={`rounded-md px-2 py-3 text-center text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.08] text-white" : "bg-white/[0.03] text-slate-400"}`}>{tab}</button>)}</nav>}
       </header>
@@ -471,7 +481,7 @@ export default function Page() {
       <Ticker rows={marketRows} />
 
       <div className="relative z-10 mx-auto max-w-[1320px] px-5 py-8 lg:px-8 lg:py-12">
-        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} balances={balances} balancesLoading={balancesLoading} slippage={slippage} setSlippage={setSlippage} onSwap={(from, to, sizing) => swapNow(from, to, sizing, `swap:${to.address.toLowerCase()}`)} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel tokens={allTokens} account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
+        {activeTab === "Swap" ? <SwapPanel network={swapNetwork} setNetwork={setSwapNetwork} tokens={allTokens} account={account} swapping={swapping} balances={balances} balancesLoading={balancesLoading} slippage={slippage} setSlippage={setSlippage} onSwap={(from, to, sizing) => swapNow(from, to, sizing, `swap:${to.address.toLowerCase()}`)} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel tokens={allTokens} account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
           <section className="mb-12 flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div>
               <p className="mb-3 text-sm text-slate-400">Cronos market today</p>
@@ -515,6 +525,8 @@ export default function Page() {
 const CRO_GAS_RESERVE = "0.5"
 
 interface SwapPanelProps {
+  network: SwapNetwork
+  setNetwork: (network: SwapNetwork) => void
   tokens: Token[]
   account: string | null
   swapping: boolean
@@ -526,11 +538,12 @@ interface SwapPanelProps {
   onConnect: () => void
 }
 
-function SwapPanel({ tokens, account, swapping, balances, balancesLoading, slippage, setSlippage, onSwap, onConnect }: SwapPanelProps) {
+function SwapPanel({ network, setNetwork, tokens, account, swapping, balances, balancesLoading, slippage, setSlippage, onSwap, onConnect }: SwapPanelProps) {
   const cro = tokens.find((t) => t.isNative)
   const [token, setToken] = useState<Token | null>(() => tokens.find((t) => isMery(t.address)) ?? tokens.find((t) => !t.isNative) ?? null)
   const [mode, setMode] = useState<SwapMode>("buy")
   const pick = (t: Token, m: SwapMode) => {
+    setNetwork("cronos")
     setToken(t)
     setMode(m)
     document.getElementById("swap-box")?.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -539,9 +552,25 @@ function SwapPanel({ tokens, account, swapping, balances, balancesLoading, slipp
     <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 md:max-w-[880px]">
       <div className="text-center">
         <h1 className="text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">Swap in <span className="text-[#29e6ff]">seconds</span></h1>
-        <p className="mx-auto mt-2 flex items-center justify-center gap-1.5 text-pretty text-sm text-slate-400"><ArrowDownUp size={13} className="text-[#ff3d7f]" aria-hidden="true" /> Best price across WolfSwap and Obsidian, every quote.</p>
+        <p className="mx-auto mt-2 flex items-center justify-center gap-1.5 text-pretty text-sm text-slate-400"><ArrowDownUp size={13} className="text-[#ff3d7f]" aria-hidden="true" /> {network === "cronos" ? "Best price across WolfSwap and Obsidian, every quote." : "Ethereum swaps routed through Uniswap v2, v3 and v4."}</p>
       </div>
-      {cro && <SwapBox tokens={tokens} cro={cro} token={token} mode={mode} onTokenChange={setToken} onModeChange={setMode} account={account} balances={balances} balancesLoading={balancesLoading} swapping={swapping} slippage={slippage} setSlippage={setSlippage} onSwap={onSwap} onConnect={onConnect} />}
+      <div role="tablist" aria-label="Network" className="mx-auto flex w-full max-w-xs gap-1 rounded-xl border border-white/10 bg-[#0d0a1c] p-1">
+        {(["cronos", "ethereum"] as const).map((n) => (
+          <button
+            key={n}
+            type="button"
+            role="tab"
+            aria-selected={network === n}
+            onClick={() => setNetwork(n)}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition ${network === n ? "bg-[#29e6ff] text-[#0b0816]" : "text-slate-300 hover:bg-white/5"}`}
+          >
+            <span className={`size-2 rounded-full ${n === "cronos" ? "bg-[#ff3d7f]" : "bg-[#627eea]"}`} aria-hidden="true" />
+            {n === "cronos" ? "Cronos" : "Ethereum"}
+          </button>
+        ))}
+      </div>
+      {network === "ethereum" && <div className="mx-auto w-full max-w-[480px]"><EthSwapBox account={account} slippage={slippage} setSlippage={setSlippage} onConnect={onConnect} /></div>}
+      {network === "cronos" && cro && <SwapBox tokens={tokens} cro={cro} token={token} mode={mode} onTokenChange={setToken} onModeChange={setMode} account={account} balances={balances} balancesLoading={balancesLoading} swapping={swapping} slippage={slippage} setSlippage={setSlippage} onSwap={onSwap} onConnect={onConnect} />}
     </div>
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="min-w-0">
