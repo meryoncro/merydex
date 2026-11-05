@@ -518,7 +518,7 @@ function SwapPanel({ tokens, account, swapping, balances, balancesLoading, slipp
     document.getElementById("swap-box")?.scrollIntoView({ behavior: "smooth", block: "center" })
   }
   return <section className="mx-auto flex max-w-7xl flex-col gap-10">
-    <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 md:max-w-[880px]">
       <div className="text-center">
         <h1 className="text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">Swap in <span className="text-[#29e6ff]">seconds</span></h1>
         <p className="mx-auto mt-2 flex items-center justify-center gap-1.5 text-pretty text-sm text-slate-400"><ArrowDownUp size={13} className="text-[#ff3d7f]" aria-hidden="true" /> Best price across WolfSwap and Obsidian, every quote.</p>

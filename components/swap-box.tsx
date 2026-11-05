@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import useSWR from "swr"
-import { ArrowDown, ChevronDown, Loader2, Search, Settings2, X } from "lucide-react"
+import { ArrowDown, ArrowRight, ChevronDown, Loader2, Search, Settings2, X } from "lucide-react"
+
+function amountTextSize(text: string) {
+  if (text.length <= 8) return "text-3xl"
+  if (text.length <= 12) return "text-2xl"
+  if (text.length <= 16) return "text-xl"
+  return "text-lg"
+}
 import { getRoutingAddress, getTokenLogoUrl, type Token } from "@/lib/tokens"
 import { isWrapPair } from "@/lib/swap"
 import { formatBalance, type BalanceMap } from "@/lib/balances"
@@ -196,6 +203,8 @@ export function SwapBox(props: SwapBoxProps) {
         </div>
       )}
 
+      <div className="flex flex-col md:flex-row">
+      <div className="min-w-0 md:flex-1">
       <AmountField
         label="You pay"
         token={from}
@@ -226,20 +235,23 @@ export function SwapBox(props: SwapBoxProps) {
             const v = e.target.value.replace(",", ".")
             if (/^\d*\.?\d*$/.test(v)) { setAmount(v); setPercent(null) }
           }}
-          className={`h-11 w-full min-w-0 bg-transparent font-display font-bold tabular-nums text-white outline-none placeholder:text-slate-600 ${amount.length > 9 ? "text-2xl" : "text-4xl"}`}
+          className={`h-11 w-full min-w-0 bg-transparent font-display font-bold tabular-nums text-white outline-none placeholder:text-slate-600 ${amountTextSize(amount)}`}
         />
       </AmountField>
+      </div>
 
-      <div className="relative z-10 -my-4 flex justify-center">
+      <div className="relative z-10 -my-4 flex justify-center md:-mx-4 md:my-0 md:items-center">
         <button
           onClick={flip}
           aria-label="Switch pay and receive tokens"
           className="group rounded-xl border-4 border-[#171230] bg-[#221a44] p-2 text-[#29e6ff] transition hover:bg-[#29e6ff] hover:text-[#0b0816]"
         >
-          <ArrowDown size={18} className="transition group-hover:rotate-180" aria-hidden="true" />
+          <ArrowDown size={18} className="transition group-hover:rotate-180 md:hidden" aria-hidden="true" />
+          <ArrowRight size={18} className="hidden transition group-hover:rotate-180 md:block" aria-hidden="true" />
         </button>
       </div>
 
+      <div className="min-w-0 md:flex-1">
       <AmountField
         label="You receive"
         token={to}
@@ -248,11 +260,11 @@ export function SwapBox(props: SwapBoxProps) {
         balancesLoading={balancesLoading}
         onPick={() => setPickerSide(mode === "buy" ? "token" : "base")}
       >
-        <div className="flex h-11 min-w-0 items-center gap-2 font-display text-4xl font-bold tabular-nums" aria-live="polite">
+        <div className={`flex h-11 min-w-0 items-center gap-2 font-display font-bold tabular-nums ${out != null && token && validAmount ? amountTextSize(formatOut(out)) : "text-3xl"}`} aria-live="polite">
           {!token || !validAmount ? (
             <span className="text-slate-600">0</span>
           ) : out != null ? (
-            <span className="truncate text-white">{formatOut(out)}</span>
+            <span className="min-w-0 break-all leading-tight text-white" title={formatOut(out)}>{formatOut(out)}</span>
           ) : quoteError && quoteFresh ? (
             <span className="text-base text-[#ff3d7f]">No route for this pair</span>
           ) : (
@@ -261,6 +273,8 @@ export function SwapBox(props: SwapBoxProps) {
           {quoteLoading && out != null && <Loader2 size={14} className="shrink-0 animate-spin text-slate-400" aria-hidden="true" />}
         </div>
       </AmountField>
+      </div>
+      </div>
 
       {token && out != null && rate != null && (
         <div className="mt-2 rounded-xl bg-[#0d0a1c]">
@@ -322,7 +336,7 @@ function AmountField({ label, token, balance, account, balancesLoading, onPick, 
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0d0a1c] p-4 transition focus-within:border-[#29e6ff]/60">
+    <div className="h-full rounded-xl border border-white/10 bg-[#0d0a1c] p-4 transition focus-within:border-[#29e6ff]/60">
       <div className="mb-1 font-display text-xs text-slate-400">{label}</div>
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">{children}</div>
