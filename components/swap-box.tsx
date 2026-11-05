@@ -1,8 +1,15 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import useSWR from "swr"
-import { ArrowDownUp, ChevronDown, Loader2, Search, Settings2, X } from "lucide-react"
+import { ArrowDown, ArrowRight, ChevronDown, Loader2, Search, Settings2, X } from "lucide-react"
+
+function amountTextSize(text: string) {
+  if (text.length <= 8) return "text-3xl"
+  if (text.length <= 12) return "text-2xl"
+  if (text.length <= 16) return "text-xl"
+  return "text-lg"
+}
 import { getRoutingAddress, getTokenLogoUrl, type Token } from "@/lib/tokens"
 import { isWrapPair } from "@/lib/swap"
 import { formatBalance, type BalanceMap } from "@/lib/balances"
@@ -12,8 +19,8 @@ export type SwapMode = "buy" | "sell"
 export type SwapSizing = { amount: string } | { percent: number }
 
 const CRO_GAS_RESERVE = 0.5
-const BUY_PRESETS = ["10", "50", "100", "500"]
-const SELL_PRESETS = [25, 50, 75, 100]
+const CRO_PRESETS = ["10", "50", "100", "500"]
+const PERCENT_PRESETS = [25, 50, 75, 100]
 const SLIPPAGE_PRESETS = ["0.5", "1", "3"]
 const BASE_SYMBOLS = ["USDC"]
 
@@ -72,12 +79,14 @@ async function fetchQuote([, from, to, amount]: [string, Token, Token, string]):
 
 export function SwapBox(props: SwapBoxProps) {
   const { tokens, cro, token, mode, onTokenChange, onModeChange, account, balances, balancesLoading, swapping, slippage, setSlippage, onSwap, onConnect } = props
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] = useState("50")
   const [percent, setPercent] = useState<number | null>(null)
   const [pickerSide, setPickerSide] = useState<"token" | "base" | null>(null)
   const [showSettings, setShowSettings] = useState(false)
-  const [debounced, setDebounced] = useState("")
+  const [showDetails, setShowDetails] = useState(false)
+  const [debounced, setDebounced] = useState("50")
   const [base, setBase] = useState<Token>(cro)
+  const keepAmountOnNextChange = useRef(true)
 
   const quickBases = useMemo(() => {
     const curated = tokens.filter((t) => !t.imported)
@@ -89,10 +98,15 @@ export function SwapBox(props: SwapBoxProps) {
   const fromBalance = from ? balanceOf(balances, from) : 0
   const toBalance = to ? balanceOf(balances, to) : 0
 
+  // Only the pay-side token changing invalidates the typed amount; changing what you receive keeps it.
   useEffect(() => {
-    setAmount(mode === "buy" ? "50" : "")
+    if (keepAmountOnNextChange.current) {
+      keepAmountOnNextChange.current = false
+      return
+    }
+    setAmount(from?.isNative ? "50" : "")
     setPercent(null)
-  }, [mode, token?.address, base.address])
+  }, [from?.address])
 
   const chooseBase = (t: Token) => {
     if (token && sameToken(t, token)) onTokenChange(base)
@@ -124,13 +138,22 @@ export function SwapBox(props: SwapBoxProps) {
 
   const maxSpend = from?.isNative ? Math.max(0, fromBalance - CRO_GAS_RESERVE) : fromBalance
   const insufficient = account != null && validAmount && percent !== 100 && amountNum > maxSpend + 1e-12
+  const hasBalance = account != null && fromBalance > 0
 
   const setPresetAmount = (v: string) => { setAmount(v); setPercent(null) }
   const setPresetPercent = (p: number) => {
     if (!from) return
-    const base = from.isNative ? maxSpend : fromBalance
-    setAmount(trimAmount((base * p) / 100, from.decimals))
+    setAmount(trimAmount((maxSpend * p) / 100, from.decimals))
     setPercent(p)
+  }
+
+  const flip = () => {
+    if (to && out != null) {
+      keepAmountOnNextChange.current = true
+      setAmount(trimAmount(out, to.decimals))
+      setPercent(null)
+    }
+    onModeChange(mode === "buy" ? "sell" : "buy")
   }
 
   const submit = () => {
@@ -151,63 +174,37 @@ export function SwapBox(props: SwapBoxProps) {
             ? "Confirm in wallet…"
             : quoteError && quoteFresh
               ? "No route right now"
-              : `${mode === "buy" ? "Buy" : "Sell"} ${token.symbol}`
+              : `Swap ${from?.symbol} for ${to?.symbol}`
   const disabled = !!account && (!token || !validAmount || insufficient || swapping || (!!quoteError && quoteFresh))
-  const accent = mode === "buy" ? "#3dff9a" : "#ff3d7f"
 
   return (
-    <div className="rounded-2xl border border-[#29e6ff]/25 bg-[#171230]/90 p-4 backdrop-blur sm:p-5" id="swap-box">
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <div className="grid flex-1 grid-cols-2 gap-1 arcade-panel rounded-xl border border-white/15 bg-[#110d22] p-1" role="tablist" aria-label="Trade direction">
-          {(["buy", "sell"] as const).map((m) => {
-            const selected = mode === m
-            const c = m === "buy" ? "#3dff9a" : "#ff3d7f"
-            return (
-              <button
-                key={m}
-                role="tab"
-                aria-selected={selected}
-                onClick={() => onModeChange(m)}
-                className="rounded-lg py-2 font-display text-sm font-bold tracking-normal transition"
-                style={{ backgroundColor: selected ? c : "transparent", color: selected ? "#0b0816" : "#cbd5e1" }}
-              >
-                {m}
-              </button>
-            )
-          })}
-        </div>
+    <div className="arcade-panel rounded-2xl border bg-[#171230]/95 p-3 backdrop-blur sm:p-4" id="swap-box">
+      <div className="mb-3 flex items-center justify-between gap-2 px-1">
+        <h2 className="font-display text-lg font-bold text-white">Swap</h2>
         <button
           onClick={() => setShowSettings((s) => !s)}
           aria-expanded={showSettings}
           aria-label="Slippage settings"
-          className={`rounded-lg border p-2.5 transition ${showSettings ? "border-[#29e6ff]/60 text-[#29e6ff]" : "border-white/10 text-slate-300 hover:text-white"}`}
+          className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-display text-xs font-bold transition ${showSettings ? "bg-[#29e6ff]/15 text-[#29e6ff]" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}
         >
-          <Settings2 size={16} />
+          {slippage}% slippage
+          <Settings2 size={15} aria-hidden="true" />
         </button>
       </div>
 
       {showSettings && (
-        <div className="mb-3 flex items-center justify-between gap-2 arcade-panel rounded-xl border border-white/15 bg-[#110d22] px-3 py-2.5">
-          <span className="font-display text-xs font-bold tracking-normal text-slate-300">Max slippage</span>
+        <div className="mb-3 flex items-center justify-between gap-2 rounded-xl bg-[#0d0a1c] px-3 py-2.5">
+          <span className="font-display text-xs font-bold text-slate-300">Max slippage</span>
           <div className="flex gap-1">
             {SLIPPAGE_PRESETS.map((s) => (
-              <Chip key={s} selected={slippage === s} onClick={() => setSlippage(s)} color="#29e6ff">{s}%</Chip>
+              <Chip key={s} selected={slippage === s} onClick={() => setSlippage(s)}>{s}%</Chip>
             ))}
           </div>
         </div>
       )}
 
-      <div className="mb-3 flex flex-wrap items-center gap-1.5">
-        <span className="mr-1 font-display text-xs font-bold text-slate-400">{mode === "buy" ? "Pay with" : "Receive in"}</span>
-        {quickBases.map((t) => (
-          <Chip key={t.address} selected={sameToken(base, t)} onClick={() => chooseBase(t)} color="#29e6ff">{t.symbol}</Chip>
-        ))}
-        {!quickBases.some((t) => sameToken(t, base)) && (
-          <Chip selected onClick={() => setPickerSide("base")} color="#29e6ff">{base.symbol}</Chip>
-        )}
-        <Chip selected={false} onClick={() => setPickerSide("base")} color="#29e6ff">More…</Chip>
-      </div>
-
+      <div className="flex flex-col md:flex-row">
+      <div className="min-w-0 md:flex-1">
       <AmountField
         label="You pay"
         token={from}
@@ -215,6 +212,18 @@ export function SwapBox(props: SwapBoxProps) {
         account={account}
         balancesLoading={balancesLoading}
         onPick={() => setPickerSide(mode === "sell" ? "token" : "base")}
+        onMax={hasBalance ? () => setPresetPercent(100) : undefined}
+        footer={
+          hasBalance
+            ? PERCENT_PRESETS.map((p) => (
+                <Chip key={p} selected={percent === p} onClick={() => setPresetPercent(p)}>{p === 100 ? "Max" : `${p}%`}</Chip>
+              ))
+            : from?.isNative
+              ? CRO_PRESETS.map((v) => (
+                  <Chip key={v} selected={percent == null && amount === v} onClick={() => setPresetAmount(v)}>{v}</Chip>
+                ))
+              : null
+        }
       >
         <input
           inputMode="decimal"
@@ -226,35 +235,23 @@ export function SwapBox(props: SwapBoxProps) {
             const v = e.target.value.replace(",", ".")
             if (/^\d*\.?\d*$/.test(v)) { setAmount(v); setPercent(null) }
           }}
-          className="w-full min-w-0 bg-transparent font-display text-3xl font-bold tabular-nums text-white outline-none placeholder:text-slate-600"
+          className={`h-11 w-full min-w-0 bg-transparent font-display font-bold tabular-nums text-white outline-none placeholder:text-slate-600 ${amountTextSize(amount)}`}
         />
       </AmountField>
-
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {mode === "buy"
-          ? <>
-              {BUY_PRESETS.map((v) => (
-                <Chip key={v} selected={percent == null && amount === v} onClick={() => setPresetAmount(v)} color={accent}>{v} {base.symbol}</Chip>
-              ))}
-              {account && <Chip selected={percent === 100} onClick={() => setPresetPercent(100)} color={accent}>Max</Chip>}
-            </>
-          : SELL_PRESETS.map((p) => (
-              <Chip key={p} selected={percent === p} onClick={() => setPresetPercent(p)} color={accent} disabled={!token || !account}>
-                {p === 100 ? "Max" : `${p}%`}
-              </Chip>
-            ))}
       </div>
 
-      <div className="relative z-10 -my-2.5 flex justify-center">
+      <div className="relative z-10 -my-4 flex justify-center md:-mx-4 md:my-0 md:items-center">
         <button
-          onClick={() => onModeChange(mode === "buy" ? "sell" : "buy")}
-          aria-label="Flip buy and sell"
-          className="mt-3 rounded-xl border-4 border-[#171230] bg-[#29e6ff] p-2 text-[#0b0816] transition hover:rotate-180 hover:bg-[#8ef3ff]"
+          onClick={flip}
+          aria-label="Switch pay and receive tokens"
+          className="group rounded-xl border-4 border-[#171230] bg-[#221a44] p-2 text-[#29e6ff] transition hover:bg-[#29e6ff] hover:text-[#0b0816]"
         >
-          <ArrowDownUp size={16} />
+          <ArrowDown size={18} className="transition group-hover:rotate-180 md:hidden" aria-hidden="true" />
+          <ArrowRight size={18} className="hidden transition group-hover:rotate-180 md:block" aria-hidden="true" />
         </button>
       </div>
 
+      <div className="min-w-0 md:flex-1">
       <AmountField
         label="You receive"
         token={to}
@@ -263,36 +260,51 @@ export function SwapBox(props: SwapBoxProps) {
         balancesLoading={balancesLoading}
         onPick={() => setPickerSide(mode === "buy" ? "token" : "base")}
       >
-        <div className="flex min-w-0 items-center gap-2 font-display text-3xl font-bold tabular-nums" aria-live="polite">
+        <div className={`flex h-11 min-w-0 items-center gap-2 font-display font-bold tabular-nums ${out != null && token && validAmount ? amountTextSize(formatOut(out)) : "text-3xl"}`} aria-live="polite">
           {!token || !validAmount ? (
             <span className="text-slate-600">0</span>
           ) : out != null ? (
-            <span className="truncate text-white">{formatOut(out)}</span>
+            <span className="min-w-0 break-all leading-tight text-white" title={formatOut(out)}>{formatOut(out)}</span>
           ) : quoteError && quoteFresh ? (
-            <span className="text-base text-[#ff3d7f]">No route</span>
+            <span className="text-base text-[#ff3d7f]">No route for this pair</span>
           ) : (
-            <span className="h-8 w-28 animate-pulse rounded bg-white/10" aria-label="Fetching price" />
+            <span className="h-9 w-32 animate-pulse rounded-md bg-white/10" aria-label="Fetching price" />
           )}
           {quoteLoading && out != null && <Loader2 size={14} className="shrink-0 animate-spin text-slate-400" aria-hidden="true" />}
         </div>
       </AmountField>
+      </div>
+      </div>
 
       {token && out != null && rate != null && (
-        <dl className="mt-3 flex flex-col gap-1.5 arcade-panel rounded-xl border border-white/15 bg-[#110d22] px-3 py-2.5 text-[13px]">
-          <Row label="Rate">1 {from?.symbol} = {formatOut(rate)} {to?.symbol}</Row>
-          <Row label={`Min. received (${slippage}% slippage)`}>{formatOut(minOut ?? 0)} {to?.symbol}</Row>
-
-          {quote && quote.route.length > 0 && <Row label="Route">{quote.route.slice(0, 3).join(" + ")}</Row>}
-        </dl>
+        <div className="mt-2 rounded-xl bg-[#0d0a1c]">
+          <button
+            onClick={() => setShowDetails((s) => !s)}
+            aria-expanded={showDetails}
+            className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-[13px]"
+          >
+            <span className="truncate font-display font-bold tabular-nums text-slate-200">1 {from?.symbol} = {formatOut(rate)} {to?.symbol}</span>
+            <span className="flex shrink-0 items-center gap-1 text-xs text-slate-400">
+              {showDetails ? "Less" : "Details"}
+              <ChevronDown size={14} className={`transition ${showDetails ? "rotate-180" : ""}`} aria-hidden="true" />
+            </span>
+          </button>
+          {showDetails && (
+            <dl className="flex flex-col gap-1.5 border-t border-white/5 px-3 pb-3 pt-2.5 text-[13px]">
+              <Row label="Minimum received">{formatOut(minOut ?? 0)} {to?.symbol}</Row>
+              <Row label="Max slippage">{slippage}%</Row>
+              {quote && quote.route.length > 0 && <Row label="Route">{quote.route.slice(0, 3).join(" → ")}</Row>}
+            </dl>
+          )}
+        </div>
       )}
 
       <button
         onClick={submit}
         disabled={disabled}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-4 font-display text-base font-bold tracking-normal text-[#0b0816] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-        style={{ backgroundColor: account ? accent : "#29e6ff" }}
+        className="arcade-btn mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#29e6ff] py-4 font-display text-base font-bold text-[#0b0816] disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {swapping && <Loader2 size={16} className="animate-spin" />}
+        {swapping && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
         {label}
       </button>
       {from?.isNative && account && (
@@ -312,30 +324,42 @@ export function SwapBox(props: SwapBoxProps) {
   )
 }
 
-function AmountField({ label, token, balance, account, balancesLoading, onPick, children }: {
+function AmountField({ label, token, balance, account, balancesLoading, onPick, onMax, footer, children }: {
   label: string
   token: Token | null
   balance: number | null
   account: string | null
   balancesLoading: boolean
   onPick?: () => void
+  onMax?: () => void
+  footer?: React.ReactNode
   children: React.ReactNode
 }) {
   return (
-    <div className="arcade-panel rounded-xl border border-white/15 bg-[#110d22] p-4 transition focus-within:border-[#29e6ff]/50">
-      <div className="mb-2 flex items-center justify-between font-display text-xs tracking-normal text-slate-400">
-        <span>{label}</span>
-        <span>
-          Balance{" "}
-          <span className="text-slate-300">
-            {!account || balance == null ? "—" : balancesLoading && balance === 0 ? "…" : formatBalance(balance)}
-          </span>
-        </span>
-      </div>
+    <div className="h-full rounded-xl border border-white/10 bg-[#0d0a1c] p-4 transition focus-within:border-[#29e6ff]/60">
+      <div className="mb-1 font-display text-xs text-slate-400">{label}</div>
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">{children}</div>
         <TokenButton token={token} onClick={onPick} />
       </div>
+      {(footer || (account && token)) && <div className="mt-2 flex min-h-7 flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap gap-1">{footer}</div>
+        {account && token && (
+          <div className="ml-auto flex items-center gap-1.5 font-display text-xs text-slate-400">
+            <span>
+              Balance{" "}
+              <span className="tabular-nums text-slate-300">
+                {balance == null ? "—" : balancesLoading && balance === 0 ? "…" : formatBalance(balance)}
+              </span>
+            </span>
+            {onMax && (
+              <button onClick={onMax} className="rounded px-1 font-bold text-[#29e6ff] transition hover:bg-[#29e6ff]/10">
+                Max
+              </button>
+            )}
+          </div>
+        )}
+      </div>}
     </div>
   )
 }
@@ -448,15 +472,14 @@ function TokenPickerDialog({ tokens, pinned, balances, onClose, onSelect }: { to
   )
 }
 
-function Chip({ selected, onClick, color, disabled, children }: { selected: boolean; onClick: () => void; color: string; disabled?: boolean; children: React.ReactNode }) {
+function Chip({ selected, onClick, disabled, children }: { selected: boolean; onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
       aria-pressed={selected}
-      className="rounded-md border px-2.5 py-1.5 font-display text-xs font-bold tabular-nums transition disabled:opacity-40"
-      style={{ borderColor: selected ? color : "rgba(255,255,255,0.1)", backgroundColor: selected ? `${color}1f` : "transparent", color: selected ? color : "#94a3b8" }}
+      className={`rounded-md px-2 py-1 font-display text-xs font-bold tabular-nums transition disabled:opacity-40 ${selected ? "bg-[#29e6ff]/15 text-[#29e6ff]" : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200"}`}
     >
       {children}
     </button>

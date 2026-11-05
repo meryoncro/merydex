@@ -515,22 +515,21 @@ function SwapPanel({ tokens, account, swapping, balances, balancesLoading, slipp
   const pick = (t: Token, m: SwapMode) => {
     setToken(t)
     setMode(m)
-    if (window.matchMedia("(max-width: 1023px)").matches) document.getElementById("swap-box")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    document.getElementById("swap-box")?.scrollIntoView({ behavior: "smooth", block: "center" })
   }
-  return <section className="mx-auto grid max-w-7xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
-    <div className="min-w-0 lg:col-start-1 lg:row-start-1">
-      <div className="mb-6 text-center lg:text-left">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-[#ff3d7f]/30 bg-[#ff3d7f]/10 px-3 py-1 font-display text-xs font-bold tracking-normal text-[#ff3d7f]"><ArrowDownUp size={13} /> MCRO.FUN smart routing</div>
-        <h1 className="text-balance font-display text-4xl font-bold tracking-tight">Swap in <span className="text-[#29e6ff]">seconds</span></h1>
-        <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-6 text-slate-300 lg:mx-0">Pick a token, enter an amount, check what you get, then confirm in your wallet. Nothing is sent until you approve it.</p>
+  return <section className="mx-auto flex max-w-7xl flex-col gap-10">
+    <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 md:max-w-[880px]">
+      <div className="text-center">
+        <h1 className="text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">Swap in <span className="text-[#29e6ff]">seconds</span></h1>
+        <p className="mx-auto mt-2 flex items-center justify-center gap-1.5 text-pretty text-sm text-slate-400"><ArrowDownUp size={13} className="text-[#ff3d7f]" aria-hidden="true" /> Best price across WolfSwap and Obsidian, every quote.</p>
       </div>
-    </div>
-    <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
       {cro && <SwapBox tokens={tokens} cro={cro} token={token} mode={mode} onTokenChange={setToken} onModeChange={setMode} account={account} balances={balances} balancesLoading={balancesLoading} swapping={swapping} slippage={slippage} setSlippage={setSlippage} onSwap={onSwap} onConnect={onConnect} />}
-      <LiveChat room="swap" title="Traders chat" account={account} onConnect={onConnect} />
     </div>
-    <div className="min-w-0 lg:col-start-1 lg:row-start-2">
-      <DegenArcade tokens={tokens} account={account} swapping={swapping} selectedAddress={token?.address.toLowerCase() ?? null} onPick={pick} onConnect={onConnect} />
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="min-w-0">
+        <DegenArcade tokens={tokens} account={account} swapping={swapping} selectedAddress={token?.address.toLowerCase() ?? null} onPick={pick} onConnect={onConnect} />
+      </div>
+      <LiveChat room="swap" title="Traders chat" account={account} onConnect={onConnect} />
     </div>
   </section>
 }
