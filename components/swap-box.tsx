@@ -412,10 +412,21 @@ function TokenPickerDialog({ tokens, pinned, balances, onClose, onSelect }: { to
   }, [onClose])
 
   const list = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    const matched = q ? tokens.filter((t) => t.symbol.toLowerCase().includes(q) || t.name.toLowerCase().includes(q) || t.address.toLowerCase() === q) : tokens
+    const q = query.trim().toLowerCase().replace(/^\$/, "")
+    const sym = (t: Token) => t.symbol.toLowerCase().replace(/^\$/, "")
+    // Lower is better: exact symbol, symbol prefix, symbol contains, name/address match.
+    const relevance = (t: Token) => {
+      const s = sym(t)
+      if (t.address.toLowerCase() === q || s === q) return 0
+      if (s.startsWith(q)) return 1
+      if (s.includes(q)) return 2
+      return 3
+    }
+    const matched = q ? tokens.filter((t) => sym(t).includes(q) || t.name.toLowerCase().includes(q) || t.address.toLowerCase() === q) : tokens
     const held = (t: Token) => balanceOf(balances, t)
-    return [...matched].sort((a, b) => Number(isMery(b.address)) - Number(isMery(a.address)) || Number(held(b) > 0) - Number(held(a) > 0)).slice(0, 80)
+    return [...matched]
+      .sort((a, b) => (q ? relevance(a) - relevance(b) : 0) || Number(isMery(b.address)) - Number(isMery(a.address)) || Number(held(b) > 0) - Number(held(a) > 0))
+      .slice(0, 80)
   }, [tokens, balances, query])
 
   return (
