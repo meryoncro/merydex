@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { TOKENS } from "@/lib/tokens"
+import { cronosRpcUrls } from "@/lib/rpc-urls"
 
 // Live Cronos on-chain + DEX ecosystem stats for the Overview highlight cards.
 // Sources (all real, no mock values):
@@ -34,20 +35,27 @@ function toNum(v: unknown): number | null {
 }
 
 async function rpcCall<T = unknown>(method: string, params: unknown[]): Promise<T | null> {
-  if (!RPC) return null
-  try {
-    const res = await fetch(RPC, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-      cache: "no-store",
-    })
-    const json = (await res.json()) as { result?: T; error?: { message?: string } }
-    if (json.error) return null
-    return json.result ?? null
-  } catch {
-    return null
+  for (const url of cronosRpcUrls(25, RPC)) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+      })
+      if (!res.ok) continue
+      const json = (await res.json()) as { result?: T; error?: { message?: string } }
+      if (json.error) {
+        if (/rate.?limit|too many requests/i.test(json.error.message ?? "")) continue
+        return null
+      }
+      return json.result ?? null
+    } catch {
+      continue
+    }
   }
+  return null
 }
 
 interface DexPair {

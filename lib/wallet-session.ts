@@ -2,6 +2,7 @@
 
 import { BrowserProvider } from "ethers"
 import { chatSignInMessage } from "@/lib/chat"
+import { getEthereum } from "@/lib/wallet-provider"
 
 export const sessionKey = (address: string) => `merydex-chat:${address.toLowerCase()}`
 
@@ -13,8 +14,8 @@ export const clearSession = (address: string) => sessionStorage.removeItem(sessi
 export async function ensureSession(address: string): Promise<string> {
   const existing = storedSession(address)
   if (existing) return existing
-  const ethereum = (window as Window & { ethereum?: unknown }).ethereum
-  if (!ethereum) throw new Error("Install a compatible wallet first.")
+  const ethereum = getEthereum()
+  if (!ethereum) throw new Error("Connect a wallet first.")
   const signer = await new BrowserProvider(ethereum as ConstructorParameters<typeof BrowserProvider>[0]).getSigner()
   const signerAddress = await signer.getAddress()
   const issuedAt = new Date().toISOString()

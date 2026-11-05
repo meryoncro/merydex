@@ -1,4 +1,5 @@
 import { BrowserProvider, Contract, formatEther } from "ethers"
+import { getEthereum as getConnectedEthereum } from "@/lib/wallet-provider"
 
 // Mistery on Cro (MERY) — the ERC721 collection this tab renders.
 // https://app.ebisusbay.com/collection/cronos/mistery-on-cro
@@ -128,8 +129,8 @@ export const arenaNftName = (nft: { name?: string; nftId?: string; collection?: 
 }
 
 const getEthereum = () => {
-  const eth = (window as Window & { ethereum?: unknown }).ethereum
-  if (!eth) throw new Error("No compatible wallet detected. Install MetaMask or a Cronos wallet.")
+  const eth = getConnectedEthereum()
+  if (!eth) throw new Error("Connect a wallet first.")
   return eth as ConstructorParameters<typeof BrowserProvider>[0]
 }
 

@@ -4,6 +4,7 @@ import { useState } from "react"
 import useSWR from "swr"
 import { ArrowDownRight, ArrowUpRight, Crown, ExternalLink, Loader2, Radio, Repeat, UserCheck, UserPlus, X } from "lucide-react"
 import { clearSession, ensureSession } from "@/lib/wallet-session"
+import { useCroNames } from "@/lib/use-cro-names"
 
 export interface FeedTrade {
   id: number
@@ -147,6 +148,7 @@ function FollowButton({ account, target, following, onConnect, onChanged, compac
 /* ---------- Live ticker (signature strip) ---------- */
 
 export function TradeTicker({ trades }: { trades: FeedTrade[] }) {
+  const { label } = useCroNames(trades.slice(0, 14).map((t) => t.wallet))
   if (trades.length === 0) return null
   const loop = [...trades.slice(0, 14), ...trades.slice(0, 14)]
   return (
@@ -159,7 +161,7 @@ export function TradeTicker({ trades }: { trades: FeedTrade[] }) {
         {loop.map((t, i) => (
           <span key={`${t.id}-${i}`} className="flex items-center gap-1.5 whitespace-nowrap text-[13px]" aria-hidden={i >= loop.length / 2}>
             <Avatar wallet={t.wallet} size={12} />
-            <span className="font-mono text-slate-300">{shortWallet(t.wallet)}</span>
+            <span className="font-mono text-slate-300">{label(t.wallet)}</span>
             <span className={t.side === "sell" ? "text-[#ff3d7f]" : t.side === "buy" ? "text-[#3dff9a]" : "text-[#29e6ff]"}>
               {t.side === "sell" ? "sold" : t.side === "buy" ? "aped" : "swapped"}
             </span>
@@ -183,6 +185,7 @@ export function TradeFeed({ account, trades, onOpenTrader }: { account: string |
     { refreshInterval: 5000 },
   )
   const list = scope === "all" ? trades : followingData?.trades
+  const { label } = useCroNames((list ?? []).map((t) => t.wallet))
 
   return (
     <div>
@@ -215,11 +218,11 @@ export function TradeFeed({ account, trades, onOpenTrader }: { account: string |
         <ol className="max-h-[520px] overflow-y-auto">
           {list.map((t) => (
             <li key={t.id} className="flex items-center gap-3 border-b border-white/[0.06] py-2.5 last:border-0">
-              <button type="button" onClick={() => onOpenTrader(t.wallet)} className="flex min-w-0 flex-1 items-center gap-3 text-left" aria-label={`Open profile of ${shortWallet(t.wallet)}`}>
+              <button type="button" onClick={() => onOpenTrader(t.wallet)} className="flex min-w-0 flex-1 items-center gap-3 text-left" aria-label={`Open profile of ${label(t.wallet)}`}>
                 <Avatar wallet={t.wallet} />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className={`font-mono text-xs ${t.wallet === me ? "text-[#3dff9a]" : "text-slate-300"}`}>{shortWallet(t.wallet)}{t.wallet === me ? " (you)" : ""}</span>
+                    <span className={`font-mono text-xs ${t.wallet === me ? "text-[#3dff9a]" : "text-slate-300"}`}>{label(t.wallet)}{t.wallet === me ? " (you)" : ""}</span>
                     <SideBadge side={t.side} />
                   </span>
                   <span className="mt-0.5 block truncate text-[13px] text-slate-400">
@@ -253,6 +256,7 @@ export function Leaderboard({ account, onConnect, onOpenTrader }: { account: str
   const me = account?.toLowerCase()
   const { data, mutate } = useSWR<{ leaders: Leader[] }>(`/api/social?view=leaders${me ? `&wallet=${me}` : ""}`, fetchJson, { refreshInterval: 15000 })
   const leaders = data?.leaders
+  const { label } = useCroNames((leaders ?? []).map((l) => l.wallet))
 
   return (
     <div>
@@ -270,7 +274,7 @@ export function Leaderboard({ account, onConnect, onOpenTrader }: { account: str
                 <button type="button" onClick={() => onOpenTrader(l.wallet)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                   <Avatar wallet={l.wallet} size={32} />
                   <span className="min-w-0">
-                    <span className={`block font-mono text-xs ${mine ? "text-[#3dff9a]" : "text-slate-200"}`}>{shortWallet(l.wallet)}{mine ? " (you)" : ""}</span>
+                    <span className={`block font-mono text-xs ${mine ? "text-[#3dff9a]" : "text-slate-200"}`}>{label(l.wallet)}{mine ? " (you)" : ""}</span>
                     <span className="block text-[13px] text-slate-400">
                       {l.trades} trades · {formatUsd(l.volume)} vol · {l.followers} {l.followers === 1 ? "follower" : "followers"}
                     </span>
@@ -303,6 +307,7 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
     fetchJson,
     { refreshInterval: 15000 },
   )
+  const { nameOf } = useCroNames([wallet])
 
   if (!wallet) {
     return (
@@ -333,7 +338,8 @@ export function TraderProfile({ account, target, onConnect, onBack }: {
           <div className="flex items-center gap-3">
             <Avatar wallet={wallet} size={48} />
             <div>
-              <div className="font-mono text-sm text-white">{shortWallet(wallet)}{isMe ? " (you)" : ""}</div>
+              <div className="font-mono text-sm text-white">{nameOf(wallet) ?? shortWallet(wallet)}{isMe ? " (you)" : ""}</div>
+              {nameOf(wallet) && <div className="font-mono text-xs text-slate-400">{shortWallet(wallet)}</div>}
               <div className="mt-0.5 font-display text-xs tracking-normal text-slate-400">
                 {data?.rank ? `Rank #${data.rank}` : "Unranked"} · {data?.followers ?? 0} followers · {data?.following ?? 0} following
               </div>

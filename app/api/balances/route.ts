@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { ethers } from "ethers"
 import { TOKENS } from "@/lib/tokens"
 import { getImportedTokens } from "@/lib/tokenlist"
+import { cronosProvider } from "@/lib/rpc-urls"
 
 export const dynamic = "force-dynamic"
 
@@ -63,10 +64,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Valid address required" }, { status: 400 })
   }
 
-  const rpcUrl = process.env.RPC_URL || "https://evm.cronos.org"
-
   try {
-    const provider = new ethers.JsonRpcProvider(rpcUrl, 25, { batchMaxCount: 1, staticNetwork: true })
+    const provider = cronosProvider(25, process.env.RPC_URL)
 
     const imported = await getImportedTokens().catch(() => [])
     const curated = TOKENS.filter((t) => !t.isNative)
