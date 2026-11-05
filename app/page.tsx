@@ -229,7 +229,9 @@ export default function Page() {
   const connectWallet = async () => { setPickerOpen(true) }
 
   const pickWallet = async (kind: WalletKind) => {
-    setConnecting(true)
+  // WalletConnect shows its own QR modal; close ours so it doesn't sit on top.
+  if (kind === "walletconnect") setPickerOpen(false)
+  setConnecting(true)
     try {
       const address = await openWallet(kind)
       setAccount(address)

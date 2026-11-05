@@ -12,7 +12,9 @@ export type Eip1193Provider = {
 
 export type WalletKind = "injected" | "walletconnect"
 
-export const WALLETCONNECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? ""
+// WalletConnect project IDs are public (they ship in the browser bundle); the env var can override it.
+export const WALLETCONNECT_PROJECT_ID =
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "f4fd8fe14701cef72a246397050a3678"
 export const walletConnectEnabled = WALLETCONNECT_PROJECT_ID.length > 0
 
 let active: Eip1193Provider | null = null
