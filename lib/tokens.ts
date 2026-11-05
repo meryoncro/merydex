@@ -51,7 +51,7 @@ export const TOKENS: Token[] = [
     color: "#2775CA",
   },
   {
-    address: "0x062E66477Faf610fFaFe27FCADC3c7E6390d4E9c",
+    address: "0x062E66477Faf219F25D27dCED647BF57C3107d52",
     symbol: "WBTC",
     name: "Wrapped Bitcoin",
     decimals: 8,

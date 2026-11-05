@@ -16,7 +16,7 @@ const CHAIN_ID = "cronos"
  */
 const COINGECKO_FALLBACK: Record<string, string> = {
   "0x66e428c3f67a68878562e79a0234c1f83c208770": "tether", // USDT
-  "0x062e66477faf610ffafe27fcadc3c7e6390d4e9c": "wrapped-bitcoin", // WBTC
+  "0x062E66477Faf219F25D27dCED647BF57C3107d52": "wrapped-bitcoin", // WBTC
 }
 
 interface DexToken {
