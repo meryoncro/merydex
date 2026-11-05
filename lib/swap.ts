@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { cronosProvider } from "@/lib/rpc-urls";
 import {
   ACTIVE_CHAIN,
   VVS_ROUTER_V2,
@@ -121,7 +122,7 @@ export async function getSwapQuote(
 
     const path = buildSwapPath(fromToken, toToken);
 
-    const provider = new ethers.JsonRpcProvider(ACTIVE_CHAIN.rpcUrl);
+    const provider = cronosProvider(ACTIVE_CHAIN.chainIdNumber);
     const router = new ethers.Contract(VVS_ROUTER_V2, ROUTER_ABI, provider);
 
     // Convert input to wei
@@ -176,7 +177,7 @@ export async function estimateGas(
   maxPriorityFeePerGas: string;
 }> {
   try {
-    const provider = new ethers.JsonRpcProvider(ACTIVE_CHAIN.rpcUrl);
+    const provider = cronosProvider(ACTIVE_CHAIN.chainIdNumber);
     const path = buildSwapPath(fromToken, toToken);
     const amountInWei = ethers.parseUnits(amountIn, fromToken.decimals);
 

@@ -5,6 +5,8 @@ import useSWR from "swr"
 import { BrowserProvider } from "ethers"
 import { Loader2, MessageSquare, Send, ShieldCheck, Wallet } from "lucide-react"
 import { CHAT_MAX_LENGTH, chatSignInMessage, type ChatMessage, type ChatRoom } from "@/lib/chat"
+import { useCroNames } from "@/lib/use-cro-names"
+import { getEthereum } from "@/lib/wallet-provider"
 
 interface ChatFeed {
   messages: ChatMessage[]
@@ -46,6 +48,7 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
   }, [me])
 
   const messages = data?.messages ?? []
+  const { label } = useCroNames(messages.map((m) => m.address))
   const lastId = messages.at(-1)?.id
 
   useLayoutEffect(() => {
@@ -60,8 +63,8 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
 
   const signIn = async () => {
     if (!me) return onConnect()
-    const ethereum = (window as Window & { ethereum?: unknown }).ethereum
-    if (!ethereum) return setNotice("Install a compatible wallet to chat.")
+    const ethereum = getEthereum()
+    if (!ethereum) return setNotice("Connect a wallet to chat.")
     setSigningIn(true); setNotice(null)
     try {
       const signer = await new BrowserProvider(ethereum as ConstructorParameters<typeof BrowserProvider>[0]).getSigner()
@@ -148,7 +151,7 @@ export function LiveChat({ room, title, account, onConnect }: LiveChatProps) {
             <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`}>
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <span className="font-mono font-bold" style={{ color: mine ? "#3dff9a" : `hsl(${walletHue(m.address)} 90% 70%)` }}>
-                  {mine ? "You" : short(m.address)}
+                  {mine ? "You" : label(m.address)}
                 </span>
                 <time dateTime={m.createdAt}>{clock(m.createdAt)}</time>
               </div>

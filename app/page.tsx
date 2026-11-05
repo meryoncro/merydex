@@ -19,6 +19,9 @@ import { PredictHub } from "@/components/predict-hub"
 import { LiveChat } from "@/components/live-chat"
 import { McroFx } from "@/components/mcro-fx"
 import { NetworkSwitch } from "@/components/network-switch"
+import { WalletPicker } from "@/components/wallet-picker"
+import { connectWallet as openWallet, disconnectWallet, getEthereum, onWalletAccountChange, type WalletKind } from "@/lib/wallet-provider"
+import { useCroNames } from "@/lib/use-cro-names"
 import { emitFx } from "@/lib/fx"
 import { recordTrade, fetchLeaderboard, shortWallet, formatVolume, timeAgo, type LeaderRow, type LeaderboardTotals } from "@/lib/leaderboard"
 
@@ -106,7 +109,11 @@ function Ticker({ rows }: { rows: MarketRow[] }) {
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Overview")
   const [account, setAccount] = useState<string | null>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [connecting, setConnecting] = useState(false)
+  const { nameOf: croNameOf } = useCroNames(account ? [account] : [])
   useReferralCapture(account)
+  useEffect(() => (account ? onWalletAccountChange(setAccount) : undefined), [account])
   const [mobileOpen, setMobileOpen] = useState(false)
   const [swapping, setSwapping] = useState(false)
   const [pendingTrade, setPendingTrade] = useState<string | null>(null)
@@ -219,14 +226,23 @@ export default function Page() {
     return map
   }, [market])
 
-  const connectWallet = async () => {
-    const ethereum = (window as Window & { ethereum?: unknown }).ethereum as { request: (args: { method: string; params?: unknown[] }) => Promise<string[]> } | undefined
-    if (!ethereum) { setMessage("Install a compatible wallet to continue."); return }
+  const connectWallet = async () => { setPickerOpen(true) }
+
+  const pickWallet = async (kind: WalletKind) => {
+    setConnecting(true)
     try {
-      const accounts = await ethereum.request({ method: "eth_requestAccounts" })
-      setAccount(accounts[0])
+      const address = await openWallet(kind)
+      setAccount(address)
       setMessage("")
-    } catch { setMessage("Wallet connection was cancelled.") }
+      setPickerOpen(false)
+    } catch (error) {
+      setMessage(error instanceof Error && !/reject|cancel|closed/i.test(error.message) ? error.message : "Wallet connection was cancelled.")
+    } finally { setConnecting(false) }
+  }
+
+  const disconnect = async () => {
+    await disconnectWallet()
+    setAccount(null)
   }
 
   // One-click trade: size is either a fixed input amount or a % of the wallet's
@@ -235,8 +251,8 @@ export default function Page() {
   const swapNow = async (fromToken: Token, toToken: Token, sizing: { amount: string } | { percent: number }, tag: string) => {
     if (swapping) return
     if (!account) { await connectWallet(); return }
-    const ethereum = (window as Window & { ethereum?: unknown }).ethereum
-    if (!ethereum) { setMessage("Install a compatible wallet to continue."); return }
+    const ethereum = getEthereum()
+    if (!ethereum) { setMessage("Connect a wallet to continue."); return }
 
     setSwapping(true)
     setPendingTrade(tag)
@@ -445,7 +461,7 @@ export default function Page() {
             </button>
             <nav className="hidden items-center gap-1 md:flex">{tabs.map(tab => <button key={tab} onClick={() => setActiveTab(tab)} className={`rounded-md px-3 py-2 text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.07] text-white" : "text-slate-400 hover:text-white"}`}>{tab}</button>)}</nav>
           </div>
-          <div className="flex items-center gap-3"><NetworkSwitch onUnavailable={setMessage} /><button onClick={connectWallet} className="arcade-btn rounded-md bg-[#29e6ff] px-4 py-2 font-display text-sm font-bold text-[#0b0816] hover:bg-[#8ef3ff]">{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Connect wallet"}</button><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
+          <div className="flex items-center gap-3"><NetworkSwitch onUnavailable={setMessage} /><button onClick={account ? disconnect : connectWallet} title={account ? `${account} · click to disconnect` : undefined} className="arcade-btn max-w-[180px] truncate rounded-md bg-[#29e6ff] px-4 py-2 font-display text-sm font-bold text-[#0b0816] hover:bg-[#8ef3ff]">{account ? (croNameOf(account) ?? `${account.slice(0, 6)}...${account.slice(-4)}`) : "Connect wallet"}</button><WalletPicker open={pickerOpen} busy={connecting} onClose={() => setPickerOpen(false)} onPick={pickWallet} /><button className="rounded-md p-2 text-slate-300 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"><Menu size={20} /></button></div>
         </div>
         {mobileOpen && <nav aria-label="Mobile navigation" className="grid grid-cols-3 gap-2 border-t border-white/10 px-5 py-3 md:hidden">{tabs.map(tab => <button key={tab} onClick={() => { setActiveTab(tab); setMobileOpen(false) }} aria-current={activeTab === tab ? "page" : undefined} className={`rounded-md px-2 py-3 text-center text-sm font-medium transition ${activeTab === tab ? "bg-white/[0.08] text-white" : "bg-white/[0.03] text-slate-400"}`}>{tab}</button>)}</nav>}
       </header>
@@ -553,6 +569,7 @@ function MarketsPanel({ account }: { account: string | null }) {
   }, [reload])
 
   const leaders = data?.leaders ?? []
+  const { label: walletLabel } = useCroNames(leaders.map((l) => l.wallet))
   const totals = data?.totals
   const rankColor = (rank: number) => (rank === 1 ? "#3dff9a" : rank === 2 ? "#29e6ff" : rank === 3 ? "#ff3d7f" : "#64748b")
 
@@ -582,7 +599,7 @@ function MarketsPanel({ account }: { account: string | null }) {
           const mine = me != null && row.wallet.toLowerCase() === me
           return <tr key={row.wallet} className={`border-b border-white/[0.06] last:border-0 transition hover:bg-white/[0.03] ${mine ? "bg-[#3dff9a]/[0.06]" : ""}`}>
             <td className="py-4"><span className="font-display text-lg font-bold tabular-nums" style={{ color: rankColor(row.rank) }}>{String(row.rank).padStart(2, "0")}</span></td>
-            <td className="py-4"><div className="flex items-center gap-2 sm:gap-3"><div className="hidden h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-[#a39cc8]/40 to-[#110d22] font-display text-xs font-bold text-white sm:flex">{row.wallet.slice(2, 4).toUpperCase()}</div><div><a href={`${ACTIVE_CHAIN.explorer}/address/${row.wallet}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-mono text-xs text-[#29e6ff] hover:text-[#8ef3ff]">{shortWallet(row.wallet)} <ArrowUpRight size={12} /></a>{mine && <span className="font-display text-[11px] tracking-normal text-[#3dff9a]">You</span>}</div></div></td>
+            <td className="py-4"><div className="flex items-center gap-2 sm:gap-3"><div className="hidden h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-[#a39cc8]/40 to-[#110d22] font-display text-xs font-bold text-white sm:flex">{row.wallet.slice(2, 4).toUpperCase()}</div><div><a href={`${ACTIVE_CHAIN.explorer}/address/${row.wallet}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-mono text-xs text-[#29e6ff] hover:text-[#8ef3ff]">{walletLabel(row.wallet)} <ArrowUpRight size={12} /></a>{mine && <span className="font-display text-[11px] tracking-normal text-[#3dff9a]">You</span>}</div></div></td>
             <td className="py-4 text-right font-display font-bold text-[#3dff9a]">{formatVolume(row.volume)}</td>
             <td className="py-4 text-right font-display font-bold text-slate-300 tabular-nums">{row.trades}</td>
             <td className="hidden py-4 text-right font-mono text-xs text-slate-400 sm:table-cell">{timeAgo(row.lastTraded)}</td>
