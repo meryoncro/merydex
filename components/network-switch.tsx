@@ -2,45 +2,39 @@
 
 /* eslint-disable @next/next/no-img-element */
 
+export type SwapNetwork = "cronos" | "ethereum"
+
 type NetworkSwitchProps = {
-  onUnavailable: (message: string) => void
+  network: SwapNetwork
+  onSelect: (network: SwapNetwork) => void
 }
 
-// WolfSwap's routing API only accepts Cronos (networkId 25) today; Ethereum
-// requests are rejected with "networkId is not supported".
-const ETH_UNAVAILABLE =
-  "Ethereum swaps aren't live yet. Swap routing currently supports Cronos only. We'll switch Ethereum on as soon as it's available."
+const OPTIONS: { id: SwapNetwork; label: string; short: string; icon: string; iconClass: string }[] = [
+  { id: "cronos", label: "Cronos Mainnet", short: "Cronos", icon: "/chains/cronos.png", iconClass: "h-5 w-5 rounded-full" },
+  { id: "ethereum", label: "Ethereum Mainnet", short: "ETH", icon: "/chains/ethereum.svg", iconClass: "h-5 w-5" },
+]
 
-export function NetworkSwitch({ onUnavailable }: NetworkSwitchProps) {
+export function NetworkSwitch({ network, onSelect }: NetworkSwitchProps) {
   return (
-    <div
-      role="radiogroup"
-      aria-label="Network"
-      className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.03] p-1"
-    >
-      <button
-        type="button"
-        role="radio"
-        aria-checked="true"
-        aria-label="Cronos Mainnet"
-        title="Cronos Mainnet"
-        className="flex items-center gap-2 rounded bg-[#3dff9a]/10 px-2 py-1.5 ring-1 ring-[#3dff9a]/40 transition"
-      >
-        <img src="/chains/cronos.png" alt="" width={20} height={20} className="h-5 w-5 rounded-full" />
-        <span className="hidden font-display text-xs font-bold tracking-normal text-[#3dff9a] lg:inline">Cronos</span>
-      </button>
-      <button
-        type="button"
-        role="radio"
-        aria-checked="false"
-        aria-label="Ethereum (coming soon)"
-        title="Ethereum - coming soon"
-        onClick={() => onUnavailable(ETH_UNAVAILABLE)}
-        className="flex items-center gap-2 rounded px-2 py-1.5 opacity-50 grayscale transition hover:opacity-90 hover:grayscale-0 focus-visible:opacity-90 focus-visible:grayscale-0"
-      >
-        <img src="/chains/ethereum.svg" alt="" width={20} height={20} className="h-5 w-5" />
-        <span className="hidden font-display text-xs font-bold tracking-normal text-slate-300 lg:inline">ETH</span>
-      </button>
+    <div role="radiogroup" aria-label="Network" className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.03] p-1">
+      {OPTIONS.map((o) => {
+        const active = network === o.id
+        return (
+          <button
+            key={o.id}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            aria-label={o.label}
+            title={o.label}
+            onClick={() => onSelect(o.id)}
+            className={`flex items-center gap-2 rounded px-2 py-1.5 transition ${active ? "bg-[#3dff9a]/10 ring-1 ring-[#3dff9a]/40" : "opacity-60 hover:opacity-100"}`}
+          >
+            <img src={o.icon} alt="" width={20} height={20} className={o.iconClass} />
+            <span className={`hidden font-display text-xs font-bold tracking-normal lg:inline ${active ? "text-[#3dff9a]" : "text-slate-300"}`}>{o.short}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }
