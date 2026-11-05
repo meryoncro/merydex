@@ -453,7 +453,7 @@ export default function Page() {
       <Ticker rows={marketRows} />
 
       <div className="relative z-10 mx-auto max-w-[1320px] px-5 py-8 lg:px-8 lg:py-12">
-        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} balances={balances} balancesLoading={balancesLoading} slippage={slippage} setSlippage={setSlippage} onSwap={(from, to, sizing) => swapNow(from, to, sizing, `swap:${to.address.toLowerCase()}`)} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
+        {activeTab === "Swap" ? <SwapPanel tokens={allTokens} account={account} swapping={swapping} balances={balances} balancesLoading={balancesLoading} slippage={slippage} setSlippage={setSlippage} onSwap={(from, to, sizing) => swapNow(from, to, sizing, `swap:${to.address.toLowerCase()}`)} onConnect={connectWallet} /> : activeTab === "Pro" ? <ProTerminal croDexPrice={croDexPrice} onSwap={() => { setActiveTab("Swap"); window.scrollTo({ top: 0 }) }} /> : activeTab === "Predict" ? <PredictHub account={account} onConnect={connectWallet} /> : activeTab === "Markets" ? <MarketsPanel account={account} /> : activeTab === "NFTs" ? <NftPanel account={account} onConnect={connectWallet} /> : activeTab === "Game" ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="min-w-0"><GamePanel account={account} onConnect={connectWallet} /></div><LiveChat room="game" title="Arena chat" account={account} onConnect={connectWallet} /></div> : activeTab === "Portfolio" ? <PortfolioPanel tokens={allTokens} account={account} onConnect={connectWallet} market={market} balances={balances} balancesLoading={balancesLoading} onRefresh={refreshBalances} /> : activeTab === "Referral" ? <ReferralPanel account={account} onConnect={connectWallet} /> : <>
           <section className="mb-12 flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div>
               <p className="mb-3 text-sm text-slate-400">Cronos market today</p>
@@ -593,7 +593,7 @@ function MarketsPanel({ account }: { account: string | null }) {
   </section>
 }
 
-function PortfolioPanel({ account, onConnect, market, balances, balancesLoading, onRefresh }: { account: string | null; onConnect: () => void; market: MarketMap; balances: BalanceMap; balancesLoading: boolean; onRefresh: () => void }) {
+function PortfolioPanel({ tokens, account, onConnect, market, balances, balancesLoading, onRefresh }: { tokens: Token[]; account: string | null; onConnect: () => void; market: MarketMap; balances: BalanceMap; balancesLoading: boolean; onRefresh: () => void }) {
   // Native CRO tracks WCRO's price; every other token is priced by its own address.
   const wcro = getTokenBySymbol("WCRO")
   const priceOf = (token: Token): number | null => market[token.address.toLowerCase()]?.priceUsd ?? null
@@ -602,7 +602,7 @@ function PortfolioPanel({ account, onConnect, market, balances, balancesLoading,
 
   const holdings = [
     { key: "native", token: { address: "native", symbol: "CRO", name: "Cronos", decimals: 18, color: "#1199FA" } as Token, amount: nativeAmount, price: nativePrice, native: true },
-    ...TOKENS.filter((token) => !token.isNative).map((token) => {
+    ...tokens.filter((token) => !token.isNative && balances[token.address.toLowerCase()] != null).map((token) => {
       const amount = Number(balances[token.address.toLowerCase()] ?? 0)
       return { key: token.address, token, amount, price: priceOf(token), native: false }
     }),
